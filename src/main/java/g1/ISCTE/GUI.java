@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class GUI extends Application {
@@ -115,6 +116,12 @@ public class GUI extends Application {
                 "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: #6562fc;");
         selectFolder.setFont(boldButSmaller);
+
+        selectFolder.setOnMouseClicked(event ->{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            fileChooser.showOpenDialog(selectFolder.getScene().getWindow());
+        });
 
 
         emptyLeftPane.setPadding(new Insets(10,10,10,10));
