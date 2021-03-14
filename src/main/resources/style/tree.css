@@ -1,0 +1,18 @@
+.myTree .tree-view {
+    -fx-background-color:lightsteelblue;
+}
+
+.myTree .tree-cell {
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-color: #6562fc;
+
+}
+
+.myTree .tree-view:focused .tree-cell:filled:selected {
+    -fx-background-color:indigo; // Focused color
+}
+
+.myTree .tree-cell:filled:selected{
+    -fx-background-color:lightcyan; // Unfocused color
+}

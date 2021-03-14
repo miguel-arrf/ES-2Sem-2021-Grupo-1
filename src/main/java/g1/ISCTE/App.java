@@ -4,6 +4,7 @@ public class App {
 
     public static void main(String[] args) {
         GUI.main(args);
+        //CodeEditorExample.main(args);
     }
 
 }

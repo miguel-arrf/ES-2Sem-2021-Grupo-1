@@ -99,11 +99,13 @@ public class oldGUI extends Application {
         Scene scene = new Scene(initialView,400,600);
 
         scene.setFill(Color.TRANSPARENT);
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        //primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         initialView.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         primaryStage.setScene(scene);
+
+        getWebView(primaryStage);
         primaryStage.show();
     }
 
