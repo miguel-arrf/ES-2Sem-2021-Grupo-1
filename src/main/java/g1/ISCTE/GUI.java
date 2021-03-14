@@ -1,6 +1,10 @@
 package g1.ISCTE;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,6 +25,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import javax.swing.*;
 import java.awt.*;
@@ -358,12 +363,16 @@ public class GUI extends Application {
     }
 
     private void loadCenterPane(){
+
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        File f = new File("C:\\Users\\mferr\\IdeaProjects\\ES-2Sem-2021-Grupo-1\\src\\teste.html");
+
+
+        File f = new File(getClass().getResource("/teste.html").getFile());
         webEngine.load(f.toURI().toString());
 
         VBox.setVgrow(webView, Priority.ALWAYS);
+
 
         centerPane.getChildren().add(webView);
     }
@@ -377,10 +386,12 @@ public class GUI extends Application {
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
         //initialView.setTop(getMenu());
+        centerPane.setStyle("-fx-background-color: #3d3c40");
+
+        loadCenterPane();
         initialView.setCenter(centerPane);
         initialView.setLeft(getLeft());
 
-        loadCenterPane();
 
 
         Scene scene = new Scene(initialView,1000,800);
