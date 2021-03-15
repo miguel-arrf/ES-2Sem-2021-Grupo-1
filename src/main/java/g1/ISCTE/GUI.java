@@ -43,7 +43,11 @@ public class GUI extends Application {
     private Desktop desktop = Desktop.getDesktop();
     private final FileChooser fileChooser = new FileChooser();
     private File selectedFile = null;
-    private Font boldButSmaller = Font.loadFont(getClass().getResource("/fonts/SF-Pro-Rounded-Bold.ttf").toExternalForm(), 10);
+    private static Font boldButSmaller = Font.loadFont(GUI.class.getResource("/fonts/SF-Pro-Rounded-Bold.ttf").toExternalForm(), 10);
+
+    public static Font getFont(int size){
+        return Font.loadFont(GUI.class.getResource("/fonts/SF-Pro-Rounded-Bold.ttf").toExternalForm(), size);
+    }
 
     private VBox centerPane = new VBox();
 
@@ -181,16 +185,18 @@ public class GUI extends Application {
                 VBox.setVgrow(tree, Priority.ALWAYS);
 
 
-                tree.getStylesheets().add(getClass().getResource("/style/tree.css").toExternalForm());
+                //tree.getStylesheets().add(getClass().getResource("/style/tree.css").toExternalForm());
                 //tree.getStyleClass().add("myTree");
+                tree.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
 
-                tree.setStyle(
+
+                /*tree.setStyle(
                         "  -fx-base: #1c1c1e ;\n" +
                                 "  -fx-control-inner-background: derive(-fx-base,20%);\n" +
                                 "  -fx-control-inner-background-alt: derive(-fx-control-inner-background,-10%);\n" +
                                 "  -fx-accent: #41d1b6;\n" +
                                 "  -fx-focus-color: red;\n" +
-                                "  -fx-faint-focus-color: yellow;");
+                                "  -fx-faint-focus-color: yellow;");*/
 
 
                 //filePane.getChildren().add(tree);
@@ -214,6 +220,7 @@ public class GUI extends Application {
 
 
                 filePane.getChildren().add(stackPane);
+
             }
 
         }
