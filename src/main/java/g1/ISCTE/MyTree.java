@@ -5,9 +5,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,14 +27,16 @@ public class MyTree {
             if(filename.isDirectory()){
 
                 Label label = new Label(filename.getName());
-                label.setPadding(new Insets(10,10,10,10));
+                label.setTextFill(Color.WHITE);
+                label.setFont(GUI.getFont(12));
+                label.setPadding(new Insets(4, 10, 4, 10));
 
-                label.setStyle("-fx-background-radius: 18 18 18 18;\n" +
-                        "    -fx-border-radius: 18 18 18 18;\n" +
-                        "    -fx-background-color: red;");
+                label.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                        "    -fx-border-radius: 7 7 7 7;\n" +
+                        "    -fx-background-color: #2cadf6;");
 
                 VBox newRootItem = new VBox(label);
-                newRootItem.setPadding(new Insets(3,3,3,level+20));
+                newRootItem.setPadding(new Insets(5,0,0,level));
 
 
                 rootItem.getChildren().add(newRootItem);
@@ -45,7 +49,7 @@ public class MyTree {
                         newRootItem.getChildren().clear();
                         newRootItem.getChildren().add(label);
                     }else{
-                        percolateFolder(newRootItem, filename, level +1);
+                        percolateFolder(newRootItem, filename, 20);
                     }
 
                     isShowing[0] = !isShowing[0];
@@ -54,7 +58,7 @@ public class MyTree {
 
             }else if(filename.isFile()){
                 Label label = new Label(filename.getName());
-                label.setPadding(new Insets(0,0, 0,level+20));
+                label.setPadding(new Insets(0,0, 0,level));
 
                 VBox item = new VBox(label);
                 rootItem.getChildren().add(item);
@@ -69,9 +73,16 @@ public class MyTree {
     public ScrollPane getScrollPane(File file){
         VBox rootItem = new VBox();
 
-        percolateFolder(rootItem, file, 0);
+        Pane spacer = new Pane();
+        spacer.setMinHeight(10);
+        VBox vBox = new VBox();
 
-        scrollPane.setContent(rootItem);
+        percolateFolder(rootItem, file, 20);
+
+        vBox.getChildren().add(spacer);
+        vBox.getChildren().add(rootItem);
+
+        scrollPane.setContent(vBox);
 
         scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
 
