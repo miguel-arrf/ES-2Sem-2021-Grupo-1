@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -171,7 +172,7 @@ public class GUI extends Application {
                     filePane.getChildren().add(fileName);
                 }
 
-                /*TreeItem<String> rootItem = new TreeItem<String>(selectedFile.getName());
+                TreeItem<String> rootItem = new TreeItem<String>(selectedFile.getName());
                 rootItem.setExpanded(true);
 
                 percolateFolder(rootItem, selectedFile);
@@ -181,7 +182,7 @@ public class GUI extends Application {
 
 
                 tree.getStylesheets().add(getClass().getResource("/style/tree.css").toExternalForm());
-                tree.getStyleClass().add("myTree");
+                //tree.getStyleClass().add("myTree");
 
                 tree.setStyle(
                         "  -fx-base: #1c1c1e ;\n" +
@@ -192,8 +193,27 @@ public class GUI extends Application {
                                 "  -fx-faint-focus-color: yellow;");
 
 
+                //filePane.getChildren().add(tree);
+                MyTree myTree = new MyTree();
 
-                filePane.getChildren().add(tree);*/
+                ScrollPane scrollPane = myTree.getScrollPane(selectedFile);
+                VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
+                StackPane stackPane = new StackPane();
+                VBox emptyLeftPane = new VBox();
+                emptyLeftPane.setStyle("-fx-background-radius: 10 10 10 10;\n" +
+                        "    -fx-border-radius: 10 10 10 10;\n" +
+                        "    -fx-background-color: #3d3c40;");
+                VBox.setVgrow(emptyLeftPane, Priority.ALWAYS);
+
+
+                stackPane.getChildren().add(emptyLeftPane);
+                stackPane.getChildren().add(scrollPane);
+
+                VBox.setVgrow(stackPane, Priority.ALWAYS);
+
+
+                filePane.getChildren().add(stackPane);
             }
 
         }
@@ -246,6 +266,8 @@ public class GUI extends Application {
     }
 
     private VBox getEmptyLeftPane(){
+
+        System.out.println(getClass().getResource("/fonts/SF-Pro-Rounded-Bold.ttf").toExternalForm());
         Font font = Font.loadFont(getClass().getResource("/fonts/SF-Pro-Rounded-Bold.ttf").toExternalForm(), 14);
         Font regular = Font.loadFont(getClass().getResource("/fonts/SFProDisplay-Medium.ttf").toExternalForm(), 12);
 

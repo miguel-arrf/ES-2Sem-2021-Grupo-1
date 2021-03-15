@@ -16,3 +16,4 @@
 .myTree .tree-cell:filled:selected{
     -fx-background-color:lightcyan; // Unfocused color
 }
+
