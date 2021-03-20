@@ -161,7 +161,7 @@ public class NewGUI extends Application {
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
-        emptyLeftPane.setMinHeight(100);
+        emptyLeftPane.setMinHeight(190);
 
         return emptyLeftPane;
     }
@@ -177,6 +177,9 @@ public class NewGUI extends Application {
 
         centerPane.getChildren().add(webView);
     }
+
+
+
 
     @Override
     public void start(Stage stage) {
@@ -199,7 +202,7 @@ public class NewGUI extends Application {
         Scene scene = new Scene(splitPane,1000,800);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         stage.setMinWidth(900);
-        stage.setMinHeight(300);
+        stage.setMinHeight(400);
 
         stage.setScene(scene);
         stage.show();

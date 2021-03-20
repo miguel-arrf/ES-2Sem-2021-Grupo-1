@@ -3,6 +3,8 @@ package g1.ISCTE;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,6 +26,15 @@ public class MyTree {
                 label.setTextFill(Color.WHITE);
                 label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 12));
                 label.setPadding(new Insets(4, 10, 4, 10));
+
+
+                Image image = new Image(MyTree.class.getResource("/icons/icons8-folder-48.png").toExternalForm());
+                ImageView imageView = new ImageView(image);
+
+                imageView.setFitHeight(15);
+                imageView.setPreserveRatio(true);
+                label.setGraphic(imageView);
+
 
                 label.getStyleClass().add("treeLabel");
 
@@ -49,11 +60,21 @@ public class MyTree {
 
             }else if(filename.isFile()){
                 Label label = new Label(filename.getName());
-                label.getStyleClass().add("treeLabel");
+                label.getStyleClass().add("fileLabel");
 
-                label.setPadding(new Insets(0,0, 0, 20));
+                Image image = new Image(MyTree.class.getResource("/icons/icons8-file-48.png").toExternalForm());
+                ImageView imageView = new ImageView(image);
+
+                imageView.setFitHeight(15);
+                imageView.setPreserveRatio(true);
+                label.setGraphic(imageView);
+
+                label.setPadding(new Insets(4,10, 4, 10));
 
                 VBox item = new VBox(label);
+
+                item.setPadding(new Insets(5,0,0,20));
+
                 rootItem.getChildren().add(item);
             }
         }
@@ -70,10 +91,12 @@ public class MyTree {
         spacer.setMinHeight(10);
         VBox vBox = new VBox();
 
+        Pane bottomSpacer = new Pane();
+        bottomSpacer.setMinHeight(10);
+
         percolateFolder(rootItem, file);
 
-        vBox.getChildren().add(spacer);
-        vBox.getChildren().add(rootItem);
+        vBox.getChildren().addAll(spacer, rootItem, bottomSpacer);
 
         scrollPane.setContent(vBox);
 

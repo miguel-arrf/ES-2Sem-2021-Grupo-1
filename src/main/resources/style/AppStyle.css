@@ -21,3 +21,15 @@
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #2cadf6;
 }
+
+.fileLabel{
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-color: #fdffbc;
+}
+
+.split-pane-divider {
+    -fx-padding: 0 2 0 1 ;
+    -fx-background-color: rgb(145,145,145) ;
+    -fx-background-insets: 0;
+}
