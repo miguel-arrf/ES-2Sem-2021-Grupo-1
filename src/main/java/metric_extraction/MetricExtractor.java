@@ -42,7 +42,7 @@ public class MetricExtractor {
             }
             threadPool.shutdown();
             threadPool.awaitTermination(5, TimeUnit.SECONDS);
-            ArrayList<int[]> results = new ArrayList<>();
+            ArrayList<ClassMetrics> results = new ArrayList<>();
             for(ExtractionWorker worker : workers) {
                 results.add(worker.getMetrics());
             }
@@ -50,9 +50,8 @@ public class MetricExtractor {
         }
     }
 
-    private void exportResultsToFile(ArrayList<int[]> results) {
+    private void exportResultsToFile(ArrayList<ClassMetrics> results) {
         File results_file = new File(destination_directory.concat("\\") + project_name + "_metrics.xlsx");
-        //Criar o ficheiro Excel com base na lista 'results' que contém as métricas de cada ficheiro .java
     }
 
 }
