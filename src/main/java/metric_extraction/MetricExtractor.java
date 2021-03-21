@@ -8,23 +8,28 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MetricExtractor {
 
     private final ExecutorService threadPool;
-    private ArrayList<File> source_code = new ArrayList<>();
-    private final String project_name;
+    private ArrayList<File> source_code;
+    private final String exported_file_name;
     private final String destination_directory;
 
-    public MetricExtractor(File project, String destination_directory) {
-        getFilesFromProjectDirectory(project);
+    public MetricExtractor(File project_directory, String destination_directory) {
+        getFilesFromProjectDirectory(project_directory);
         this.threadPool = Executors.newFixedThreadPool(5);
-        this.project_name = project.getName();
+        this.exported_file_name = project_directory.getName() + "_metrics.xlsx";
         this.destination_directory = destination_directory;
     }
 
     private void getFilesFromProjectDirectory(File project) {
-        for(File file : project.listFiles()) {
+        for(File file :project.listFiles()) {
             if(file.isFile() && file.getName().endsWith(".java")) {
                 source_code.add(file);
             } else if(file.isDirectory()) {
@@ -33,9 +38,9 @@ public class MetricExtractor {
         }
     }
 
-    public void executeExtraction() throws InterruptedException{
+    public void executeExtraction() throws InterruptedException {
         if(source_code.isEmpty()) {
-            System.out.println("ERROR: No source code files found in given directory.");
+            System.out.println("ERROR: No source code files found in given directory. No metrics extracted.");
         } else {
             ArrayList<ExtractionWorker> workers = new ArrayList<>();
             for(File class_file : source_code) {
@@ -45,15 +50,16 @@ public class MetricExtractor {
             }
             threadPool.shutdown();
             threadPool.awaitTermination(5, TimeUnit.SECONDS);
-            ArrayList<int[]> results = new ArrayList<>();
+            ArrayList<ClassMetrics> results = new ArrayList<>();
             for(ExtractionWorker worker : workers) {
-                results.add(worker.getMetrics());
+                ArrayList<ClassMetrics> metrics = worker.getMetrics();
+                results.addAll(metrics);
             }
             exportResultsToFile(results);
         }
     }
 
-    private void exportResultsToFile(ArrayList<int[]> results) {
+    private void exportResultsToFile(ArrayList<ClassMetrics> results) {
         String SheetName = "Code Smells";
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
@@ -96,7 +102,7 @@ public class MetricExtractor {
                 System.out.println("Directory already exists!");
             }
 
-            String relativePath = directoryName + System.getProperty("file.separator") + project_name + "_metrics.xlsx";
+            String relativePath = directoryName + System.getProperty("file.separator") + exported_file_name + "_metrics.xlsx";
 
             FileOutputStream out = new FileOutputStream(new File(relativePath));
             workBook.write(out);
