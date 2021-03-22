@@ -44,9 +44,9 @@ public class ClassMetrics {
         System.out.println("NOM_Class: " + nom_class);
         System.out.println("Class methods: ");
         for(Method m : class_methods) {
-            System.out.println("Name: " + m.getMethod_name());
-            System.out.println("LOC_Method: " + m.getLoc_method());
-            System.out.println("CYCLO_Method: " + m.getCyclo_method());
+            System.out.println("  Name: " + m.getMethod_name());
+            System.out.println("  LOC_Method: " + m.getLoc_method());
+            System.out.println("  CYCLO_Method: " + m.getCyclo_method());
             System.out.println("---------------------");
         }
         System.out.println("END OF CLASS");

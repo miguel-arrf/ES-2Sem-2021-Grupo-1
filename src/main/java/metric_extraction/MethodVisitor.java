@@ -2,7 +2,6 @@ package metric_extraction;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-
 import java.util.ArrayList;
 
 public class MethodVisitor extends VoidVisitorAdapter {
@@ -10,7 +9,11 @@ public class MethodVisitor extends VoidVisitorAdapter {
     private ArrayList<Method> class_methods = new ArrayList<>();
 
     public void visit(MethodDeclaration n, Object arg) {
-        Method method = new Method(n.getBody().get().toString(), n.getName().asString());
+        String body = "";
+        if(n.getBody().isPresent()){
+            body = n.getBody().get().toString();
+        }
+        Method method = new Method(body, n.getName().asString());
         class_methods.add(method);
     }
 

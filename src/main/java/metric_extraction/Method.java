@@ -50,4 +50,7 @@ public class Method {
         return method;
     }
 
+    public String getName() {
+        return method_name;
+    }
 }

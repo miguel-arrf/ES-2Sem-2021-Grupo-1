@@ -2,10 +2,12 @@ package metric_extraction;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ExtractionWorker implements Runnable {
@@ -21,7 +23,9 @@ public class ExtractionWorker implements Runnable {
     public void run() {
         try {
             CompilationUnit parser = getCodeParser(class_file);
-            String class_package = parser.getPackageDeclaration().get().toString().substring(8).replace(";","").trim();
+            String class_package = "null";
+            if (parser.getPackageDeclaration().isPresent())
+                class_package = parser.getPackageDeclaration().get().toString().substring(8).replace(";","").trim();
             List<ClassOrInterfaceDeclaration> classes = parser.findAll(ClassOrInterfaceDeclaration.class);
             for(ClassOrInterfaceDeclaration c : classes) {
                 String class_name = c.getName().asString();

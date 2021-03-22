@@ -3,12 +3,6 @@ package metric_extraction;
 import org.apache.poi.xssf.usermodel.*;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class MetricExtractor {
 
     private final ExecutorService threadPool;
-    private ArrayList<File> source_code;
+    private ArrayList<File> source_code = new ArrayList<>();
     private final String exported_file_name;
     private final String destination_directory;
 
@@ -98,11 +92,9 @@ public class MetricExtractor {
                     System.out.println("Directory is created!");
                 else
                     System.out.println("Failed to create directory!");
-            } else {
-                System.out.println("Directory already exists!");
             }
 
-            String relativePath = directoryName + System.getProperty("file.separator") + exported_file_name + "_metrics.xlsx";
+            String relativePath = directoryName + System.getProperty("file.separator") + exported_file_name;
 
             FileOutputStream out = new FileOutputStream(new File(relativePath));
             workBook.write(out);
