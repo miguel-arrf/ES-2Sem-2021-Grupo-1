@@ -10,12 +10,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Timer;
 
 public class ProjectInfo {
 
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-   // private enum Type {PACKAGE, CLASS, METHOD};
+    // private enum Type {PACKAGE, CLASS, METHOD};
 
     public ProjectInfo(XSSFWorkbook workbook) {
         this.workbook = workbook;
@@ -110,10 +111,14 @@ public class ProjectInfo {
         return counter;
     }
 
+    private String[] getMainMetricsInfo(File file){
+        return null;
+    }
+
 
     //apenas para testar
     public static void main(String[] args) throws IOException {
-        File file = new File("C:\\Users\\Chainz\\ES-project\\Code_Smells.xlsx");
+        File file = new File("C:\\Users\\mferr\\Downloads\\teste\\Code_Smells (1).xlsx");
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);
