@@ -15,44 +15,11 @@ public class ProjectInfo {
 
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-   // private enum Type {PACKAGE, CLASS, METHOD};
 
     public ProjectInfo(XSSFWorkbook workbook) {
         this.workbook = workbook;
         this.sheet = workbook.getSheetAt(0);
     }
-
-    /*public int counter(Type type) {
-        Iterator<Row> itr = sheet.iterator();
-        ArrayList<String> packageList = new ArrayList<String>();
-        itr.next();
-        while (itr.hasNext()) {
-            Row row = itr.next();
-            switch(type) {
-                case PACKAGE:
-                    Cell packageCell = row.getCell(1);
-                    if(!packageList.contains(packageCell.getStringCellValue()) && packageCell.getCellType() == Cell.CELL_TYPE_STRING) {
-                        packageList.add(packageCell.getStringCellValue());
-                    }
-                    break;
-                case CLASS:
-                    Cell classCell = row.getCell(2);
-                    if(!packageList.contains(classCell.getStringCellValue()) && classCell.getCellType() == Cell.CELL_TYPE_STRING) {
-                        packageList.add(classCell.getStringCellValue());
-                    }
-                    break;
-                case METHOD:
-                    Cell methodCell = row.getCell(3);
-                    if(!packageList.contains(methodCell.getStringCellValue()) && methodCell.getCellType() == Cell.CELL_TYPE_STRING) {
-                        packageList.add(methodCell.getStringCellValue());
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        return packageList.size();
-    }*/
 
     public int packageCounter() {
         Iterator<Row> itr = sheet.iterator();
