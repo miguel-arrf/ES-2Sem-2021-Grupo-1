@@ -1,6 +1,7 @@
 package g1.ISCTE;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,17 +14,16 @@ import java.util.Iterator;
 
 public class ProjectInfo {
 
-    private XSSFWorkbook workbook;
     private XSSFSheet sheet;
+    private int NUM_OF_COLUMNS = 11;
 
     public ProjectInfo(XSSFWorkbook workbook) {
-        this.workbook = workbook;
         this.sheet = workbook.getSheetAt(0);
     }
 
     public int packageCounter() {
         Iterator<Row> itr = sheet.iterator();
-        ArrayList<String> packageList = new ArrayList<String>();
+        ArrayList<String> packageList = new ArrayList<>();
         itr.next();
         while (itr.hasNext()) {
             Row row = itr.next();
@@ -37,7 +37,7 @@ public class ProjectInfo {
 
     public int classCounter() {
         Iterator<Row> itr = sheet.iterator();
-        ArrayList<String> classList = new ArrayList<String>();
+        ArrayList<String> classList = new ArrayList<>();
         itr.next();
         while (itr.hasNext()) {
             Row row = itr.next();
@@ -51,7 +51,7 @@ public class ProjectInfo {
 
     public int methodCounter() {
         Iterator<Row> itr = sheet.iterator();
-        ArrayList<String> methodList = new ArrayList<String>();
+        ArrayList<String> methodList = new ArrayList<>();
         itr.next();
         while (itr.hasNext()) {
             Row row = itr.next();
@@ -77,6 +77,35 @@ public class ProjectInfo {
         return counter;
     }
 
+    //tirar o printArray quando for implementado na GUI
+    //Nota: os espaços em branco devolve como String = ""
+    public ArrayList<ArrayList<String>> getMetricsTable() {
+        ArrayList<ArrayList<String>> table = new ArrayList<>();
+        DataFormatter dataFormatter = new DataFormatter();
+        for(Row row : sheet) {
+            ArrayList<String> line = new ArrayList<>(NUM_OF_COLUMNS);
+            for(int column=0; column < row.getLastCellNum(); column++) {
+                Cell cell = row.getCell(column);
+                String cellValue = dataFormatter.formatCellValue(cell);
+                line.add(cellValue);
+            }
+            printArray(line);
+            table.add(line);
+        }
+        return table;
+    }
+
+    private void printArray(ArrayList<String> list) {
+        for (String cell : list) {
+            System.out.println(cell);
+        }
+    }
+
+    private String[] getMainMetricsInfo(File file){
+
+        return null;
+    }
+
 
     //apenas para testar
     public static void main(String[] args) throws IOException {
@@ -84,6 +113,7 @@ public class ProjectInfo {
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);
+        metricsinfo.getMetricsTable();
         System.out.println(metricsinfo.packageCounter());
         System.out.println(metricsinfo.classCounter());
         System.out.println(metricsinfo.methodCounter());
@@ -92,9 +122,4 @@ public class ProjectInfo {
     }
 
 }
-
-
-
-
-
 
