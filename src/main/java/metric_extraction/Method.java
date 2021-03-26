@@ -20,7 +20,16 @@ public class Method {
     }
 
     private int calculateCyclo_Method() {
-        return 0;
+        Scanner scanner = new Scanner(method);
+        int counter = 1;
+        while(scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            line = line.replaceAll("\\s+","");
+            if(line.startsWith("if") || line.startsWith("case") || line.startsWith("for") || line.startsWith("while"))
+                counter++;
+        }
+        scanner.close();
+        return counter;
     }
 
     private int calculateLoc_Method() {
