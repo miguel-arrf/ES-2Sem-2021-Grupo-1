@@ -1,13 +1,20 @@
 package g1.ISCTE;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -17,8 +24,12 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NewGUI extends Application {
 
@@ -26,6 +37,14 @@ public class NewGUI extends Application {
 
     private final VBox centerPane = new VBox();
     private final VBox filePane = new VBox();
+
+    private ArrayList<Label> metricBoxes = new ArrayList<>();
+
+    private StackPane stackPaneLeftVBox;
+    private VBox leftUnderVBox;
+    private Stage stage;
+
+    private WebEngine webEngine;
 
     public static void main( String[] args ) {
         launch(args);
@@ -38,7 +57,12 @@ public class NewGUI extends Application {
         leftVBox.setMaxWidth(400);
 
         leftVBox.setStyle("-fx-background-color: #1c1c1e");
-        leftVBox.getChildren().addAll(getEmptyLeftPane(), filePane);
+
+        stackPaneLeftVBox = new StackPane();
+        leftUnderVBox = getEmptyLeftPane();
+        stackPaneLeftVBox.getChildren().add(leftUnderVBox);
+
+        leftVBox.getChildren().addAll(stackPaneLeftVBox, filePane);
         VBox.setVgrow(filePane, Priority.ALWAYS);
 
         filePane.setSpacing(10);
@@ -56,6 +80,7 @@ public class NewGUI extends Application {
             filePane.setPadding(new Insets(15,0,0,0));
 
              if(selectedFile.isDirectory()){
+
 
                 MyTree myTree = new MyTree();
 
@@ -78,6 +103,8 @@ public class NewGUI extends Application {
 
         }
     }
+
+
 
     private Pane getSpacer(){
         Pane pane = new Pane();
@@ -116,9 +143,68 @@ public class NewGUI extends Application {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasFiles()) {
-                selectedFile = db.getFiles().get(0);
-                updateFilePane();
-                success = true;
+                File file = db.getFiles().get(0);
+                if(file.isDirectory()){
+                    stage.setTitle(file.getName());
+
+                    String name = file.getName();
+                    webEngine.executeScript("changeFirstBox("+"'"+ name +"'"+ ")");
+
+                    selectedFile = file;
+                    updateFilePane();
+                    updateCenterPane();
+                    success = true;
+
+
+                }else{
+                    blurBackground(0, 30, 500, leftUnderVBox);
+
+                    Label selectFolder = new Label("Drag a folder, not a file!");
+                    selectFolder.setTextFill(Color.WHITE);
+                    selectFolder.setMaxWidth(Double.MAX_VALUE);
+                    selectFolder.getStyleClass().add("errorLabel");
+                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 15));
+                    selectFolder.setWrapText(true);
+                    selectFolder.setAlignment(Pos.CENTER);
+                    selectFolder.setPadding(new Insets(10));
+
+                    VBox overlayVBox = new VBox();
+                    overlayVBox.getChildren().add(selectFolder);
+                    overlayVBox.setAlignment(Pos.CENTER);
+                    overlayVBox.setPadding(new Insets(10,10,10,10));
+
+                    overlayVBox.setMinHeight(190);
+
+                    AppStyle.addFadingIn(overlayVBox, stackPaneLeftVBox);
+
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> {
+                                AppStyle.removeFadingOut(overlayVBox, stackPaneLeftVBox);
+                                blurBackground(30, 0, 500, leftUnderVBox);
+                            });
+
+                        }
+                    };
+                    timer.schedule(task, 3000l);
+
+                    /*Stage popup = AppStyle.setUpPopup("teste", "oioi)");
+
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> popup.fireEvent(new WindowEvent(popup, WindowEvent.WINDOW_CLOSE_REQUEST)));
+
+                        }
+                    };
+                    timer.schedule(task, 5000l);
+                    popup.setOnCloseRequest(e -> blurBackground(30, 0, 500, leftVBox));*/
+
+
+                }
             }
 
             event.setDropCompleted(success);
@@ -145,6 +231,7 @@ public class NewGUI extends Application {
             if (selectedDirectory != null) {
                 selectedFile = selectedDirectory;
                 updateFilePane();
+                updateCenterPane();
             }
         });
 
@@ -155,8 +242,8 @@ public class NewGUI extends Application {
         HBox.setHgrow(selectFolder, Priority.ALWAYS);
 
         emptyLeftPane.setPadding(new Insets(10,10,10,10));
-        emptyLeftPane.getChildren().addAll(AppStyle.getTitleLabel("Select you Java Project!"), AppStyle.getSubTitleLabel("Folder should have a java project"),getSpacer(), dragAndDropVBox,getSpacer(), buttonsBox);
 
+        emptyLeftPane.getChildren().addAll(AppStyle.getTitleLabel("Select you Java Project!"), AppStyle.getSubTitleLabel("Folder should have a java project"),getSpacer(), dragAndDropVBox,getSpacer(), buttonsBox);
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
@@ -167,9 +254,9 @@ public class NewGUI extends Application {
 
     private void loadCenterPane(){
         WebView webView = new WebView();
-        WebEngine webEngine = webView.getEngine();
+        webEngine = webView.getEngine();
 
-        File f = new File(getClass().getResource("/teste.html").getFile());
+        File f = new File(getClass().getResource("/testeScript.html").getFile());
         webEngine.load(f.toURI().toString());
 
         VBox.setVgrow(webView, Priority.ALWAYS);
@@ -180,7 +267,7 @@ public class NewGUI extends Application {
         centerPane.getChildren().add(webView);
     }
 
-    private VBox getSquareInfoBox(String typeOfInfo, int number){
+    private VBox getSquareInfoBox(String typeOfInfo, String number){
         VBox emptyLeftPane = new VBox();
 
         emptyLeftPane.setSpacing(10);
@@ -194,7 +281,7 @@ public class NewGUI extends Application {
 
         typeOfInfoLabel.setWrapText(true);
 
-        Label numberLabel = new Label(Integer.toString(number));
+        Label numberLabel = new Label(number);
         numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
         numberLabel.setTextFill(Color.BLACK);
         numberLabel.setPadding(new Insets(2,2,2,2));
@@ -210,14 +297,16 @@ public class NewGUI extends Application {
 
         emptyLeftPane.getChildren().addAll(typeOfInfoLabel, spacer, numberLabel);
 
+        metricBoxes.add(numberLabel);
+
         return emptyLeftPane;
     }
 
     private HBox getInfoBoxes(){
-        VBox infoBox = getSquareInfoBox("Número total de packages", 1);
-        VBox infoBox1 = getSquareInfoBox("Número total de classes", 5);
-        VBox infoBox2  = getSquareInfoBox("Número total de métodos", 20);
-        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", 200);
+        VBox infoBox = getSquareInfoBox("Número total de packages", "?");
+        VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
+        VBox infoBox2  = getSquareInfoBox("Número total de métodos", "?");
+        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", "?");
 
         HBox.setHgrow(infoBox, Priority.ALWAYS);
         HBox.setHgrow(infoBox1, Priority.ALWAYS);
@@ -231,6 +320,15 @@ public class NewGUI extends Application {
         infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
 
         return infoBoxes;
+    }
+
+    private void updateCenterPane(){
+        String[] metrics = ProjectInfo.getMainMetricsInfo(selectedFile);
+
+        for(int i = 0; i < metrics.length && i <metricBoxes.size(); i++){
+            metricBoxes.get(i).setText(metrics[i]);
+        }
+
     }
 
     private VBox centerPane(){
@@ -251,6 +349,8 @@ public class NewGUI extends Application {
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
+
         stage.setTitle("CodeSmells Detector");
 
         SplitPane splitPane = new SplitPane();
@@ -260,6 +360,7 @@ public class NewGUI extends Application {
 
         VBox leftPane = getLeft();
         leftPane.setMinWidth(300);
+
 
         splitPane.setDividerPositions(0.20);
         splitPane.getItems().addAll(leftPane, centerPane());
@@ -273,4 +374,26 @@ public class NewGUI extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+
+
+    private void blurBackground(double startValue, double endValue, double duration, Node pane){
+        GaussianBlur gaussianBlur = new GaussianBlur(startValue);
+        SimpleDoubleProperty value = new SimpleDoubleProperty(startValue);
+
+        pane.setEffect(gaussianBlur);
+
+        value.addListener((observableValue, number, t1) -> {
+            gaussianBlur.setRadius(t1.doubleValue());
+        });
+
+        Timeline timeline = new Timeline();
+        KeyValue kv = new KeyValue(value, endValue);
+        KeyFrame kf = new KeyFrame(Duration.millis(duration), kv);
+
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+    }
+
+
 }

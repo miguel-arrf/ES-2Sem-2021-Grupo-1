@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- ... -->
+</head>
+<body>
+<!-- This example requires Tailwind CSS v2.0+ -->
+<div class="grid grid-flow-col grid-cols-4 gap-4">
+
+    <div class=" relative h-32 bg-gray-600 rounded-2xl">
+        <div class="absolute left-0 top-0 h-16  text-gray-200 font-semibold text-sm pt-2 pl-3">
+            Número total de packages
+        </div>
+
+        <div id="firstBox" class="absolute bottom-0 left-0 p-1  ml-3 mb-2 font-bold bg-green-200 rounded-md">
+            ?
+        </div>
+    </div>
+
+    <div class=" relative h-32  bg-gray-600 rounded-2xl">
+        <div class="absolute left-0 top-0 h-16  text-gray-200 font-semibold text-sm pt-2 pl-3">
+            Número total de classes
+        </div>
+
+        <div class="absolute bottom-0 left-0 p-1  ml-3 mb-2 font-bold bg-green-200 rounded-md">
+            ?
+        </div>
+    </div>
+
+    <div class=" relative h-32  bg-gray-600 rounded-2xl">
+        <div class="absolute left-0 top-0 h-16  text-gray-200 font-semibold text-sm pt-2 pl-3">
+            Número total de métodos
+        </div>
+
+        <div class="absolute bottom-0 left-0 p-1  ml-3 mb-2 font-bold bg-green-200 rounded-md">
+            ?
+        </div>
+    </div>
+
+    <div class=" relative h-32  bg-gray-600 rounded-2xl">
+        <div class="absolute left-0 top-0 h-16  text-gray-200 font-semibold text-sm pt-2 pl-3">
+            Número total linhas de código do projeto
+        </div>
+
+        <div class="absolute bottom-0 left-0 p-1  ml-3 mb-2 font-bold bg-green-200 rounded-md">
+            ?
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function changeFirstBox(text) {
+        document.getElementById("firstBox").innerText = text;
+    }
+</script>
+
+</body>
+</html>
