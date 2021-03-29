@@ -86,18 +86,17 @@ public class NewGUI extends Application {
         return pane;
     }
 
+    private Pane getSpacer(int height){
+        Pane pane = new Pane();
+        pane.setPrefHeight(height);
+
+        return pane;
+    }
+
     private VBox getEmptyLeftPane(){
 
         VBox emptyLeftPane = new VBox();
         emptyLeftPane.setSpacing(10);
-
-        Label selectFilesLabel = new Label("Select your Java Project!");
-        selectFilesLabel.setTextFill(Color.web("#b7b7b8"));
-        selectFilesLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
-
-        Label filesFormat = new Label("Folder should have a java project");
-        filesFormat.setTextFill(Color.web("#76747e"));
-        filesFormat.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
 
         VBox dragAndDropVBox = new VBox();
         dragAndDropVBox.setPrefHeight(50);
@@ -156,7 +155,7 @@ public class NewGUI extends Application {
         HBox.setHgrow(selectFolder, Priority.ALWAYS);
 
         emptyLeftPane.setPadding(new Insets(10,10,10,10));
-        emptyLeftPane.getChildren().addAll(selectFilesLabel, filesFormat,getSpacer(), dragAndDropVBox,getSpacer(), buttonsBox);
+        emptyLeftPane.getChildren().addAll(AppStyle.getTitleLabel("Select you Java Project!"), AppStyle.getSubTitleLabel("Folder should have a java project"),getSpacer(), dragAndDropVBox,getSpacer(), buttonsBox);
 
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
@@ -175,34 +174,101 @@ public class NewGUI extends Application {
 
         VBox.setVgrow(webView, Priority.ALWAYS);
 
+        webView.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;");
+
         centerPane.getChildren().add(webView);
     }
 
+    private VBox getSquareInfoBox(String typeOfInfo, int number){
+        VBox emptyLeftPane = new VBox();
+
+        emptyLeftPane.setSpacing(10);
+        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+        emptyLeftPane.getStyleClass().add("emptyLeftPane");
+        emptyLeftPane.setPrefSize(150,120);
+        emptyLeftPane.setMinHeight(120);
+        emptyLeftPane.setMinWidth(150);
+
+        Label typeOfInfoLabel = AppStyle.getTitleLabel(typeOfInfo);
+
+        typeOfInfoLabel.setWrapText(true);
+
+        Label numberLabel = new Label(Integer.toString(number));
+        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        numberLabel.setTextFill(Color.BLACK);
+        numberLabel.setPadding(new Insets(2,2,2,2));
+        numberLabel.setMinWidth(20);
+        numberLabel.setAlignment(Pos.CENTER);
+
+        numberLabel.setStyle("-fx-background-color: #a3ddcb;" +
+                " -fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;");
+
+        Pane spacer = new Pane();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        emptyLeftPane.getChildren().addAll(typeOfInfoLabel, spacer, numberLabel);
+
+        return emptyLeftPane;
+    }
+
+    private HBox getInfoBoxes(){
+        VBox infoBox = getSquareInfoBox("Número total de packages", 1);
+        VBox infoBox1 = getSquareInfoBox("Número total de classes", 5);
+        VBox infoBox2  = getSquareInfoBox("Número total de métodos", 20);
+        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", 200);
+
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+        HBox.setHgrow(infoBox1, Priority.ALWAYS);
+        HBox.setHgrow(infoBox2, Priority.ALWAYS);
+        HBox.setHgrow(infoBox3, Priority.ALWAYS);
 
 
+        HBox infoBoxes = new HBox();
+        infoBoxes.setSpacing(10);
+
+        infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
+
+        return infoBoxes;
+    }
+
+    private VBox centerPane(){
+        VBox centerPaneVBox = new VBox();
+        centerPaneVBox.setSpacing(10);
+
+        loadCenterPane();
+        centerPane.setMinWidth(600);
+
+        centerPaneVBox.getChildren().addAll(getInfoBoxes(),centerPane);
+
+        VBox.setVgrow(centerPane, Priority.ALWAYS);
+
+        centerPaneVBox.setPadding(new Insets(10,10,10,10));
+
+        return centerPaneVBox;
+    }
 
     @Override
     public void start(Stage stage) {
         stage.setTitle("CodeSmells Detector");
 
         SplitPane splitPane = new SplitPane();
-        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0;");
+        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
 
         VBox leftPane = getLeft();
         leftPane.setMinWidth(300);
 
-        loadCenterPane();
-        centerPane.setMinWidth(600);
-
-        splitPane.setDividerPositions(0.25);
-        splitPane.getItems().addAll(leftPane, centerPane);
+        splitPane.setDividerPositions(0.20);
+        splitPane.getItems().addAll(leftPane, centerPane());
 
         Scene scene = new Scene(splitPane,1000,800);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
-        stage.setMinWidth(900);
+        stage.setMinWidth(1000);
         stage.setMinHeight(400);
+
 
         stage.setScene(scene);
         stage.show();
