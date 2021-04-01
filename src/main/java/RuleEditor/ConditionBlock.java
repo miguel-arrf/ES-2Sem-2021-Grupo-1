@@ -4,6 +4,8 @@ import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import g1.ISCTE.NewGUI;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,7 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -19,6 +24,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.apache.poi.ss.formula.functions.T;
+
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 
 public class ConditionBlock implements CustomNodes{
 
@@ -102,6 +111,10 @@ public class ConditionBlock implements CustomNodes{
     }
 
     private Button getStyledButton(String label){
+        return getStyledButton(label, null, true);
+    }
+
+    private Button getStyledButton(String label, String customColor, boolean isOperator){
         Button button = new Button(label);
         button.getStyleClass().add("roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
@@ -109,16 +122,23 @@ public class ConditionBlock implements CustomNodes{
 
         button.setPadding(new Insets(10, 20, 10, 20));
 
-        button.setOnMouseClicked(mouseEvent -> {
-            operator = label;
-            operatorLabel.setText(operator);
-            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-            NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
+        if(isOperator){
+            button.setOnMouseClicked(mouseEvent -> {
+                operator = label;
+                operatorLabel.setText(operator);
+                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
 
-        });
+            });
+        }
+
+
+        if(customColor!=null){
+            button.setStyle("-fx-background-color: " + customColor);
+        }
 
         return button;
     }
+
 
     private HBox optionsHBox(){
 
@@ -144,6 +164,67 @@ public class ConditionBlock implements CustomNodes{
         return hBox;
     }
 
+    private HBox valueHBox(){
+
+        Button updateButton = getStyledButton("Update", "#a3ddcb", false);
+        Button cancelButton = getStyledButton("Cancel", "#d8345f", false);
+
+        cancelButton.setOnAction(actionEvent -> {
+            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+        });
+
+
+        TextField textField = new TextField("0.0");
+
+        updateButton.setOnAction(actionEvent -> {
+            value = textField.getText();
+            valueLabel.setText(value);
+
+            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+
+        });
+
+        DecimalFormat format = new DecimalFormat( "#.0" );
+
+        textField.setTextFormatter( new TextFormatter<>(c ->
+        {
+            if ( c.getControlNewText().isEmpty() )
+            {
+                return c;
+            }
+
+            ParsePosition parsePosition = new ParsePosition( 0 );
+            Object object = format.parse( c.getControlNewText(), parsePosition );
+
+            if ( object == null || parsePosition.getIndex() < c.getControlNewText().length() )
+            {
+                return null;
+            }
+            else
+            {
+                return c;
+            }
+        }));
+
+
+
+        HBox hBox = new HBox(textField, updateButton, cancelButton);
+        hBox.getStyleClass().add("ruleBuilderMenu");
+
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
+
+        textField.setMaxWidth(150);
+
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(500);
+        hBox.setEffect(Others.getDropShadow());
+
+        hBox.setAlignment(Pos.CENTER);
+
+        return hBox;
+    }
+
     private HBox getHBox(){
         HBox box = new HBox();
 
@@ -158,22 +239,42 @@ public class ConditionBlock implements CustomNodes{
         operatorLabelVbox.setAlignment(Pos.CENTER);
 
         operatorLabelVbox.setOnMouseClicked(mouseEvent -> {
-            optionsHBox = optionsHBox();
+            if(mouseEvent.getButton() == MouseButton.PRIMARY){
+                optionsHBox = optionsHBox();
 
+                Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                popupStage = newStage;
 
-            Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
-            popupStage = newStage;
+                newStage.setOnCloseRequest(windowEvent -> {
+                    NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
+                });
 
-            FinalMain.scene.setFill(Color.web("#3d3c40"));
-            NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
+                FinalMain.scene.setFill(Color.web("#3d3c40"));
+                NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
+            }
 
-            //FinalMain.mainPaneStackPane.setAlignment(Pos.CENTER);
-            //FinalMain.mainPaneStackPane.getChildren().add(optionsHBox);
 
         });
 
         VBox valueLabelVbox = new VBox(valueLabel);
         valueLabelVbox.setAlignment(Pos.CENTER);
+
+        valueLabelVbox.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getButton() == MouseButton.PRIMARY){
+                optionsHBox = valueHBox();
+
+                Stage newStage = AppStyle.setUpPopup("Value", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                popupStage = newStage;
+
+                newStage.setOnCloseRequest(windowEvent -> {
+                    NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
+                });
+
+                FinalMain.scene.setFill(Color.web("#3d3c40"));
+                NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
+            }
+
+        });
 
         setDrag(ruleLabelVbox, ruleLabel);
 

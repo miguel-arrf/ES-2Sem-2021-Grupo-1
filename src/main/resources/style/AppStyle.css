@@ -63,3 +63,17 @@
     -fx-border-radius: 10 10 10 10;
     -fx-background-color: white;
 }
+
+.text-field {
+    -fx-border-radius: 10;
+    -fx-background-radius: 10 ;
+    -fx-border-color: transparent;
+}
+
+.text-field:focused {
+    -fx-border-radius: 10 ;
+    -fx-background-radius: 10;
+    -fx-background-color: transparent;
+    -fx-border-color: lightgray;
+    -fx-border-width: 3;
+}
