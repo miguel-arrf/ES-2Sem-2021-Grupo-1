@@ -26,6 +26,13 @@ public class NewGUI extends Application {
     private final VBox centerPane = new VBox();
     private final VBox filePane = new VBox();
 
+    private final ArrayList<Label> metricBoxes = new ArrayList<>();
+
+    private StackPane stackPaneLeftVBox;
+    private VBox leftUnderVBox;
+    private Stage stage;
+
+    private WebEngine webEngine;
     public TableView table = new TableView();
 
     public static void main( String[] args ) {
@@ -243,4 +250,29 @@ public class NewGUI extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+
+
+    public static void blurBackground(double startValue, double endValue, double duration, Node pane){
+        GaussianBlur gaussianBlur = new GaussianBlur(startValue);
+        SimpleDoubleProperty value = new SimpleDoubleProperty(startValue);
+
+        pane.setEffect(gaussianBlur);
+
+        value.addListener((observableValue, number, t1) -> {
+            gaussianBlur.setRadius(t1.doubleValue());
+        });
+
+        Timeline timeline = new Timeline();
+        KeyValue kv = new KeyValue(value, endValue);
+        KeyFrame kf = new KeyFrame(Duration.millis(duration), kv);
+
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+    }
+
+
+
+
+
 }

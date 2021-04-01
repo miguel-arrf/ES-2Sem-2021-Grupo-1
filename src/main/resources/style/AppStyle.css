@@ -45,3 +45,59 @@
     -fx-background-color: rgb(145,145,145) ;
     -fx-background-insets: 0;
 }
+
+.roundedAddButton {
+    -fx-background-radius: 20 20 20 20;
+    -fx-border-radius: 20 20 20 20;
+    -fx-background-color: #6562fc;
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-shape: "...";
+    -fx-scale-shape: true;
+    -fx-position-shape: true;
+}
+
+.ruleBuilderMenu{
+    -fx-background-radius: 10 10 10 10;
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-color: white;
+}
+
+.text-field {
+    -fx-border-radius: 10;
+    -fx-background-radius: 10 ;
+    -fx-border-color: transparent;
+}
+
+.text-field:focused {
+    -fx-border-radius: 10 ;
+    -fx-background-radius: 10;
+    -fx-background-color: transparent;
+    -fx-border-color: lightgray;
+    -fx-border-width: 3;
+}
+
+.context-menu {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.menu-item {
+    -fx-padding: 1em;
+    -fx-text-fill: black;
+    -fx-background: darkgray ;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+.menu-item .label{
+    -fx-font-size: 14.0 pt;
+    -fx-text-fill: black;
+}
+.menu-item .label:hover{
+    -fx-font-size: 14.0 pt;
+    -fx-background: black ;
+    -fx-text-fill: white;
+}
