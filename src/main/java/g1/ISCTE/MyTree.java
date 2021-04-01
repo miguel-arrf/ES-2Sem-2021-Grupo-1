@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.io.File;
+import java.util.Optional;
 
 public class MyTree {
 
@@ -19,7 +20,10 @@ public class MyTree {
 
         File[] files = file.listFiles();
 
-        for(File filename: files){
+        for(int i = 0; i < files.length ; i++){
+            //for(File filename: files){
+            File filename = files[i];
+
             if(filename.isDirectory()){
 
                 Label label = new Label(filename.getName());
@@ -35,13 +39,14 @@ public class MyTree {
                 imageView.setPreserveRatio(true);
                 label.setGraphic(imageView);
 
-
                 label.getStyleClass().add("treeLabel");
 
                 VBox newRootItem = new VBox(label);
                 newRootItem.setPadding(new Insets(5,0,0, 20));
 
-                rootItem.getChildren().add(newRootItem);
+                AppStyle.customFadingIn(newRootItem, rootItem, i);
+
+                //rootItem.getChildren().add(newRootItem);
 
                 final boolean[] isShowing = {false};
 
@@ -60,10 +65,23 @@ public class MyTree {
 
             }else if(filename.isFile()){
                 Label label = new Label(filename.getName());
-                label.getStyleClass().add("fileLabel");
 
-                Image image = new Image(MyTree.class.getResource("/icons/icons8-file-48.png").toExternalForm());
-                ImageView imageView = new ImageView(image);
+                Optional<String> fileExtension = Helpers.getExtensionByStringHandling(filename.getName());
+
+                Image image;
+                ImageView imageView;
+
+                if(fileExtension.get().equals("xlsx")){
+
+                    label.getStyleClass().add("excelLabel");
+                    image = new Image(MyTree.class.getResource("/icons/icons8-microsoft-excel-90.png").toExternalForm());
+                }else{
+
+                    label.getStyleClass().add("fileLabel");
+                    image = new Image(MyTree.class.getResource("/icons/icons8-file-48.png").toExternalForm());
+                }
+
+                imageView = new ImageView(image);
 
                 imageView.setFitHeight(15);
                 imageView.setPreserveRatio(true);
@@ -75,7 +93,9 @@ public class MyTree {
 
                 item.setPadding(new Insets(5,0,0,20));
 
-                rootItem.getChildren().add(item);
+                AppStyle.customFadingIn(item, rootItem, i);
+
+                //rootItem.getChildren().add(item);
             }
         }
 
