@@ -2,15 +2,12 @@ package g1.ISCTE;
 
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -30,8 +27,6 @@ public class NewGUI extends Application {
     private final VBox filePane = new VBox();
 
     public TableView table = new TableView();
-
-    private ObservableList<TableHolder> tabledata;
 
     public static void main( String[] args ) {
         launch(args);
@@ -187,57 +182,6 @@ public class NewGUI extends Application {
        centerPane.getChildren().addAll(center);
     }
 
-    /*private TableView createTable() {
-
-        TableView<ObservableList<String>> table2 = new TableView();
-
-        table.setEditable(false);
-
-        TableColumn nomClassCol = new TableColumn("NOM_class");
-        TableColumn locClassCol = new TableColumn("LOC_class");
-        TableColumn wmcClassCol = new TableColumn("WMC_class");
-        TableColumn locMethodCol = new TableColumn("LOC_method");
-        TableColumn cycloMethodCol = new TableColumn("CYCLO_method");
-        TableColumn addedMethod = new TableColumn("EXTRA");
-
-        table.getColumns().addAll(nomClassCol,locClassCol,wmcClassCol,locMethodCol,cycloMethodCol);
-        table2.getColumns().addAll(addedMethod,cycloMethodCol);
-
-        ObservableList<String> data2 = FXCollections.observableArrayList();
-        data2.add(0,"Yeah");
-
-        nomClassCol.setCellValueFactory(
-                new PropertyValueFactory<>("NOM_class")
-        );
-        locClassCol.setCellValueFactory(
-                new PropertyValueFactory<>("LOC_class")
-        );
-        wmcClassCol.setCellValueFactory(
-                new PropertyValueFactory<>("WMC_class")
-        );
-        locMethodCol.setCellValueFactory(
-                new PropertyValueFactory<>("LOC_method")
-        );
-        cycloMethodCol.setCellValueFactory(
-                new PropertyValueFactory<>("CYCLO_method")
-        );
-
-        return table2;
-    }*/
-
-    private void loadCenterPane(){
-        /*WebView webView = new WebView();
-        WebEngine webEngine = webView.getEngine();
-
-        File f = new File(getClass().getResource("/teste.html").getFile());
-        webEngine.load(f.toURI().toString());
-
-        VBox.setVgrow(webView, Priority.ALWAYS);
-
-        centerPane.getChildren().add(webView);*/
-        centerPane.setStyle("-fx-background-color: #1c1c1e");
-    }
-
 
     private void fillTable(String[] cols,String[][] dataSource) {
         table.getColumns().clear();
@@ -275,7 +219,7 @@ public class NewGUI extends Application {
         VBox leftPane = getLeft();
         leftPane.setMinWidth(300);
 
-        loadCenterPane();
+        centerPane.setStyle("-fx-background-color: #1c1c1e");
         centerPane.setMinWidth(600);
 
         splitPane.setDividerPositions(0.25);
@@ -286,20 +230,15 @@ public class NewGUI extends Application {
         stage.setMinWidth(900);
         stage.setMinHeight(400);
 
-         tabledata = FXCollections.observableArrayList(
-                new TableHolder("4", "18", "4", "3", "1")
-        );
-
-         String[][] sdata = new String[1][2];
+        String[][] sdata = new String[1][2];
         sdata[0][1] = "True";
         sdata[0][0] = "False";
 
         String[] cols = new String[2];
         cols[0] = "isLongMethod";
         cols[1] = "isGodClass";
-         fillTable(cols,sdata);
+        fillTable(cols,sdata);
 
-         loadCenterPane();
 
         stage.setScene(scene);
         stage.show();
