@@ -8,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -49,7 +48,7 @@ public class AppStyle {
         return titleLabel;
     }
 
-    private static Stage setUpPopupStage(String popupTitle, String iconPlace){
+    public static Stage setUpPopupStage(String popupTitle, String iconPlace){
         Stage popupStage = new Stage();
         popupStage.setTitle(popupTitle);
         popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -60,26 +59,27 @@ public class AppStyle {
         return popupStage;
     }
 
-    public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
+    public static Stage setUpPopup(String popupTitle, String iconPlace){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace);
 
+        VBox innervBox = new VBox(new Label("Teste"));
 
-        setUpPoupScene(content, popupStage, styleSheet);
+        setUpPoupScene(innervBox, popupStage);
 
-        //popupStage.initStyle(StageStyle.TRANSPARENT);
+        popupStage.initStyle(StageStyle.UNDECORATED);
+
 
         popupStage.show();
 
         return popupStage;
     }
 
-    private static Scene setUpPoupScene(HBox content, Stage popupStage, String styleSheet) {
+    private static Scene setUpPoupScene(VBox content, Stage popupStage) {
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));
 
         Scene scene = new Scene(content);
-        scene.getStylesheets().add(styleSheet);
 
         popupStage.setScene(scene);
 
@@ -120,3 +120,18 @@ public class AppStyle {
 
 }
 
+enum FontType{
+    ROUNDED_BOLD("SF-Pro-Rounded-Bold.ttf"),
+    DISPLAY_MEDIUM("SFProDisplay-Medium.ttf"),
+    LIGHT(""),
+    REGULAR(""),
+    MEDIUM(""),
+    BOLD(""),
+    BLACK("");
+
+    public final String font;
+
+    private FontType(String string){
+        this.font = string;
+    }
+}
