@@ -7,7 +7,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -79,25 +78,8 @@ public class ProjectInfo {
         return counter;
     }
 
-    protected static String[] getMainMetricsInfo(File file) {
-        try{
-            FileInputStream fip = new FileInputStream(file);
-            XSSFWorkbook workbook = new XSSFWorkbook(fip);
-            ProjectInfo metricsinfo = new ProjectInfo(workbook);
-
-            String[] metrics = {
-                    Integer.toString(metricsinfo.packageCounter()) ,
-                    Integer.toString(metricsinfo.classCounter()),
-                    Integer.toString(metricsinfo.methodCounter()),
-                    Integer.toString(metricsinfo.lineCounter())
-            };
-
-            return metrics;
-        }catch (IOException e){
-            System.err.println(e.getMessage());
-        }
+    private String[] getMainMetricsInfo(File file){
         return null;
-
     }
 
 

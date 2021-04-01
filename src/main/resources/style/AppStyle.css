@@ -4,12 +4,6 @@
     -fx-background-color: #41d1b6;
 }
 
-.errorLabel {
-    -fx-background-radius: 7 7 7 7;
-    -fx-border-radius: 7 7 7 7;
-    -fx-background-color: #ff7171;
-}
-
 .selectFolderButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
@@ -32,12 +26,6 @@
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #fdffbc;
-}
-
-.excelLabel{
-    -fx-background-radius: 7 7 7 7;
-    -fx-border-radius: 7 7 7 7;
-    -fx-background-color: #c6ebc9;
 }
 
 .split-pane-divider {
