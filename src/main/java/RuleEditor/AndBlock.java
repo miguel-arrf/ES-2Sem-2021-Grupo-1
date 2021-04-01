@@ -103,7 +103,7 @@ public class AndBlock implements CustomNodes{
                     vBox.getChildren().clear();
                     vBox.getChildren().add(andBlock.gethBox());
 
-                    VBox.setVgrow(andBlock.gethBox(), Priority.ALWAYS);
+                    //VBox.setVgrow(andBlock.gethBox(), Priority.ALWAYS);
 
                     andBlock.gethBox().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = andBlock.gethBox().startDragAndDrop(TransferMode.ANY);
@@ -208,8 +208,8 @@ public class AndBlock implements CustomNodes{
                 "    -fx-border-radius: 7 7 0 0;\n" +
                 "    -fx-background-color: " +color);
 
-        VBox.setVgrow(leftLabelVBox, Priority.ALWAYS);
-        VBox.setVgrow(rightLabelVBox, Priority.ALWAYS);
+        //VBox.setVgrow(leftLabelVBox, Priority.ALWAYS);
+        //VBox.setVgrow(rightLabelVBox, Priority.ALWAYS);
 
 
         VBox andLabelVBox = new VBox(andLabel);

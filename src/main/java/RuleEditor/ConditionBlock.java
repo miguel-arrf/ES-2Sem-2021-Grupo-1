@@ -1,13 +1,24 @@
 package RuleEditor;
 
+import g1.ISCTE.AppStyle;
+import g1.ISCTE.FontType;
+import g1.ISCTE.NewGUI;
+import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class ConditionBlock implements CustomNodes{
 
@@ -21,7 +32,9 @@ public class ConditionBlock implements CustomNodes{
     private Label valueLabel;
     private Label operatorLabel;
 
+    private Stage popupStage;
 
+    private HBox optionsHBox;
 
     private DraggingObject oQueEstaASerDragged;
 
@@ -80,13 +93,55 @@ public class ConditionBlock implements CustomNodes{
                 }
 
 
-
             }
 
             event.setDropCompleted(success);
 
             event.consume();
         });
+    }
+
+    private Button getStyledButton(String label){
+        Button button = new Button(label);
+        button.getStyleClass().add("roundedAddButton");
+        button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
+        button.setTextFill(Color.WHITE);
+
+        button.setPadding(new Insets(10, 20, 10, 20));
+
+        button.setOnMouseClicked(mouseEvent -> {
+            operator = label;
+            operatorLabel.setText(operator);
+            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+            NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
+
+        });
+
+        return button;
+    }
+
+    private HBox optionsHBox(){
+
+        Button lessButton = getStyledButton("<");
+        Button lessOrEqualButton = getStyledButton("<=");
+        Button greaterButton = getStyledButton(">");
+        Button greatOrEqualButton = getStyledButton(">=");
+        Button equalButton = getStyledButton("=");
+        Button differentButton = getStyledButton("!=");
+
+        HBox hBox = new HBox(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
+        hBox.getStyleClass().add("ruleBuilderMenu");
+
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
+
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(400);
+        hBox.setEffect(Others.getDropShadow());
+
+        hBox.setAlignment(Pos.CENTER);
+
+        return hBox;
     }
 
     private HBox getHBox(){
@@ -101,6 +156,21 @@ public class ConditionBlock implements CustomNodes{
 
         VBox operatorLabelVbox = new VBox(operatorLabel);
         operatorLabelVbox.setAlignment(Pos.CENTER);
+
+        operatorLabelVbox.setOnMouseClicked(mouseEvent -> {
+            optionsHBox = optionsHBox();
+
+
+            Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+            popupStage = newStage;
+
+            FinalMain.scene.setFill(Color.web("#3d3c40"));
+            NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
+
+            //FinalMain.mainPaneStackPane.setAlignment(Pos.CENTER);
+            //FinalMain.mainPaneStackPane.getChildren().add(optionsHBox);
+
+        });
 
         VBox valueLabelVbox = new VBox(valueLabel);
         valueLabelVbox.setAlignment(Pos.CENTER);

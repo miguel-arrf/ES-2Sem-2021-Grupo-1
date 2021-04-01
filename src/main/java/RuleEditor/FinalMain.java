@@ -13,6 +13,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -21,11 +22,15 @@ import java.util.ArrayList;
 
 public class FinalMain extends Application {
 
-    private final BorderPane borderPane = new BorderPane();
-    private final VBox mainPane = new VBox();
+    public static final BorderPane borderPane = new BorderPane();
+
+    public static final VBox mainPane = new VBox();
+    public static final StackPane mainPaneStackPane = new StackPane();
+
     private final ArrayList<CustomNodes> rectanglesTypes = new ArrayList<>();
     private DraggingObject oQueEstaASerDragged = new DraggingObject();
 
+    public static Scene scene;
     public static final DataFormat customFormat = new DataFormat("Node");
 
     private double lastMouseX = 0;
@@ -41,6 +46,8 @@ public class FinalMain extends Application {
 
         stage.setTitle("Rule Builder");
         stage.setScene(scene);
+
+        FinalMain.scene = scene;
 
         stage.show();
     }
@@ -126,7 +133,8 @@ public class FinalMain extends Application {
         rectanglesTypes.add(orBlock);
         rectanglesTypes.add(conditionBlock);
 
-        borderPane.setCenter(mainPane);
+        borderPane.setCenter(mainPaneStackPane);
+        mainPaneStackPane.getChildren().add(mainPane);
         borderPane.setRight(getScrollPane());
 
         configureMainPane();
