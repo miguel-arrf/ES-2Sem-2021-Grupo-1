@@ -377,7 +377,7 @@ public class NewGUI extends Application {
 
 
 
-    private void blurBackground(double startValue, double endValue, double duration, Node pane){
+    public static void blurBackground(double startValue, double endValue, double duration, Node pane){
         GaussianBlur gaussianBlur = new GaussianBlur(startValue);
         SimpleDoubleProperty value = new SimpleDoubleProperty(startValue);
 
@@ -394,6 +394,9 @@ public class NewGUI extends Application {
         timeline.getKeyFrames().add(kf);
         timeline.play();
     }
+
+
+
 
 
 }

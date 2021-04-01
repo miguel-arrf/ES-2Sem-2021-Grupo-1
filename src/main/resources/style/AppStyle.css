@@ -45,3 +45,21 @@
     -fx-background-color: rgb(145,145,145) ;
     -fx-background-insets: 0;
 }
+
+.roundedAddButton {
+    -fx-background-radius: 20 20 20 20;
+    -fx-border-radius: 20 20 20 20;
+    -fx-background-color: #6562fc;
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-shape: "...";
+    -fx-scale-shape: true;
+    -fx-position-shape: true;
+}
+
+.ruleBuilderMenu{
+    -fx-background-radius: 10 10 10 10;
+    -fx-border-radius: 10 10 10 10;
+    -fx-background-color: white;
+}
