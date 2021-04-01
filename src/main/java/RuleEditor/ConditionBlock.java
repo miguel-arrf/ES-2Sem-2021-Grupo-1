@@ -263,7 +263,7 @@ public class ConditionBlock implements CustomNodes{
             if(mouseEvent.getButton() == MouseButton.PRIMARY){
                 optionsHBox = valueHBox();
 
-                Stage newStage = AppStyle.setUpPopup("Value", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                Stage newStage = AppStyle.setUpPopup("Value", "noIcon", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
                 popupStage = newStage;
 
                 newStage.setOnCloseRequest(windowEvent -> {

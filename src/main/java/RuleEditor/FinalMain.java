@@ -1,20 +1,18 @@
 package RuleEditor;
 
+import g1.ISCTE.AppStyle;
+import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -181,6 +179,33 @@ public class FinalMain extends Application {
 
                         VBox.setVgrow(customRectangle3.gethBox(), Priority.ALWAYS);
                         mainPane.getChildren().add(customRectangle3.gethBox());
+
+                        /*customRectangle3.gethBox().setOnMouseClicked(mouseEvent -> {
+
+                            if(mouseEvent.getButton() == MouseButton.SECONDARY){
+                                HBox hBox = new HBox();
+                                Stage newStage = AppStyle.setUpPopup("Value", "noIcon", hBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+                                newStage.setOnCloseRequest(windowEvent -> {
+                                    NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
+                                });
+
+                                FinalMain.scene.setFill(Color.web("#3d3c40"));
+                                NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
+                            }
+                        });*/
+
+                        MenuItem deleteMenu = new MenuItem("delete");
+                        ContextMenu menu = new ContextMenu(deleteMenu);
+
+                        deleteMenu.setOnAction(actionEvent -> {
+                            mainPane.getChildren().remove(customRectangle3.gethBox());
+                        });
+
+                        customRectangle3.gethBox().setOnContextMenuRequested(contextMenuEvent -> {
+                            menu.show(customRectangle3.gethBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
+                        });
+
 
                     }else if(oQueEstaASerDragged.getNodes().getType() == Types.AndBlock){
                         AndBlock c1 = (AndBlock) oQueEstaASerDragged.getNodes();
