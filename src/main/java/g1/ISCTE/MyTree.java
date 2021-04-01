@@ -24,7 +24,7 @@ public class MyTree {
 
                 Label label = new Label(filename.getName());
                 label.setTextFill(Color.WHITE);
-                label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 12));
+               // label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 12));
                 label.setPadding(new Insets(4, 10, 4, 10));
 
 

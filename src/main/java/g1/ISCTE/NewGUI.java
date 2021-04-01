@@ -1,20 +1,22 @@
 package g1.ISCTE;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -26,6 +28,10 @@ public class NewGUI extends Application {
 
     private final VBox centerPane = new VBox();
     private final VBox filePane = new VBox();
+
+    public TableView table = new TableView();
+
+    private ObservableList<TableHolder> tabledata;
 
     public static void main( String[] args ) {
         launch(args);
@@ -55,26 +61,24 @@ public class NewGUI extends Application {
 
             filePane.setPadding(new Insets(15,0,0,0));
 
-             if(selectedFile.isDirectory()){
+            Button rulesEditor = new Button("Editor De Regras");
+            rulesEditor.setTextFill(Color.WHITE);
+            rulesEditor.setMaxWidth(Double.MAX_VALUE);
+            rulesEditor.getStyleClass().add("selectFolderButton");
 
-                MyTree myTree = new MyTree();
+            Button showMetrics = new Button("Mostrar Métricas");
+            showMetrics.setTextFill(Color.WHITE);
+            showMetrics.setMaxWidth(Double.MAX_VALUE);
+            showMetrics.getStyleClass().add("selectFolderButton");
+            // selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
 
-                ScrollPane scrollPane = myTree.getScrollPane(selectedFile);
-                VBox.setVgrow(scrollPane, Priority.ALWAYS);
+            showMetrics.setOnMouseClicked(event -> {
 
-                StackPane stackPane = new StackPane();
-                VBox emptyLeftPane = new VBox();
-                emptyLeftPane.getStyleClass().add("emptyLeftPane");
-                VBox.setVgrow(emptyLeftPane, Priority.ALWAYS);
+                setCenterPane();
 
-                stackPane.getChildren().add(emptyLeftPane);
-                stackPane.getChildren().add(scrollPane);
+            });
 
-                VBox.setVgrow(stackPane, Priority.ALWAYS);
-
-                filePane.getChildren().add(stackPane);
-
-            }
+            filePane.getChildren().addAll(showMetrics,rulesEditor);
 
         }
     }
@@ -93,11 +97,11 @@ public class NewGUI extends Application {
 
         Label selectFilesLabel = new Label("Select your Java Project!");
         selectFilesLabel.setTextFill(Color.web("#b7b7b8"));
-        selectFilesLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+      //  selectFilesLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
 
         Label filesFormat = new Label("Folder should have a java project");
         filesFormat.setTextFill(Color.web("#76747e"));
-        filesFormat.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
+       // filesFormat.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
 
         VBox dragAndDropVBox = new VBox();
         dragAndDropVBox.setPrefHeight(50);
@@ -127,16 +131,16 @@ public class NewGUI extends Application {
             event.consume();
         });
 
-        dragAndDropVBox.getChildren().add(
+       /* dragAndDropVBox.getChildren().add(
                 AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_BOLD, 10, "Drag & drop folder here")
-        );
+        );*/
 
 
         Button selectFolder = new Button("Select Folder");
         selectFolder.setTextFill(Color.WHITE);
         selectFolder.setMaxWidth(Double.MAX_VALUE);
         selectFolder.getStyleClass().add("selectFolderButton");
-        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+       // selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
 
         selectFolder.setOnMouseClicked(event -> {
             final DirectoryChooser directoryChooser =
@@ -166,8 +170,63 @@ public class NewGUI extends Application {
         return emptyLeftPane;
     }
 
+    private void setCenterPane() {
+
+       centerPane.getChildren().clear();
+
+       BorderPane center = new BorderPane();
+       HBox topBox = new HBox();
+
+       HBox centerBox = new HBox();
+
+       centerBox.getChildren().add(table);
+
+       center.setTop(topBox);
+       center.setCenter(centerBox);
+
+       centerPane.getChildren().addAll(center);
+    }
+
+    /*private TableView createTable() {
+
+        TableView<ObservableList<String>> table2 = new TableView();
+
+        table.setEditable(false);
+
+        TableColumn nomClassCol = new TableColumn("NOM_class");
+        TableColumn locClassCol = new TableColumn("LOC_class");
+        TableColumn wmcClassCol = new TableColumn("WMC_class");
+        TableColumn locMethodCol = new TableColumn("LOC_method");
+        TableColumn cycloMethodCol = new TableColumn("CYCLO_method");
+        TableColumn addedMethod = new TableColumn("EXTRA");
+
+        table.getColumns().addAll(nomClassCol,locClassCol,wmcClassCol,locMethodCol,cycloMethodCol);
+        table2.getColumns().addAll(addedMethod,cycloMethodCol);
+
+        ObservableList<String> data2 = FXCollections.observableArrayList();
+        data2.add(0,"Yeah");
+
+        nomClassCol.setCellValueFactory(
+                new PropertyValueFactory<>("NOM_class")
+        );
+        locClassCol.setCellValueFactory(
+                new PropertyValueFactory<>("LOC_class")
+        );
+        wmcClassCol.setCellValueFactory(
+                new PropertyValueFactory<>("WMC_class")
+        );
+        locMethodCol.setCellValueFactory(
+                new PropertyValueFactory<>("LOC_method")
+        );
+        cycloMethodCol.setCellValueFactory(
+                new PropertyValueFactory<>("CYCLO_method")
+        );
+
+        return table2;
+    }*/
+
     private void loadCenterPane(){
-        WebView webView = new WebView();
+        /*WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
 
         File f = new File(getClass().getResource("/teste.html").getFile());
@@ -175,9 +234,32 @@ public class NewGUI extends Application {
 
         VBox.setVgrow(webView, Priority.ALWAYS);
 
-        centerPane.getChildren().add(webView);
+        centerPane.getChildren().add(webView);*/
+        centerPane.setStyle("-fx-background-color: #1c1c1e");
     }
 
+
+    private void fillTable(String[] cols,String[][] dataSource) {
+        table.getColumns().clear();
+
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        for (String[] row : dataSource)
+            data.add(FXCollections.observableArrayList(row));
+        table.setItems(data);
+
+        for (int i = 0; i < dataSource[0].length; i++) {
+            final int currentColumn = i;
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
+            column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
+            column.setEditable(false);
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
+            column.setOnEditCommit(
+                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
+                        t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
+                    });
+            table.getColumns().add(column);
+        }
+    }
 
 
 
@@ -203,6 +285,21 @@ public class NewGUI extends Application {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         stage.setMinWidth(900);
         stage.setMinHeight(400);
+
+         tabledata = FXCollections.observableArrayList(
+                new TableHolder("4", "18", "4", "3", "1")
+        );
+
+         String[][] sdata = new String[1][2];
+        sdata[0][1] = "True";
+        sdata[0][0] = "False";
+
+        String[] cols = new String[2];
+        cols[0] = "isLongMethod";
+        cols[1] = "isGodClass";
+         fillTable(cols,sdata);
+
+         loadCenterPane();
 
         stage.setScene(scene);
         stage.show();
