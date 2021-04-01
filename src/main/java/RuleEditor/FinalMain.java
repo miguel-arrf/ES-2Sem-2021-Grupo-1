@@ -1,7 +1,5 @@
 package RuleEditor;
 
-import g1.ISCTE.AppStyle;
-import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,7 +9,11 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -20,22 +22,24 @@ import java.util.ArrayList;
 
 public class FinalMain extends Application {
 
-    public static final BorderPane borderPane = new BorderPane();
+    public static SplitPane borderPane;
 
     public static final VBox mainPane = new VBox();
     public static final StackPane mainPaneStackPane = new StackPane();
 
     private final ArrayList<CustomNodes> rectanglesTypes = new ArrayList<>();
-    private DraggingObject oQueEstaASerDragged = new DraggingObject();
+    private final DraggingObject oQueEstaASerDragged = new DraggingObject();
 
     public static Scene scene;
     public static final DataFormat customFormat = new DataFormat("Node");
 
-    private double lastMouseX = 0;
-    private double lastMouseY = 0;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
+
+        borderPane = new SplitPane();
+        borderPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
+        borderPane.setDividerPositions(0.8);
 
         configureBorderPane();
 
@@ -53,11 +57,30 @@ public class FinalMain extends Application {
     private VBox getVBox(){
         VBox vBoxItems = new VBox();
 
+        HBox.setHgrow(vBoxItems, Priority.ALWAYS);
+
+
         vBoxItems.setSpacing(30);
         vBoxItems.setAlignment(Pos.CENTER);
         vBoxItems.setPadding(new Insets(30,30,30,30));
 
-        for(CustomNodes vBox1 : rectanglesTypes){
+        ArrayList<CustomNodes> sortedArrayList = new ArrayList<>(rectanglesTypes);
+
+        sortedArrayList.sort((a,b) -> {
+            if(a.getType() == Types.RuleBlock){
+                return -1;
+            }else if(a.getType() == b.getType()){
+                return 0;
+            }else if(a.getType() == Types.AndBlock && b.getType() == Types.ConditionBlock){
+                return 1;
+            }else if(b.getType() == Types.AndBlock && a.getType() == Types.ConditionBlock){
+                return -1;
+            }
+            return 1;
+
+        });
+
+        for(CustomNodes vBox1 : sortedArrayList){
 
             Node node = vBox1.getRuleMakerBox();
 
@@ -98,14 +121,10 @@ public class FinalMain extends Application {
                 event.consume();
             });
 
-            node.setOnDragDone(event -> {
-                if (event.getTransferMode() == TransferMode.MOVE){
-                }
-
-                event.consume();
-            });
 
             vBoxItems.getChildren().add(node);
+
+
         }
 
         return vBoxItems;
@@ -117,12 +136,58 @@ public class FinalMain extends Application {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setContent(getVBox());
 
+        scrollPane.setMinWidth(250);
+        scrollPane.setPrefWidth(200);
+        scrollPane.setMaxWidth(350);
+
+        HBox.setHgrow(scrollPane, Priority.ALWAYS);
+
+
+        scrollPane.setFitToWidth(true);
+        //scrollPane.setFitToHeight(true);
+
+        scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
+
+
         return scrollPane;
+    }
+
+    private VBox rightVBox(){
+        VBox rightVBox = new VBox();
+
+        rightVBox.setPrefWidth(250);
+        rightVBox.setMaxWidth(400);
+
+        rightVBox.setAlignment(Pos.TOP_CENTER);
+
+        rightVBox.setStyle("-fx-background-color: #1c1c1e");
+
+
+        //ScrollPane where boxes go
+        ScrollPane scrollPane = getScrollPane();
+
+        //StackPane due to rounded corners...
+        StackPane stackPane = new StackPane();
+        VBox emptyPane = new VBox();
+        emptyPane.getStyleClass().add("emptyLeftPane");
+        VBox.setVgrow(emptyPane, Priority.ALWAYS);
+
+        stackPane.getChildren().add(emptyPane);//Background...
+        stackPane.getChildren().add(scrollPane);
+
+
+        rightVBox.getChildren().addAll(stackPane);
+
+
+        rightVBox.setPadding(new Insets(15,15,15,15));
+
+        return rightVBox;
+
     }
 
     private void configureBorderPane(){
         ConditionBlock conditionBlock = new ConditionBlock("Operator", "Rule","Value", oQueEstaASerDragged);
-        RuleBlock ruleBlock = new RuleBlock("Rule do Migule");
+        RuleBlock ruleBlock = new RuleBlock("My Rule");
         AndBlock andBlock = new AndBlock(oQueEstaASerDragged, "AND", "#ffeebb");
         AndBlock orBlock = new AndBlock(oQueEstaASerDragged, "OR", "#8f4068");
 
@@ -131,9 +196,12 @@ public class FinalMain extends Application {
         rectanglesTypes.add(orBlock);
         rectanglesTypes.add(conditionBlock);
 
-        borderPane.setCenter(mainPaneStackPane);
+        borderPane.getItems().add(mainPaneStackPane);
         mainPaneStackPane.getChildren().add(mainPane);
-        borderPane.setRight(getScrollPane());
+
+        VBox rightVBox = rightVBox();
+
+        borderPane.getItems().add(rightVBox);
 
         configureMainPane();
     }
@@ -198,13 +266,9 @@ public class FinalMain extends Application {
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
-                        deleteMenu.setOnAction(actionEvent -> {
-                            mainPane.getChildren().remove(customRectangle3.gethBox());
-                        });
+                        deleteMenu.setOnAction(actionEvent -> mainPane.getChildren().remove(customRectangle3.gethBox()));
 
-                        customRectangle3.gethBox().setOnContextMenuRequested(contextMenuEvent -> {
-                            menu.show(customRectangle3.gethBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-                        });
+                        customRectangle3.gethBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.gethBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
 
                     }else if(oQueEstaASerDragged.getNodes().getType() == Types.AndBlock){

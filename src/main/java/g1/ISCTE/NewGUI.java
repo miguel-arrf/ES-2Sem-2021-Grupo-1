@@ -38,7 +38,7 @@ public class NewGUI extends Application {
     private final VBox centerPane = new VBox();
     private final VBox filePane = new VBox();
 
-    private ArrayList<Label> metricBoxes = new ArrayList<>();
+    private final ArrayList<Label> metricBoxes = new ArrayList<>();
 
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
