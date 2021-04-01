@@ -39,11 +39,11 @@ public class ClassMetrics {
     public void printInfo() {
         System.out.println("Package: " + class_package);
         System.out.println("Class: " + class_name);
-        System.out.println("LOC_Class: " + loc_class);
-        System.out.println("WMC_Class: " + wmc_class);
-        System.out.println("NOM_Class: " + nom_class);
+        System.out.println("LOC_Class: " + getLoc_class());
+        System.out.println("WMC_Class: " + getWmc_class());
+        System.out.println("NOM_Class: " + getNom_class());
         System.out.println("Class methods: ");
-        for(Method m : class_methods) {
+        for(Method m : getClass_methods()) {
             System.out.println("  Name: " + m.getMethod_name());
             System.out.println("  LOC_Method: " + m.getLoc_method());
             System.out.println("  CYCLO_Method: " + m.getCyclo_method());

@@ -14,6 +14,7 @@ public class MetricExtractor {
     private ArrayList<File> source_code = new ArrayList<>();
     private final String exported_file_name;
     private final String destination_directory;
+    private ArrayList<ClassMetrics> results = new ArrayList<>();
 
     public MetricExtractor(File project_directory, String destination_directory) {
         getFilesFromProjectDirectory(project_directory);
@@ -32,6 +33,10 @@ public class MetricExtractor {
         }
     }
 
+    public ArrayList<ClassMetrics> getResults() {
+        return results;
+    }
+
     public void executeExtraction() throws InterruptedException {
         if(source_code.isEmpty()) {
             System.out.println("ERROR: No source code files found in given directory. No metrics extracted.");
@@ -43,17 +48,15 @@ public class MetricExtractor {
                 workers.add(runnable);
             }
             threadPool.shutdown();
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-            ArrayList<ClassMetrics> results = new ArrayList<>();
+            threadPool.awaitTermination(60, TimeUnit.SECONDS);
             for(ExtractionWorker worker : workers) {
-                ArrayList<ClassMetrics> metrics = worker.getMetrics();
-                results.addAll(metrics);
+                results.addAll(worker.getMetrics());
             }
-            exportResultsToFile(results);
+            exportResultsToFile();
         }
     }
 
-    private void exportResultsToFile(ArrayList<ClassMetrics> results) {
+    private void exportResultsToFile() {
         String SheetName = "Code Smells";
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
