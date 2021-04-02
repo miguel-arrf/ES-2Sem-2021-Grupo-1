@@ -22,7 +22,9 @@ import javafx.util.Duration;
 public class AppStyle {
 
     public static Font getFont(FontType fontType, int size){
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        return new Font(size);
+        //TODO Add fonts back!
+        //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
 
     public static Label getLabelWithColorAndFont(Paint paint, FontType fontType, int size, String string){
