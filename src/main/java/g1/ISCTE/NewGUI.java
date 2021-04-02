@@ -5,15 +5,16 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
@@ -40,9 +41,12 @@ public class NewGUI extends Application {
 
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
 
+    public TableView table = new TableView();
+
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
     private Stage stage;
+    private VBox centerPaneWebViewPane = new VBox();
 
     private WebEngine webEngine;
 
@@ -72,6 +76,44 @@ public class NewGUI extends Application {
         return leftVBox;
     }
 
+    private VBox getButtonsLeft(){
+        Button rulesEditor = new Button("Editor De Regras");
+        rulesEditor.setTextFill(Color.BLACK);
+        rulesEditor.setMaxWidth(Double.MAX_VALUE);
+        rulesEditor.getStyleClass().add("selectRuleBuilderButton");
+        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+
+        Button showMetrics = new Button("Mostrar Métricas");
+        showMetrics.setTextFill(Color.BLACK);
+        showMetrics.setMaxWidth(Double.MAX_VALUE);
+        showMetrics.getStyleClass().add("selectShowMetricsButton");
+        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+
+        showMetrics.setOnMouseClicked(mouseEvent -> {
+            addTableToCenterPane();
+        });
+
+        VBox emptyLeftPane = new VBox();
+        emptyLeftPane.setSpacing(10);
+
+        HBox buttonsBox = new HBox(rulesEditor, showMetrics);
+        buttonsBox.setSpacing(10);
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(rulesEditor, Priority.ALWAYS);
+        HBox.setHgrow(showMetrics, Priority.ALWAYS);
+
+        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+
+        emptyLeftPane.getChildren().addAll(buttonsBox);
+
+        emptyLeftPane.getStyleClass().add("emptyLeftPane");
+
+        return emptyLeftPane;
+
+
+    }
+
     private void updateFilePane(){
         if (selectedFile != null){
 
@@ -79,10 +121,13 @@ public class NewGUI extends Application {
 
             filePane.setPadding(new Insets(15,0,0,0));
 
-             if(selectedFile.isDirectory()){
+            filePane.getChildren().addAll(getButtonsLeft());
+            filePane.setSpacing(15);
+
+            if(selectedFile.isDirectory()){
 
 
-                MyTree myTree = new MyTree();
+                 MyTree myTree = new MyTree();
 
                 ScrollPane scrollPane = myTree.getScrollPane(selectedFile);
                 VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -97,7 +142,7 @@ public class NewGUI extends Application {
 
                 VBox.setVgrow(stackPane, Priority.ALWAYS);
 
-                filePane.getChildren().add(stackPane);
+                filePane.getChildren().addAll(stackPane);
 
             }
 
@@ -144,6 +189,7 @@ public class NewGUI extends Application {
             boolean success = false;
             if (db.hasFiles()) {
                 File file = db.getFiles().get(0);
+
                 if(file.isDirectory()){
                     stage.setTitle(file.getName());
 
@@ -154,8 +200,6 @@ public class NewGUI extends Application {
                     updateFilePane();
                     updateCenterPane();
                     success = true;
-
-
                 }else{
                     blurBackground(0, 30, 500, leftUnderVBox);
 
@@ -190,21 +234,9 @@ public class NewGUI extends Application {
                     };
                     timer.schedule(task, 3000l);
 
-                    /*Stage popup = AppStyle.setUpPopup("teste", "oioi)");
-
-                    Timer timer = new Timer();
-                    TimerTask task = new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> popup.fireEvent(new WindowEvent(popup, WindowEvent.WINDOW_CLOSE_REQUEST)));
-
-                        }
-                    };
-                    timer.schedule(task, 5000l);
-                    popup.setOnCloseRequest(e -> blurBackground(30, 0, 500, leftVBox));*/
-
-
                 }
+
+
             }
 
             event.setDropCompleted(success);
@@ -252,75 +284,24 @@ public class NewGUI extends Application {
         return emptyLeftPane;
     }
 
-    private void loadCenterPane(){
+    private void loadCenterPaneWebView(){
         WebView webView = new WebView();
         webEngine = webView.getEngine();
 
         File f = new File(getClass().getResource("/testeScript.html").getFile());
         webEngine.load(f.toURI().toString());
 
-        VBox.setVgrow(webView, Priority.ALWAYS);
+        //VBox.setVgrow(webView, Priority.ALWAYS);
 
         webView.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;");
 
-        centerPane.getChildren().add(webView);
+        centerPaneWebViewPane.setMaxHeight(132);
+        centerPaneWebViewPane.setMinHeight(132);
+
+        centerPaneWebViewPane.getChildren().add(webView);
     }
 
-    private VBox getSquareInfoBox(String typeOfInfo, String number){
-        VBox emptyLeftPane = new VBox();
-
-        emptyLeftPane.setSpacing(10);
-        emptyLeftPane.setPadding(new Insets(10,10,10,10));
-        emptyLeftPane.getStyleClass().add("emptyLeftPane");
-        emptyLeftPane.setPrefSize(150,120);
-        emptyLeftPane.setMinHeight(120);
-        emptyLeftPane.setMinWidth(150);
-
-        Label typeOfInfoLabel = AppStyle.getTitleLabel(typeOfInfo);
-
-        typeOfInfoLabel.setWrapText(true);
-
-        Label numberLabel = new Label(number);
-        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
-        numberLabel.setTextFill(Color.BLACK);
-        numberLabel.setPadding(new Insets(2,2,2,2));
-        numberLabel.setMinWidth(20);
-        numberLabel.setAlignment(Pos.CENTER);
-
-        numberLabel.setStyle("-fx-background-color: #a3ddcb;" +
-                " -fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;");
-
-        Pane spacer = new Pane();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-
-        emptyLeftPane.getChildren().addAll(typeOfInfoLabel, spacer, numberLabel);
-
-        metricBoxes.add(numberLabel);
-
-        return emptyLeftPane;
-    }
-
-    private HBox getInfoBoxes(){
-        VBox infoBox = getSquareInfoBox("Número total de packages", "?");
-        VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
-        VBox infoBox2  = getSquareInfoBox("Número total de métodos", "?");
-        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", "?");
-
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
-        HBox.setHgrow(infoBox1, Priority.ALWAYS);
-        HBox.setHgrow(infoBox2, Priority.ALWAYS);
-        HBox.setHgrow(infoBox3, Priority.ALWAYS);
-
-
-        HBox infoBoxes = new HBox();
-        infoBoxes.setSpacing(10);
-
-        infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
-
-        return infoBoxes;
-    }
 
     private void updateCenterPane(){
         String[] metrics = ProjectInfo.getMainMetricsInfo(selectedFile);
@@ -335,12 +316,14 @@ public class NewGUI extends Application {
         VBox centerPaneVBox = new VBox();
         centerPaneVBox.setSpacing(10);
 
-        loadCenterPane();
+        loadCenterPaneWebView();
         centerPane.setMinWidth(600);
+        centerPane.setAlignment(Pos.CENTER);
 
-        centerPaneVBox.getChildren().addAll(getInfoBoxes(),centerPane);
+        centerPaneVBox.getChildren().addAll(centerPaneWebViewPane,centerPane);
 
         VBox.setVgrow(centerPane, Priority.ALWAYS);
+
 
         centerPaneVBox.setPadding(new Insets(10,10,10,10));
 
@@ -370,11 +353,62 @@ public class NewGUI extends Application {
         stage.setMinWidth(1000);
         stage.setMinHeight(400);
 
+        configureTableData();
 
         stage.setScene(scene);
         stage.show();
     }
 
+    private void configureTableData(){
+        String[][] sdata = new String[1][2];
+        sdata[0][1] = "True";
+        sdata[0][0] = "False";
+
+        String[] cols = new String[2];
+        cols[0] = "isLongMethod";
+        cols[1] = "isGodClass";
+        fillTable(cols,sdata);
+
+    }
+
+    private void addTableToCenterPane(){
+        centerPane.getChildren().clear();
+
+        BorderPane center = new BorderPane();
+        HBox topBox = new HBox();
+
+        HBox centerBox = new HBox();
+
+        centerBox.getChildren().add(table);
+
+        center.setTop(topBox);
+        center.setCenter(centerBox);
+
+
+        centerPane.getChildren().addAll(center);
+    }
+
+    private void fillTable(String[] cols,String[][] dataSource) {
+        table.getColumns().clear();
+
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        for (String[] row : dataSource)
+            data.add(FXCollections.observableArrayList(row));
+        table.setItems(data);
+
+        for (int i = 0; i < dataSource[0].length; i++) {
+            final int currentColumn = i;
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
+            column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
+            column.setEditable(false);
+            column.setCellFactory(TextFieldTableCell.forTableColumn());
+            column.setOnEditCommit(
+                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
+                        t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
+                    });
+            table.getColumns().add(column);
+        }
+    }
 
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){

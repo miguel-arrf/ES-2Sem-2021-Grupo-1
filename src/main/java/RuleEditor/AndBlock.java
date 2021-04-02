@@ -49,9 +49,9 @@ public class AndBlock implements CustomNodes{
 
         java.awt.Color colors = java.awt.Color.decode(boxColor);
 
-        int red = colors.getRed() + depth*8;
-        int green = colors.getGreen() + depth*8;
-        int blue = colors.getBlue() + depth*8;
+        int red = colors.getRed() + depth*3;
+        int green = colors.getGreen() + depth*4;
+        int blue = colors.getBlue() + depth*2;
 
 
 
