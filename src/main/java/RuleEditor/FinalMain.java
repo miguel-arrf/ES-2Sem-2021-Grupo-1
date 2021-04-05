@@ -6,10 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -22,10 +19,10 @@ import java.util.ArrayList;
 
 public class FinalMain extends Application {
 
-    public static SplitPane borderPane;
+    public static SplitPane splitPane;
 
     public static final VBox mainPane = new VBox();
-    public static final StackPane mainPaneStackPane = new StackPane();
+    public static ScrollPane mainScrollPane;
 
     private final ArrayList<CustomNodes> rectanglesTypes = new ArrayList<>();
     private final DraggingObject oQueEstaASerDragged = new DraggingObject();
@@ -37,14 +34,17 @@ public class FinalMain extends Application {
     @Override
     public void start(Stage stage) {
 
-        borderPane = new SplitPane();
-        borderPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
-        borderPane.setDividerPositions(0.8);
+        mainScrollPane = new ScrollPane();
 
-        configureBorderPane();
+        splitPane = new SplitPane();
+        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0");
+        splitPane.setDividerPositions(0.8);
 
-        Scene scene = new Scene(borderPane, 1200, 1200);
+        configureSplitPane();
+
+        Scene scene = new Scene(splitPane, 1200, 1200);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+
 
         stage.setTitle("Rule Builder");
         stage.setScene(scene);
@@ -102,14 +102,14 @@ public class FinalMain extends Application {
 
                 }else if(vBox1.getType() == Types.ConditionBlock){
                     ConditionBlock block = (ConditionBlock)vBox1;
-                    ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRule(), block.getValue(), oQueEstaASerDragged);
+                    ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRuleBlock(), block.getValue(), oQueEstaASerDragged);
 
                     oQueEstaASerDragged.setNodes(copyBlock);
 
                 }else if(vBox1.getType() == Types.RuleBlock){
 
                     RuleBlock block = (RuleBlock)vBox1;
-                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage());
+                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage(), block.getIsNumeric());
 
                     oQueEstaASerDragged.setNodes(copyBlock);
                 }
@@ -144,6 +144,9 @@ public class FinalMain extends Application {
 
 
         scrollPane.setFitToWidth(true);
+
+
+
         //scrollPane.setFitToHeight(true);
 
         scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
@@ -185,23 +188,31 @@ public class FinalMain extends Application {
 
     }
 
-    private void configureBorderPane(){
-        ConditionBlock conditionBlock = new ConditionBlock("Operator", "Rule","Value", oQueEstaASerDragged);
-        RuleBlock ruleBlock = new RuleBlock("My Rule");
+    private void configureSplitPane(){
+        ConditionBlock conditionBlock = new ConditionBlock("Operator", null,"Value", oQueEstaASerDragged);
+        RuleBlock classSizeBlock = new RuleBlock("Class Size", true);
+        RuleBlock godBlock = new RuleBlock("God class", false);
+
         AndBlock andBlock = new AndBlock(oQueEstaASerDragged, "AND", "#ffeebb");
         AndBlock orBlock = new AndBlock(oQueEstaASerDragged, "OR", "#8f4068");
 
-        rectanglesTypes.add(ruleBlock);
+        rectanglesTypes.add(classSizeBlock);
+        rectanglesTypes.add(godBlock);
+
         rectanglesTypes.add(andBlock);
         rectanglesTypes.add(orBlock);
         rectanglesTypes.add(conditionBlock);
 
-        borderPane.getItems().add(mainPaneStackPane);
-        mainPaneStackPane.getChildren().add(mainPane);
+        splitPane.getItems().add(mainScrollPane);
+
+        mainScrollPane.setContent(mainPane);
+        //mainPaneStackPane.setMinHeight(2000);
+        mainScrollPane.setFitToWidth(true);
+
 
         VBox rightVBox = rightVBox();
 
-        borderPane.getItems().add(rightVBox);
+        splitPane.getItems().add(rightVBox);
 
         configureMainPane();
     }
@@ -210,6 +221,14 @@ public class FinalMain extends Application {
         mainPane.setStyle("-fx-background-color: #3d3c40 ");
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
+
+        Label firstLabel = new Label("Drag & Drop here");
+        firstLabel.setTextFill(Color.WHITE);
+
+        mainPane.setAlignment(Pos.CENTER);
+
+        mainPane.getChildren().add(firstLabel);
+
 
         mainPane.setOnDragOver(event -> {
             if(event.getDragboard().hasContent(customFormat)){
@@ -239,11 +258,22 @@ public class FinalMain extends Application {
             if(db.hasContent(customFormat)){
                 success = true;
 
+
+                    if(mainPane.getChildren().contains(firstLabel)){
+                        if(oQueEstaASerDragged.getNodes().getType() != Types.RuleBlock) {
+                            mainPane.getChildren().clear();
+                        }
+                    }
+
+
+
                 if(mainPane.getChildren().size() <1){
+
+
                     if(oQueEstaASerDragged.getNodes().getType() == Types.ConditionBlock){
                         ConditionBlock c1 = (ConditionBlock) oQueEstaASerDragged.getNodes();
 
-                        ConditionBlock customRectangle3 = new ConditionBlock(c1.getOperator(), c1.getRule(), c1.getValue(), oQueEstaASerDragged);
+                        ConditionBlock customRectangle3 = new ConditionBlock(c1.getOperator(), c1.getRuleBlock(), c1.getValue(), oQueEstaASerDragged);
 
                         VBox.setVgrow(customRectangle3.gethBox(), Priority.ALWAYS);
                         mainPane.getChildren().add(customRectangle3.gethBox());
@@ -266,7 +296,12 @@ public class FinalMain extends Application {
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
-                        deleteMenu.setOnAction(actionEvent -> mainPane.getChildren().remove(customRectangle3.gethBox()));
+                        deleteMenu.setOnAction(actionEvent -> {
+                            mainPane.getChildren().remove(customRectangle3.gethBox());
+                            if(mainPane.getChildren().isEmpty()){
+                                mainPane.getChildren().add(firstLabel);
+                            }
+                        });
 
                         customRectangle3.gethBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.gethBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
@@ -280,8 +315,24 @@ public class FinalMain extends Application {
 
                         mainPane.getChildren().add(customRectangle3.gethBox());
 
+
+                        MenuItem deleteMenu = new MenuItem("delete");
+                        ContextMenu menu = new ContextMenu(deleteMenu);
+
+                        deleteMenu.setOnAction(actionEvent -> {
+                            mainPane.getChildren().remove(customRectangle3.gethBox());
+                            if(mainPane.getChildren().isEmpty()){
+                                mainPane.getChildren().add(firstLabel);
+                            }
+                        });
+
+                        customRectangle3.getCentralBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.getCentralBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
+
+
+
                     }
                 }
+
 
 
 

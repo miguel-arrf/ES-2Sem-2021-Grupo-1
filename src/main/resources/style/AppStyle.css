@@ -64,6 +64,12 @@
     -fx-background-color: #6562fc;
 }
 
+.textualRuleButton {
+    -fx-background-radius: 20 20 20 20;
+    -fx-border-radius: 20 20 20 20;
+    -fx-background-color: lightgreen;
+}
+
 .combo-box .arrow-button .arrow {
     -fx-shape: "...";
     -fx-scale-shape: true;
@@ -75,6 +81,7 @@
     -fx-border-radius: 10 10 10 10;
     -fx-background-color: white;
 }
+
 
 .text-field {
     -fx-border-radius: 10;
@@ -112,4 +119,8 @@
     -fx-font-size: 14.0 pt;
     -fx-background: black ;
     -fx-text-fill: white;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #3d3c40;
 }

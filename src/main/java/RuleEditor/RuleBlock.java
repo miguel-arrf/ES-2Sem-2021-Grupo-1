@@ -2,15 +2,8 @@ package RuleEditor;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 public class RuleBlock implements CustomNodes{
 
@@ -18,12 +11,18 @@ public class RuleBlock implements CustomNodes{
 
     private Node hBox;
 
-    public RuleBlock(String ruleMessage ){
+    private boolean isNumeric;
+
+    public boolean getIsNumeric(){
+        return isNumeric;
+    }
+
+    public RuleBlock(String ruleMessage, boolean isNumeric ){
         this.ruleMessage = ruleMessage;
+        this.isNumeric = isNumeric;
 
         hBox = getHBox();
     }
-
 
 
     @Override
@@ -56,10 +55,13 @@ public class RuleBlock implements CustomNodes{
 
     @Override
     public HBox getRuleMakerBox() {
+
+        String color = isNumeric ? "lightpink" : "lightgreen";
+
         HBox ruleMakerBox = new HBox(new Label(ruleMessage));
         ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: lightpink;");
+                "    -fx-background-color: " + color + ";");
 
         ruleMakerBox.setMinWidth(150);
         ruleMakerBox.setMinHeight(50);
