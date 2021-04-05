@@ -152,8 +152,6 @@ public class NewGUI extends Application {
         }
     }
 
-
-
     private Pane getSpacer(){
         Pane pane = new Pane();
         pane.setPrefHeight(5);
@@ -323,14 +321,18 @@ public class NewGUI extends Application {
         centerPane.setMinWidth(600);
         centerPane.setAlignment(Pos.CENTER);
 
-        centerPaneVBox.getChildren().addAll(centerPaneWebViewPane,centerPane);
-
         VBox.setVgrow(centerPane, Priority.ALWAYS);
-
+        centerPaneVBox.getChildren().addAll(centerPaneWebViewPane,centerPane);
 
         centerPaneVBox.setPadding(new Insets(10,10,10,10));
 
         return centerPaneVBox;
+    }
+
+    private void addTableToCenterPane(){
+        centerPane.getChildren().clear();
+        VBox.setVgrow(table, Priority.ALWAYS);
+        centerPane.getChildren().addAll(table);
     }
 
     @Override
@@ -364,7 +366,7 @@ public class NewGUI extends Application {
 
     private void configureTableData() throws IOException  {
 
-        File file = new File("C:\\Users\\Antonio Martins\\Downloads\\Code_Smells.xlsx");
+        File file = new File("C:\\Users\\mferr\\Downloads\\teste\\Code_Smells (1).xlsx");
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);
@@ -387,22 +389,7 @@ public class NewGUI extends Application {
 
     }
 
-    private void addTableToCenterPane(){
-        centerPane.getChildren().clear();
 
-        BorderPane center = new BorderPane();
-        HBox topBox = new HBox();
-
-        HBox centerBox = new HBox();
-
-        centerBox.getChildren().add(table);
-
-        center.setTop(topBox);
-        center.setCenter(centerBox);
-
-
-        centerPane.getChildren().addAll(center);
-    }
 
     private void fillTable(String[] cols,String[][] dataSource) {
         table.getColumns().clear();
