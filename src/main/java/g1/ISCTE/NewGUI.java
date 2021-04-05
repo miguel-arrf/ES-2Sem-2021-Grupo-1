@@ -26,8 +26,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -331,7 +334,7 @@ public class NewGUI extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         this.stage = stage;
 
         stage.setTitle("CodeSmells Detector");
@@ -359,14 +362,27 @@ public class NewGUI extends Application {
         stage.show();
     }
 
-    private void configureTableData(){
-        String[][] sdata = new String[1][2];
-        sdata[0][1] = "True";
-        sdata[0][0] = "False";
+    private void configureTableData() throws IOException  {
 
-        String[] cols = new String[2];
-        cols[0] = "isLongMethod";
-        cols[1] = "isGodClass";
+        File file = new File("C:\\Users\\Antonio Martins\\Downloads\\Code_Smells.xlsx");
+        FileInputStream fip = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fip);
+        ProjectInfo metricsinfo = new ProjectInfo(workbook);
+        ArrayList<ArrayList<String>> table = metricsinfo.getMetricsTable();
+
+        String[][] sdata = new String[table.size()][table.get(0).size()];
+        String[] cols = new String[table.size()];
+        int i = 0;
+        int j = 0;
+        for(ArrayList<String> al : table) {
+            for(String s : al) {
+                sdata[i][j] = s;
+                j++;
+            }
+            j = 0;
+            cols[i] = al.get(0);
+            i++;
+        }
         fillTable(cols,sdata);
 
     }
