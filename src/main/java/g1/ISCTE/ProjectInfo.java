@@ -101,15 +101,18 @@ public class ProjectInfo {
         }
     }
 
-    public static String[] getMainMetricsInfo(File file){
 
-        return new String[5];
+    private String[] getMainMetricsInfo(File file){
+
+        return null;
     }
 
 
     //apenas para testar
     public static void main(String[] args) throws IOException {
+
         File file = new File("C:\\Users\\Antonio Martins\\Downloads\\Code_Smells.xlsx");
+
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);
@@ -122,3 +125,4 @@ public class ProjectInfo {
     }
 
 }
+
