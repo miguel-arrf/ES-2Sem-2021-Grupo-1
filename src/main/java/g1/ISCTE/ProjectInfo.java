@@ -102,7 +102,7 @@ public class ProjectInfo {
     }
 
 
-    private String[] getMainMetricsInfo(File file){
+    static String[] getMainMetricsInfo(File file){
 
         return null;
     }
