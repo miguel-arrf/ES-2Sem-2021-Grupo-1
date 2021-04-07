@@ -3,11 +3,10 @@ package g1.ISCTE;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -16,7 +15,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class AppStyle {
@@ -118,6 +116,15 @@ public class AppStyle {
             });
             transition.play();
         }
+    }
+
+    public static DropShadow getDropShadow(){
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setRadius(10.0);
+        dropShadow.setOffsetY(10.0);
+        dropShadow.setColor(Color.color(0,0,0,0.10));
+
+        return dropShadow;
     }
 
 }

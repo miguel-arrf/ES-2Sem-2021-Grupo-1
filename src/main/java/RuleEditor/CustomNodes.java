@@ -7,11 +7,11 @@ enum Types {
     ConditionBlock,
     RuleBlock,
     AndBlock
-};
+}
 
 public interface CustomNodes {
 
-    Node gethBox();
+    Node getGraphicalRepresentation();
     Types getType();
     HBox getRuleMakerBox();
 

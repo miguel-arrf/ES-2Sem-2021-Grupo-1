@@ -7,11 +7,11 @@ import javafx.scene.layout.HBox;
 
 public class RuleBlock implements CustomNodes{
 
-    private String ruleMessage;
+    private final String ruleMessage;
 
-    private Node hBox;
+    private final Node hBox;
 
-    private boolean isNumeric;
+    private final boolean isNumeric;
 
     public boolean getIsNumeric(){
         return isNumeric;
@@ -26,7 +26,7 @@ public class RuleBlock implements CustomNodes{
 
 
     @Override
-    public Node gethBox() {
+    public Node getGraphicalRepresentation() {
         return hBox;
     }
 
