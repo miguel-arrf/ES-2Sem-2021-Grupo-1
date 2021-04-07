@@ -54,6 +54,20 @@ public class FinalMain extends Application {
         stage.show();
     }
 
+    public SplitPane getPanels(Scene scene){
+        mainScrollPane = new ScrollPane();
+
+        splitPane = new SplitPane();
+        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0");
+        splitPane.setDividerPositions(0.8);
+
+        FinalMain.scene = scene;
+
+        configureSplitPane();
+
+        return splitPane;
+    }
+
     private VBox getVBox(){
         VBox vBoxItems = new VBox();
 

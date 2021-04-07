@@ -1,5 +1,6 @@
 package g1.ISCTE;
 
+import RuleEditor.FinalMain;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -45,6 +46,7 @@ public class NewGUI extends Application {
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
 
     public TableView table = new TableView();
+    private VBox centerPaneVBox;
 
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
@@ -85,6 +87,11 @@ public class NewGUI extends Application {
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
         rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+
+        rulesEditor.setOnMouseClicked(mouseEvent -> {
+            FinalMain finalMain = new FinalMain();
+            finalMain.start(AppStyle.setUpPopupStage("Rule Editor","noIcon", true));
+        });
 
         Button showMetrics = new Button("Mostrar Métricas");
         showMetrics.setTextFill(Color.BLACK);
@@ -314,7 +321,7 @@ public class NewGUI extends Application {
     }
 
     private VBox centerPane(){
-        VBox centerPaneVBox = new VBox();
+        centerPaneVBox = new VBox();
         centerPaneVBox.setSpacing(10);
 
         loadCenterPaneWebView();
@@ -358,7 +365,11 @@ public class NewGUI extends Application {
         stage.setMinWidth(1000);
         stage.setMinHeight(400);
 
-        configureTableData();
+        try{
+            configureTableData();
+        }catch (IOException exception){
+            System.err.println("There was a problem while loading the table");
+        }
 
         stage.setScene(scene);
         stage.show();

@@ -51,11 +51,11 @@ public class AppStyle {
         return titleLabel;
     }
 
-    private static Stage setUpPopupStage(String popupTitle, String iconPlace){
+    public static Stage setUpPopupStage(String popupTitle, String iconPlace, boolean resizable){
         Stage popupStage = new Stage();
         popupStage.setTitle(popupTitle);
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setResizable(false);
+        popupStage.setResizable(resizable);
 
         //popupStage.getIcons().add(new Image(iconPlace));
 
@@ -63,7 +63,7 @@ public class AppStyle {
     }
 
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
-        Stage popupStage = setUpPopupStage(popupTitle, iconPlace);
+        Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
 
 
         setUpPoupScene(content, popupStage, styleSheet);
