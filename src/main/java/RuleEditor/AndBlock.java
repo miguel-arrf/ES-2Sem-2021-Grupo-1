@@ -2,8 +2,6 @@ package RuleEditor;
 
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,16 +14,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class AndBlock implements CustomNodes{
 
-    private Node hBox;
+    private final Node hBox;
 
-
-    private Label leftLabel;
-    private Label rightLabel;
     public Label andLabel;
 
     private VBox rightLabelVBox;
@@ -33,15 +29,14 @@ public class AndBlock implements CustomNodes{
     private VBox andLabelVBox;
 
     public String label;
-    private int depth = 0;
 
     public String getLabel() {
         return label;
     }
 
-    private DraggingObject oQueEstaASerDragged;
+    private final DraggingObject oQueEstaASerDragged;
 
-    private String boxColor;
+    private final String boxColor;
 
     public AndBlock(DraggingObject oQueEstaASerDragged, String label, String boxColor){
         this.label = label;
@@ -52,7 +47,6 @@ public class AndBlock implements CustomNodes{
     }
 
     private void setDepth(int depth){
-        this.depth += depth;
 
         java.awt.Color colors = java.awt.Color.decode(boxColor);
 
@@ -107,16 +101,14 @@ public class AndBlock implements CustomNodes{
                     andBlock.setDepth(depth);
 
                     vBox.getChildren().clear();
-                    vBox.getChildren().add(andBlock.gethBox());
+                    vBox.getChildren().add(andBlock.getGraphicalRepresentation());
 
-                    //VBox.setVgrow(andBlock.gethBox(), Priority.ALWAYS);
-
-                    andBlock.gethBox().setOnDragDetected(newEvent -> {
-                        Dragboard new_DB = andBlock.gethBox().startDragAndDrop(TransferMode.ANY);
+                    andBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
+                        Dragboard new_DB = andBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
 
                         SnapshotParameters snapshotParameters = new SnapshotParameters();
                         snapshotParameters.setFill(Color.TRANSPARENT);
-                        new_DB.setDragView(andBlock.gethBox().snapshot(snapshotParameters, null));
+                        new_DB.setDragView(andBlock.getGraphicalRepresentation().snapshot(snapshotParameters, null));
 
                         ClipboardContent content = new ClipboardContent();
                         content.put(FinalMain.customFormat, 1);
@@ -130,21 +122,12 @@ public class AndBlock implements CustomNodes{
                         newEvent.consume();
                     });
 
-                    andBlock.gethBox().setOnDragDone(newEvent -> {
-                        if (newEvent.getTransferMode() == TransferMode.MOVE){
-                        }
-
-                        newEvent.consume();
-                    });
-
 
                     //DELETE
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
-                        deleteMenu.setOnAction(actionEvent -> {
-                            vBox.getChildren().remove(andBlock.gethBox());
-                        });
+                        deleteMenu.setOnAction(actionEvent -> vBox.getChildren().remove(andBlock.getGraphicalRepresentation()));
 
                     andBlock.getCentralBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(andBlock.getCentralBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
                     //END DELETE
@@ -161,14 +144,14 @@ public class AndBlock implements CustomNodes{
 
                     vBox.getChildren().clear();
 
-                    vBox.getChildren().add(newBlock.gethBox());
+                    vBox.getChildren().add(newBlock.getGraphicalRepresentation());
 
-                    newBlock.gethBox().setOnDragDetected(newEvent -> {
-                        Dragboard new_DB = newBlock.gethBox().startDragAndDrop(TransferMode.ANY);
+                    newBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
+                        Dragboard new_DB = newBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
 
                         SnapshotParameters snapshotParameters = new SnapshotParameters();
                         snapshotParameters.setFill(Color.TRANSPARENT);
-                        new_DB.setDragView(newBlock.gethBox().snapshot(snapshotParameters, null));
+                        new_DB.setDragView(newBlock.getGraphicalRepresentation().snapshot(snapshotParameters, null));
 
                         ClipboardContent content = new ClipboardContent();
                         content.put(FinalMain.customFormat, 1);
@@ -182,12 +165,6 @@ public class AndBlock implements CustomNodes{
                         newEvent.consume();
                     });
 
-                    newBlock.gethBox().setOnDragDone(newEvent -> {
-                        if (newEvent.getTransferMode() == TransferMode.MOVE){
-                        }
-
-                        newEvent.consume();
-                    });
 
                 }
 
@@ -204,34 +181,14 @@ public class AndBlock implements CustomNodes{
     private void setLabelListener(VBox vBox, Label label){
         final ObservableList<Node> children = vBox.getChildren();
 
-        InvalidationListener listener = new InvalidationListener() {
-
-            private int size = children.size();
-
-            @Override
-            public void invalidated(Observable o) {
-                int newSize = children.size();
-                if (size != newSize) { // prevent triggering if the size did not change
-                    size = newSize;
-                    // TODO: add some logic
-                }
-            }
-
-        };
-        //children.addListener(listener);
-
-
-        children.addListener(new ListChangeListener<Node>() {
-            @Override
-            public void onChanged(Change<? extends Node> change) {
-                while(change.next()){
-                    if(change.wasRemoved()){
-                        for(Node item: change.getRemoved()){
-                            children.remove(item);
-                            if(!item.equals(label)){
-                                if(!children.contains(label)){
-                                    children.add(label);
-                                }
+        children.addListener((ListChangeListener<Node>) change -> {
+            while(change.next()){
+                if(change.wasRemoved()){
+                    for(Node item: change.getRemoved()){
+                        children.remove(item);
+                        if(!item.equals(label)){
+                            if(!children.contains(label)){
+                                children.add(label);
                             }
                         }
                     }
@@ -244,12 +201,12 @@ public class AndBlock implements CustomNodes{
     private VBox getHBox() {
         VBox box = new VBox();
 
-        leftLabel = new Label("Left Condition/Rule");
-        rightLabel = new Label("Right Condition/Rule");
+        Label leftLabel = new Label("Left Condition/Rule");
+        Label rightLabel = new Label("Right Condition/Rule");
 
         leftLabelVBox = new VBox(leftLabel);
         leftLabelVBox.setAlignment(Pos.CENTER);
-        setLabelListener(leftLabelVBox,leftLabel);
+        setLabelListener(leftLabelVBox, leftLabel);
 
 
         rightLabelVBox = new VBox(rightLabel);
@@ -290,7 +247,7 @@ public class AndBlock implements CustomNodes{
         box.setMinHeight(100);
         box.setAlignment(Pos.CENTER);
 
-        box.setEffect(Others.getDropShadow());
+        box.setEffect(AppStyle.getDropShadow());
 
         return box;
     }
@@ -300,7 +257,7 @@ public class AndBlock implements CustomNodes{
     }
 
     @Override
-    public Node gethBox() {
+    public Node getGraphicalRepresentation() {
         return hBox;
     }
 

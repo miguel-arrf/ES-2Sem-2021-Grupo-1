@@ -54,20 +54,6 @@ public class FinalMain extends Application {
         stage.show();
     }
 
-    public SplitPane getPanels(Scene scene){
-        mainScrollPane = new ScrollPane();
-
-        splitPane = new SplitPane();
-        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0");
-        splitPane.setDividerPositions(0.8);
-
-        FinalMain.scene = scene;
-
-        configureSplitPane();
-
-        return splitPane;
-    }
-
     private VBox getVBox(){
         VBox vBoxItems = new VBox();
 
@@ -289,35 +275,20 @@ public class FinalMain extends Application {
 
                         ConditionBlock customRectangle3 = new ConditionBlock(c1.getOperator(), c1.getRuleBlock(), c1.getValue(), oQueEstaASerDragged);
 
-                        VBox.setVgrow(customRectangle3.gethBox(), Priority.ALWAYS);
-                        mainPane.getChildren().add(customRectangle3.gethBox());
-
-                        /*customRectangle3.gethBox().setOnMouseClicked(mouseEvent -> {
-
-                            if(mouseEvent.getButton() == MouseButton.SECONDARY){
-                                HBox hBox = new HBox();
-                                Stage newStage = AppStyle.setUpPopup("Value", "noIcon", hBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
-
-                                newStage.setOnCloseRequest(windowEvent -> {
-                                    NewGUI.blurBackground(30, 0, 200, FinalMain.borderPane);
-                                });
-
-                                FinalMain.scene.setFill(Color.web("#3d3c40"));
-                                NewGUI.blurBackground(0, 30, 500, FinalMain.borderPane);
-                            }
-                        });*/
+                        VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
+                        mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
 
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
                         deleteMenu.setOnAction(actionEvent -> {
-                            mainPane.getChildren().remove(customRectangle3.gethBox());
+                            mainPane.getChildren().remove(customRectangle3.getGraphicalRepresentation());
                             if(mainPane.getChildren().isEmpty()){
                                 mainPane.getChildren().add(firstLabel);
                             }
                         });
 
-                        customRectangle3.gethBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.gethBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
+                        customRectangle3.getGraphicalRepresentation().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.getGraphicalRepresentation().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
 
                     }else if(oQueEstaASerDragged.getNodes().getType() == Types.AndBlock){
@@ -325,16 +296,16 @@ public class FinalMain extends Application {
 
                         AndBlock customRectangle3 = new AndBlock(oQueEstaASerDragged, c1.getLabel(), c1.getBoxColor());
 
-                        VBox.setVgrow(customRectangle3.gethBox(), Priority.ALWAYS);
+                        VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
 
-                        mainPane.getChildren().add(customRectangle3.gethBox());
+                        mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
 
 
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
                         deleteMenu.setOnAction(actionEvent -> {
-                            mainPane.getChildren().remove(customRectangle3.gethBox());
+                            mainPane.getChildren().remove(customRectangle3.getGraphicalRepresentation());
                             if(mainPane.getChildren().isEmpty()){
                                 mainPane.getChildren().add(firstLabel);
                             }
@@ -342,13 +313,8 @@ public class FinalMain extends Application {
 
                         customRectangle3.getCentralBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.getCentralBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
-
-
                     }
                 }
-
-
-
 
             }
 

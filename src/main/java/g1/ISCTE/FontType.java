@@ -11,6 +11,9 @@ public enum FontType{
 
     public final String font;
 
+    /**
+     * @param string selected font type
+     */
     private FontType(String string){
         this.font = string;
     }

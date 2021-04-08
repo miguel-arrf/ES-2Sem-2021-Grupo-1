@@ -25,7 +25,7 @@ import java.text.ParsePosition;
 public class ConditionBlock implements CustomNodes{
 
     private String operator;
-    private Node hBox;
+    private final Node hBox;
 
     private String rule;
     private String value;
@@ -40,7 +40,7 @@ public class ConditionBlock implements CustomNodes{
 
     private RuleBlock ruleBlock;
 
-    private DraggingObject oQueEstaASerDragged;
+    private final DraggingObject oQueEstaASerDragged;
 
     public DraggingObject getoQueEstaASerDragged() {
         return oQueEstaASerDragged;
@@ -82,7 +82,7 @@ public class ConditionBlock implements CustomNodes{
 
 
 
-    private void setDrag(VBox vBox, Label label){
+    private void setDrag(VBox vBox){
 
         vBox.setOnDragOver(event -> {
             if(event.getDragboard().hasContent(FinalMain.customFormat)){
@@ -170,7 +170,7 @@ public class ConditionBlock implements CustomNodes{
 
             hBox.setMaxHeight(100);
             hBox.setMaxWidth(400);
-            hBox.setEffect(Others.getDropShadow());
+            hBox.setEffect(AppStyle.getDropShadow());
 
             hBox.setAlignment(Pos.CENTER);
 
@@ -187,7 +187,7 @@ public class ConditionBlock implements CustomNodes{
 
             hBox.setMaxHeight(100);
             hBox.setMaxWidth(400);
-            hBox.setEffect(Others.getDropShadow());
+            hBox.setEffect(AppStyle.getDropShadow());
 
             hBox.setAlignment(Pos.CENTER);
 
@@ -201,9 +201,7 @@ public class ConditionBlock implements CustomNodes{
         Button updateButton = getStyledButton("Update", "#a3ddcb", false);
         Button cancelButton = getStyledButton("Cancel", "#d8345f", false);
 
-        cancelButton.setOnAction(actionEvent -> {
-            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-        });
+        cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST))));
 
         HBox hBox = new HBox();
 
@@ -273,7 +271,7 @@ public class ConditionBlock implements CustomNodes{
 
         hBox.setMaxHeight(100);
         hBox.setMaxWidth(500);
-        hBox.setEffect(Others.getDropShadow());
+        hBox.setEffect(AppStyle.getDropShadow());
 
         hBox.setAlignment(Pos.CENTER);
 
@@ -301,9 +299,7 @@ public class ConditionBlock implements CustomNodes{
                     Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
                     popupStage = newStage;
 
-                    newStage.setOnCloseRequest(windowEvent -> {
-                        NewGUI.blurBackground(30, 0, 200, FinalMain.splitPane);
-                    });
+                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, FinalMain.splitPane));
 
                     FinalMain.scene.setFill(Color.web("#3d3c40"));
                     NewGUI.blurBackground(0, 30, 500, FinalMain.splitPane);
@@ -335,7 +331,7 @@ public class ConditionBlock implements CustomNodes{
 
         });
 
-        setDrag(ruleLabelVbox, ruleLabel);
+        setDrag(ruleLabelVbox);
 
         operatorLabelVbox.setStyle("-fx-background-color: #f4eeed;");
 
@@ -353,7 +349,7 @@ public class ConditionBlock implements CustomNodes{
         box.setMinHeight(50);
         box.setAlignment(Pos.CENTER);
 
-        box.setEffect(Others.getDropShadow());
+        box.setEffect(AppStyle.getDropShadow());
 
         return box;
     }
@@ -376,16 +372,12 @@ public class ConditionBlock implements CustomNodes{
     }
 
     @Override
-    public Node gethBox() {
+    public Node getGraphicalRepresentation() {
         return hBox;
     }
 
     public String getOperator() {
         return operator;
-    }
-
-    public String getRule() {
-        return rule;
     }
 
     public String getValue() {
