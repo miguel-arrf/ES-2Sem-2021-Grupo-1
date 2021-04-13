@@ -13,12 +13,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class Main {
 
-    public static void main( String[] args) throws InterruptedException, IOException {
-//        File project = new File("D:\\Users\\Diogo Simões\\Documents\\ISCTE\\2º ano\\PCD\\Projeto\\2019_2020\\Projeto2");
-//        MetricExtractor extractor = new MetricExtractor(project, "D:\\Users\\Diogo Simões\\Documents\\ISCTE\\3º ano\\ES\\Projeto");
-//        extractor.executeExtraction();
-        File class_file = new File("D:\\Users\\Diogo Simões\\Documents\\ISCTE\\2º ano\\PCD\\Projeto\\2019_2020\\Projeto2\\src\\Searching.java");
+    public static void main(String[] args) throws InterruptedException, IOException {
+        File class_file = new File("C:\\Users\\Henrique\\IdeaProjects\\MongoToMongo\\src\\main\\java\\org\\pisid\\MongoToMongo.java");
         ExtractionWorker extractor = new ExtractionWorker(class_file);
         extractor.run();
+
+
+        String destination_directory = System.getProperty("user.dir") + "\\src\\main\\Created_Excels\\";
+        File project_directory = new File("C:\\Users\\Henrique\\IdeaProjects\\MongoToMongo\\src\\");
+
+        MetricExtractor me = new MetricExtractor(project_directory, destination_directory);
+        me.executeExtraction();
     }
 }
