@@ -34,23 +34,23 @@ public class MetricExtractor {
     }
 
     public void executeExtraction() throws InterruptedException{
-        if(source_code.isEmpty()) {
-            System.out.println("ERROR: No source code files found in given directory.");
-        } else {
-            ArrayList<ExtractionWorker> workers = new ArrayList<>();
-            for(File class_file : source_code) {
-                ExtractionWorker runnable = new ExtractionWorker(class_file);
-                threadPool.execute(runnable);
-                workers.add(runnable);
-            }
-            threadPool.shutdown();
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-            ArrayList<ClassMetrics> results = new ArrayList<>();
-            for(ExtractionWorker worker : workers) {
-                results.add(worker.getMetrics());
-            }
-            exportResultsToFile(results);
-        }
+//        if(source_code.isEmpty()) {
+//            System.out.println("ERROR: No source code files found in given directory.");
+//        } else {
+//            ArrayList<ExtractionWorker> workers = new ArrayList<>();
+//            for(File class_file : source_code) {
+//                ExtractionWorker runnable = new ExtractionWorker(class_file);
+//                threadPool.execute(runnable);
+//                workers.add(runnable);
+//            }
+//            threadPool.shutdown();
+//            threadPool.awaitTermination(5, TimeUnit.SECONDS);
+//            ArrayList<int[]> results = new ArrayList<>();
+//            for(ExtractionWorker worker : workers) {
+//                results.add(worker.getMetrics());
+//            }
+//            exportResultsToFile(results);
+//        }
     }
 
     private void exportResultsToFile(ArrayList<int[]> results) {

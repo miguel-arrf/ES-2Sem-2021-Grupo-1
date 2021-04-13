@@ -1,4 +1,4 @@
-package Test3;
+package Examples;
 
 
 import java.io.FileOutputStream;
@@ -13,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * A very simple program that writes some data to an Excel file
  * using the Apache POI library.
  * @author www.codejava.net
- *
  */
 public class SimpleExcelWriterExample {
 
@@ -46,7 +45,7 @@ public class SimpleExcelWriterExample {
 
         }
 
-        String filepath = System.getProperty("user.dir") + "\\src\\main\\Excel_Criados\\demo\\";
+        String filepath = System.getProperty("user.dir") + "\\src\\main\\Created_Excels\\";
         try (FileOutputStream outputStream = new FileOutputStream(filepath + "JavaBooks.xlsx")) {
             workbook.write(outputStream);
         }
