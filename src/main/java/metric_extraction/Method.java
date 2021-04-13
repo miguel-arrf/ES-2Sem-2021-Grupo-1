@@ -6,10 +6,12 @@ public class Method {
 
     private int loc_method;
     private int cyclo_method;
+    private final String method_name;
     private final String method;
 
-    public Method(String method) {
+    public Method(String method, String method_name) {
         this.method = method;
+        this.method_name = method_name;
     }
 
     public void calculateMethodMetrics() {
@@ -18,7 +20,16 @@ public class Method {
     }
 
     private int calculateCyclo_Method() {
-        return 0;
+        Scanner scanner = new Scanner(method);
+        int counter = 1;
+        while(scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            line = line.replaceAll("\\s+","");
+            if(line.startsWith("if") || line.startsWith("case") || line.startsWith("for") || line.startsWith("while"))
+                counter++;
+        }
+        scanner.close();
+        return counter;
     }
 
     private int calculateLoc_Method() {
@@ -40,5 +51,15 @@ public class Method {
         return loc_method;
     }
 
-}
+    public String getMethod_name() {
+        return method_name;
+    }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public String getName() {
+        return method_name;
+    }
+}
