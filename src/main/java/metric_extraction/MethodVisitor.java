@@ -20,4 +20,5 @@ public class MethodVisitor extends VoidVisitorAdapter {
     public ArrayList<Method> getMethods() {
         return class_methods;
     }
+
 }
