@@ -42,9 +42,9 @@ public class CodeSmellDetector {
         for(String codeSmell : results.keySet()) {
             ArrayList<String> values = results.get(codeSmell);
             if(values.isEmpty()) {
-                System.out.println("The code smell " + codeSmell + "was not detected in the code");
+                System.out.println("The code smell " + codeSmell + " was not detected in the code");
             } else {
-                System.out.println("The code smell " + codeSmell + "was found in:");
+                System.out.println("The code smell " + codeSmell + " was found in:");
                 for(String value : values) System.out.println(value);
             }
         }

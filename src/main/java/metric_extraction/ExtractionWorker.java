@@ -39,9 +39,9 @@ public class ExtractionWorker implements Runnable {
                 }
                 metrics.add(new ClassMetrics(class_name, class_package, loc_class, nom_class, wmc_class, class_methods));
             }
-            for(ClassMetrics c : metrics) {
+            /*for(ClassMetrics c : metrics) {
                 c.printInfo();
-            }
+            }*/
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
