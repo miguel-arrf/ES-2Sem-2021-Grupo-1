@@ -1,9 +1,8 @@
 package metric_extraction;
 
 import org.apache.poi.xssf.usermodel.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
-import javax.xml.soap.Text;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ public class MetricExtractor {
     private ArrayList<File> source_code = new ArrayList<>();
     private final String exported_file_name;
     private final String destination_directory;
-    private ArrayList<ClassMetrics> results = new ArrayList<>();
+    private ArrayList<ClassMetrics> metrics = new ArrayList<>();
 
     public MetricExtractor(File project_directory, String destination_directory) {
         getFilesFromProjectDirectory(project_directory);
@@ -36,35 +35,30 @@ public class MetricExtractor {
         }
     }
 
-    public ArrayList<ClassMetrics> getResults() {
-        return results;
+    public ArrayList<ClassMetrics> getMetrics() {
+        return metrics;
     }
 
     public void executeExtraction() throws InterruptedException {
-        if (source_code.isEmpty()) {
+        if(source_code.isEmpty()) {
             System.out.println("ERROR: No source code files found in given directory. No metrics extracted.");
         } else {
             ArrayList<ExtractionWorker> workers = new ArrayList<>();
-            for (File class_file : source_code) {
+            for(File class_file : source_code) {
                 ExtractionWorker runnable = new ExtractionWorker(class_file);
                 threadPool.execute(runnable);
                 workers.add(runnable);
             }
             threadPool.shutdown();
-            threadPool.awaitTermination(5, TimeUnit.SECONDS);
-            ArrayList<ClassMetrics> results = new ArrayList<>();
-            for (ExtractionWorker worker : workers) {
-                ArrayList<ClassMetrics> metrics = worker.getMetrics();
-                results.addAll(metrics);
             threadPool.awaitTermination(60, TimeUnit.SECONDS);
             for(ExtractionWorker worker : workers) {
-                results.addAll(worker.getMetrics());
+                metrics.addAll(worker.getMetrics());
             }
-            exportResultsToFile(results);
+            exportResultsToFile();
         }
     }
 
-    private void exportResultsToFile(ArrayList<ClassMetrics> metrics){
+    private void exportResultsToFile() {
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
             XSSFSheet mySheet = workBook.createSheet("Code Smells");
@@ -88,6 +82,7 @@ public class MetricExtractor {
             metricName[10] = "is_Long_Method";
 
             XSSFRow currentRow = mySheet.createRow(0);
+
             for (int j = 0; j < 11; j++) {
                 XSSFCell myCell = currentRow.createCell(j);
                 myCell.setCellValue(metricName[j]);
@@ -99,9 +94,9 @@ public class MetricExtractor {
                 String[][] methods = metrics.get(i).getMetrics_by_method();
 
                 //Iterar pelo numero de methodos (começa no um porque a primeira row já está ocupada)
-                for (int j=1; j < methods.length; j++) {
+                for (int j=0; j < methods.length; j++) {
                     sumID++;
-                    currentRow = mySheet.createRow(sumID + 1 +j);
+                    currentRow = mySheet.createRow(sumID);
                     String[] oneMethod = methods[j];
 
                     //inserir no excel
@@ -109,11 +104,14 @@ public class MetricExtractor {
                     XSSFCell myCell = currentRow.createCell(0);
                     myCell.setCellValue(sumID);
 
+                    System.out.println("O número da linha é:" + sumID);
 
-                    for(int z=1; z <10; z++) {
+
+                    for(int z=1; z < 10; z++) {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z]);
                     }
+                    System.out.println("Current row: " + currentRow.toString().split("\n")[0]);
                 }
             }
 
@@ -146,5 +144,9 @@ public class MetricExtractor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<ClassMetrics> getResults() {
+        return metrics;
     }
 }
