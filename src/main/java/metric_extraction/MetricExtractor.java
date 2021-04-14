@@ -1,8 +1,5 @@
 package metric_extraction;
 
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xslf.usermodel.TextAutofit;
-import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
@@ -20,6 +17,7 @@ public class MetricExtractor {
     private ArrayList<File> source_code = new ArrayList<>();
     private final String exported_file_name;
     private final String destination_directory;
+    private ArrayList<ClassMetrics> results = new ArrayList<>();
 
     public MetricExtractor(File project_directory, String destination_directory) {
         getFilesFromProjectDirectory(project_directory);
@@ -38,6 +36,10 @@ public class MetricExtractor {
         }
     }
 
+    public ArrayList<ClassMetrics> getResults() {
+        return results;
+    }
+
     public void executeExtraction() throws InterruptedException {
         if (source_code.isEmpty()) {
             System.out.println("ERROR: No source code files found in given directory. No metrics extracted.");
@@ -54,12 +56,15 @@ public class MetricExtractor {
             for (ExtractionWorker worker : workers) {
                 ArrayList<ClassMetrics> metrics = worker.getMetrics();
                 results.addAll(metrics);
+            threadPool.awaitTermination(60, TimeUnit.SECONDS);
+            for(ExtractionWorker worker : workers) {
+                results.addAll(worker.getMetrics());
             }
             exportResultsToFile(results);
         }
     }
 
-    private void exportResultsToFile(ArrayList<ClassMetrics> metrics) {
+    private void exportResultsToFile(ArrayList<ClassMetrics> metrics){
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
             XSSFSheet mySheet = workBook.createSheet("Code Smells");
