@@ -3,22 +3,22 @@ package code_smell_detection;
 public class CodeSmell {
 
     private String name;
-    private Rule rule;
+    private RuleTree rule;
 
-    public CodeSmell(String name, Rule rule) {
+    public CodeSmell(String name, RuleTree rule) {
         this.name = name;
         this.rule = rule;
     }
 
     public boolean isClassSmell() {
-        return rule.getPrimaryCondition().getMetric().contains("class");
+        return rule.isClass_rule();
     }
 
     public String getName() {
         return name;
     }
 
-    public Rule getRule() {
+    public RuleTree getRule() {
         return rule;
     }
 
@@ -26,7 +26,7 @@ public class CodeSmell {
         this.name = name;
     }
 
-    public void setRule(Rule rule) {
+    public void setRule(RuleTree rule) {
         this.rule = rule;
     }
 

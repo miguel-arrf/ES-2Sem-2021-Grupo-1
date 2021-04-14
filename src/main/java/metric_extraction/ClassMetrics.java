@@ -1,6 +1,7 @@
 package metric_extraction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ClassMetrics {
 
@@ -32,6 +33,14 @@ public class ClassMetrics {
         return wmc_class;
     }
 
+    public String getClass_name() {
+        return class_name;
+    }
+
+    public String getClass_package() {
+        return class_package;
+    }
+
     public ArrayList<Method> getClass_methods() {
         return class_methods;
     }
@@ -50,5 +59,13 @@ public class ClassMetrics {
             System.out.println("---------------------");
         }
         System.out.println("END OF CLASS");
+    }
+
+    public HashMap<String, Integer> getMetricsForDetection() {
+        HashMap<String, Integer> metrics = new HashMap<>();
+        metrics.put("LOC_Class", getLoc_class());
+        metrics.put("NOM_Class", getNom_class());
+        metrics.put("WMC_Class", getWmc_class());
+        return metrics;
     }
 }

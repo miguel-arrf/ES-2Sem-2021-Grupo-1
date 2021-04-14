@@ -1,5 +1,6 @@
 package metric_extraction;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Method {
@@ -59,7 +60,10 @@ public class Method {
         return method;
     }
 
-    public String getName() {
-        return method_name;
+    public HashMap<String, Integer> getMetricsForDetection() {
+        HashMap<String, Integer> metrics = new HashMap<>();
+        metrics.put("CYCLO_Method", getCyclo_method());
+        metrics.put("LOC_Method", getLoc_method());
+        return metrics;
     }
 }
