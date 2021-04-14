@@ -50,8 +50,9 @@ public class ClassMetrics {
         for (int i = 0; i < class_methods.size(); i++) {
             for (int j = 0; j < 10; j++) {
                 values[i] = new String[]{class_package, class_name, class_methods.get(i).getMethod_name(),
-                        String.valueOf(nom_class), String.valueOf(loc_class), String.valueOf(wmc_class), "is_god_class", String.valueOf(class_methods.get(i).getLoc_method()),
-                        String.valueOf(class_methods.get(i).getCyclo_method()), "islongmethod"};
+                        String.valueOf(nom_class), String.valueOf(loc_class), String.valueOf(wmc_class), "-", String.valueOf(class_methods.get(i).getLoc_method()),
+                        String.valueOf(class_methods.get(i).getCyclo_method()), "-"};
+                System.out.println("package name: " + class_package);
             }
         }
 //        {"method id ", class_package, class_name, "method" , nom_class, loc_class, wmc_class, "is_god_class", class_methods, "islongmethod" }
