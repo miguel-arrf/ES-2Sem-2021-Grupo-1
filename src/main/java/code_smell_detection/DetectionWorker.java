@@ -37,23 +37,9 @@ public class DetectionWorker implements Runnable {
 
     private void detect(Object values) {
         HashMap<String, Integer> metrics = getMetricsMap(values);
-        boolean result = evaluateRule(metrics, codeSmell.getRule());
+        boolean result = evaluateNode(metrics, codeSmell.getRule());
         if(result && values instanceof ClassMetrics) results.add( ((ClassMetrics)values).getClass_name() );
         else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() );
-    }
-
-    private boolean evaluateRule(HashMap<String, Integer> metrics, RuleTree rule) {
-        boolean result = false;
-        if(rule.hasNoChildren()) {//Regra é composta apenas por uma RuleCondition
-            RuleCondition condition = (RuleCondition)rule.getRoot();
-            result = evaluateCondition(condition, metrics);
-        } else {//Regra contém 2 nós e a root é uma instância de RuleOperator
-            RuleOperator operator = (RuleOperator)rule.getRoot();
-            boolean left_result = evaluateNode(rule.getLeft_node(), metrics);
-            boolean right_result = evaluateNode(rule.getRight_node(), metrics);
-            result = evaluateOperator(operator, left_result, right_result);
-        }
-        return result;
     }
 
     private boolean evaluateOperator(RuleOperator operator, boolean left_result, boolean right_result) {
@@ -62,15 +48,15 @@ public class DetectionWorker implements Runnable {
         else return false;
     }
 
-    private boolean evaluateNode(RuleNode node, HashMap<String, Integer> metrics) {
+    private boolean evaluateNode(HashMap<String, Integer> metrics, RuleNode node) {
         boolean result = false;
         if(node.isLeafNode()) {//Nó representa uma condição
             RuleCondition condition = (RuleCondition)node.getElement();
             result = evaluateCondition(condition, metrics);
         } else {//Avaliar o próprio nó, o nó esquerdo e o nó direito
             RuleOperator operator = (RuleOperator)node.getElement();
-            boolean left_result = evaluateNode(node.getLeft_node(), metrics);
-            boolean right_result = evaluateNode(node.getRight_node(), metrics);
+            boolean left_result = evaluateNode(metrics, node.getLeft_node());
+            boolean right_result = evaluateNode(metrics, node.getRight_node());
             result = evaluateOperator(operator, left_result, right_result);
         }
         return result;
