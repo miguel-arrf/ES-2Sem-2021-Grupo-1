@@ -104,14 +104,10 @@ public class MetricExtractor {
                     XSSFCell myCell = currentRow.createCell(0);
                     myCell.setCellValue(sumID);
 
-                    System.out.println("O número da linha é:" + sumID);
-
-
                     for(int z=1; z < 11; z++) {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z-1]);
                     }
-                    System.out.println("Current row: " + currentRow.toString().split("\n")[0]);
                 }
             }
 
