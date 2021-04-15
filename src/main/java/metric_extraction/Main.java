@@ -33,8 +33,8 @@ public class Main {
         RuleCondition right_condition = new RuleCondition("NOM_Class", 10, RuleOperator.GREATER);
         RuleNode left_node = new RuleNode(left_condition);
         RuleNode right_node = new RuleNode(right_condition);
-        RuleTree rule = new RuleTree(RuleOperator.OR, left_node, right_node, true);
-        CodeSmell god_class = new CodeSmell("isGodClass", rule);
+        RuleNode rule = new RuleNode(RuleOperator.OR, left_node, right_node);
+        CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
         smells.add(god_class);
         CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
         detector.runDetection();
