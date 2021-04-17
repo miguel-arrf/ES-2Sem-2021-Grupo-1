@@ -195,6 +195,17 @@ public class AppStyle {
         return dropShadow;
     }
 
+
+    /**
+     * Method that adds, in the received nodes order, a fade in animation to each one.
+     * There is the option to change the duration and also the delay. The daly value is, for each node, added to the previous, starting at zero.
+     * Meaning that, if delay is 0, then all animations will be parallel, without waiting for each other.
+     * If delay is 1 second, each animation only starts 1 second after the previous.
+     *
+     * @param duration Duration of the fade in animation in milliseconds.
+     * @param delayDuration Duration of the delay between each animation in milliseconds.
+     * @param nodes Collection of nodes.
+     */
     public static void addFadingInGroup(double duration, double delayDuration, Node... nodes){
         double currentMoment = 0;
 
