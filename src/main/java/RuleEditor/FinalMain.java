@@ -1,6 +1,9 @@
 package RuleEditor;
 
+import code_smell_detection.RuleNode;
+import code_smell_detection.RuleOperator;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -30,6 +33,7 @@ public class FinalMain extends Application {
     public static Scene scene;
     public static final DataFormat customFormat = new DataFormat("Node");
 
+    private RuleNode rootRule;
 
     @Override
     public void start(Stage stage) {
@@ -146,7 +150,6 @@ public class FinalMain extends Application {
         scrollPane.setFitToWidth(true);
 
 
-
         //scrollPane.setFitToHeight(true);
 
         scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
@@ -179,13 +182,39 @@ public class FinalMain extends Application {
         stackPane.getChildren().add(scrollPane);
 
 
-        rightVBox.getChildren().addAll(stackPane);
+        rightVBox.getChildren().addAll(stackPane, getSaveButton());
 
 
         rightVBox.setPadding(new Insets(15,15,15,15));
 
         return rightVBox;
 
+    }
+
+    private void transverseMainPaneChildren(){
+        ObservableList<Node> children = mainPane.getChildren();
+
+        for (Node node : children){
+            System.out.println("node: " + node);
+        }
+
+    }
+
+    private VBox getSaveButton(){
+        VBox saveButtonVBox = new VBox();
+
+        Button saveButton = new Button("Save me :3");
+        saveButton.setOnAction(actionEvent -> {
+
+            transverseMainPaneChildren();
+            mainPane.setId("teste");
+            System.out.println(mainPane.getId());
+        });
+
+
+        saveButtonVBox.getChildren().add(saveButton);
+
+        return saveButtonVBox;
     }
 
     private void configureSplitPane(){
