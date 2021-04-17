@@ -195,5 +195,23 @@ public class AppStyle {
         return dropShadow;
     }
 
+    public static void addFadingInGroup(double duration, double delayDuration, Node... nodes){
+        double currentMoment = 0;
+
+        for(Node node: nodes){
+            node.setOpacity(0);
+
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+            fadeTransition.setFromValue(0);
+            fadeTransition.setToValue(1);
+            fadeTransition.setDelay(Duration.millis(currentMoment));
+            fadeTransition.play();
+
+           currentMoment += delayDuration;
+
+        }
+
+    }
+
 }
 
