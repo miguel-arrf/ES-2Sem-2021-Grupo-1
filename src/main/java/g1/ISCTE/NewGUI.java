@@ -1,6 +1,7 @@
 package g1.ISCTE;
 
 import RuleEditor.FinalMain;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -329,7 +330,7 @@ public class NewGUI extends Application {
         centerPane.setAlignment(Pos.CENTER);
 
         VBox.setVgrow(centerPane, Priority.ALWAYS);
-        centerPaneVBox.getChildren().addAll(centerPaneWebViewPane,centerPane);
+        centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/,centerPane);
 
         centerPaneVBox.setPadding(new Insets(10,10,10,10));
 
@@ -356,8 +357,8 @@ public class NewGUI extends Application {
         VBox leftPane = getLeft();
         leftPane.setMinWidth(300);
 
-
         splitPane.setDividerPositions(0.20);
+
         splitPane.getItems().addAll(leftPane, centerPane());
 
         Scene scene = new Scene(splitPane,1000,800);
@@ -444,6 +445,62 @@ public class NewGUI extends Application {
     }
 
 
+    private HBox getInfoBoxes(){
+        VBox infoBox = getSquareInfoBox("Número total de packages", "?");
+        VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
+        VBox infoBox2  = getSquareInfoBox("Número total de métodos", "?");
+        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", "?");
+
+        AppStyle.addFadingInGroup(1000, 500, infoBox, infoBox1, infoBox2, infoBox3);
+
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+        HBox.setHgrow(infoBox1, Priority.ALWAYS);
+        HBox.setHgrow(infoBox2, Priority.ALWAYS);
+        HBox.setHgrow(infoBox3, Priority.ALWAYS);
+
+
+        HBox infoBoxes = new HBox();
+        infoBoxes.setSpacing(10);
+
+        infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
+
+        return infoBoxes;
+    }
+
+    private VBox getSquareInfoBox(String typeOfInfo, String number){
+        VBox emptyLeftPane = new VBox();
+
+        emptyLeftPane.setSpacing(10);
+        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+        emptyLeftPane.getStyleClass().add("emptyLeftPane");
+        emptyLeftPane.setPrefSize(150,120);
+        emptyLeftPane.setMinHeight(120);
+        emptyLeftPane.setMinWidth(150);
+
+        Label typeOfInfoLabel = AppStyle.getTitleLabel(typeOfInfo);
+
+        typeOfInfoLabel.setWrapText(true);
+
+        Label numberLabel = new Label(number);
+        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        numberLabel.setTextFill(Color.BLACK);
+        numberLabel.setPadding(new Insets(2,2,2,2));
+        numberLabel.setMinWidth(20);
+        numberLabel.setAlignment(Pos.CENTER);
+
+        numberLabel.setStyle("-fx-background-color: #a3ddcb;" +
+                " -fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;");
+
+        Pane spacer = new Pane();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        emptyLeftPane.getChildren().addAll(typeOfInfoLabel, spacer, numberLabel);
+
+        metricBoxes.add(numberLabel);
+
+        return emptyLeftPane;
+    }
 
 
 
