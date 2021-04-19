@@ -102,6 +102,10 @@ public class AndBlock implements CustomNodes{
 
                     vBox.getChildren().clear();
                     vBox.getChildren().add(andBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(andBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(andBlock, this, "left");
 
                     andBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = andBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -138,6 +142,7 @@ public class AndBlock implements CustomNodes{
                     ConditionBlock c1 = (ConditionBlock) oQueEstaASerDragged.getNodes();
 
                     ConditionBlock newBlock = new ConditionBlock(c1.getOperator(), c1.getRuleBlock(), c1.getValue(), c1.getoQueEstaASerDragged());
+                    System.out.println(c1.getRuleBlock());
                     newBlock.setContextMenuDeletion();
 
                     System.out.println("estou na caixa do " + andLabel.getText());
@@ -145,6 +150,10 @@ public class AndBlock implements CustomNodes{
                     vBox.getChildren().clear();
 
                     vBox.getChildren().add(newBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(newBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(newBlock, this, "left");
 
                     newBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = newBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);

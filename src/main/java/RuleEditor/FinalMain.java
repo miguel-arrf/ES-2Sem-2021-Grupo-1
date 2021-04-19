@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
@@ -18,6 +19,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 public class FinalMain extends Application {
@@ -34,6 +36,9 @@ public class FinalMain extends Application {
     public static final DataFormat customFormat = new DataFormat("Node");
 
     private RuleNode rootRule;
+
+    public static RuleComplete rule;
+    public static ArrayList<RuleComplete> search = new ArrayList<>();
 
     @Override
     public void start(Stage stage) {
@@ -195,9 +200,8 @@ public class FinalMain extends Application {
         ObservableList<Node> children = mainPane.getChildren();
 
         for (Node node : children){
-            System.out.println("node: " + node);
+            //System.out.println(node);
         }
-
     }
 
     private VBox getSaveButton(){
@@ -205,10 +209,11 @@ public class FinalMain extends Application {
 
         Button saveButton = new Button("Save me :3");
         saveButton.setOnAction(actionEvent -> {
+            if(rule != null)
+                rule.saveRule();
 
             transverseMainPaneChildren();
             mainPane.setId("teste");
-            System.out.println(mainPane.getId());
         });
 
 
@@ -306,6 +311,7 @@ public class FinalMain extends Application {
 
                         VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
                         mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
+                        rule = new RuleComplete(customRectangle3);
 
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
@@ -328,6 +334,7 @@ public class FinalMain extends Application {
                         VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
 
                         mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
+                        rule = new RuleComplete(customRectangle3);
 
 
                         MenuItem deleteMenu = new MenuItem("delete");

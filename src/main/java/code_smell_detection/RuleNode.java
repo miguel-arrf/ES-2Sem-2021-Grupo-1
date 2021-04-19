@@ -45,4 +45,6 @@ public class RuleNode {
     public boolean isLeafNode() {
         return left_node == null && right_node == null;
     }
+
 }
+
