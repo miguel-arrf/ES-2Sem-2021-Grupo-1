@@ -1,5 +1,7 @@
 package RuleEditor;
 
+import code_smell_detection.RuleNode;
+import code_smell_detection.RuleOperator;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import javafx.collections.ListChangeListener;
@@ -15,34 +17,52 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class AndBlock implements CustomNodes{
+public class AndBlock implements CustomNode {
 
     private final Node hBox;
 
     public Label andLabel;
 
+    private RuleNode ruleNode;
+
     private VBox rightLabelVBox;
     private VBox leftLabelVBox;
     private VBox andLabelVBox;
 
-    public String label;
-
-    public String getLabel() {
-        return label;
+    public VBox getLeftLabelVBox() {
+        return leftLabelVBox;
     }
 
-    private final DraggingObject oQueEstaASerDragged;
+    public VBox getRightLabelVBox() {
+        return rightLabelVBox;
+    }
 
-    private final String boxColor;
+    public RuleOperator label;
 
-    public AndBlock(DraggingObject oQueEstaASerDragged, String label, String boxColor){
+    public String getLabel() {
+        return label.label;
+    }
+
+
+    private DraggingObject oQueEstaASerDragged = null;
+
+    private String boxColor = null;
+
+    public AndBlock(DraggingObject oQueEstaASerDragged, RuleOperator label, String boxColor){
         this.label = label;
         this.oQueEstaASerDragged = oQueEstaASerDragged;
-        andLabel = new Label(label);
+        andLabel = new Label(label.label);
         this.boxColor = boxColor;
+        hBox = getHBox();
+    }
+
+    public AndBlock(RuleOperator label ){
+        this.label = label;
+        andLabel = new Label(label.label);
         hBox = getHBox();
     }
 
@@ -102,6 +122,17 @@ public class AndBlock implements CustomNodes{
 
                     vBox.getChildren().clear();
                     vBox.getChildren().add(andBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(andBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(andBlock, this, "left");
+
+                    if(vBox.equals(rightLabelVBox)){
+                        FinalMain.ruleNodes.add(andBlock);
+                    }else{
+                        FinalMain.ruleNodes.add(andBlock);
+                    }
+
 
                     andBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = andBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -127,7 +158,15 @@ public class AndBlock implements CustomNodes{
                         MenuItem deleteMenu = new MenuItem("delete");
                         ContextMenu menu = new ContextMenu(deleteMenu);
 
-                        deleteMenu.setOnAction(actionEvent -> vBox.getChildren().remove(andBlock.getGraphicalRepresentation()));
+                        deleteMenu.setOnAction(actionEvent -> {
+                            vBox.getChildren().remove(andBlock.getGraphicalRepresentation());
+
+                            if(vBox.equals(rightLabelVBox)){
+                                FinalMain.ruleNodes.remove(andBlock);
+                            } else{
+                                FinalMain.ruleNodes.remove(andBlock);
+                            }
+                        });
 
                     andBlock.getCentralBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(andBlock.getCentralBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
                     //END DELETE
@@ -138,6 +177,7 @@ public class AndBlock implements CustomNodes{
                     ConditionBlock c1 = (ConditionBlock) oQueEstaASerDragged.getNodes();
 
                     ConditionBlock newBlock = new ConditionBlock(c1.getOperator(), c1.getRuleBlock(), c1.getValue(), c1.getoQueEstaASerDragged());
+                    System.out.println(c1.getRuleBlock());
                     newBlock.setContextMenuDeletion();
 
                     System.out.println("estou na caixa do " + andLabel.getText());
@@ -145,6 +185,16 @@ public class AndBlock implements CustomNodes{
                     vBox.getChildren().clear();
 
                     vBox.getChildren().add(newBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(newBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(newBlock, this, "left");
+
+                    if(vBox.equals(rightLabelVBox)){
+                        FinalMain.ruleNodes.add(newBlock);
+                    }else{
+                        FinalMain.ruleNodes.add(newBlock);
+                    }
 
                     newBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = newBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -198,6 +248,20 @@ public class AndBlock implements CustomNodes{
 
     }
 
+    private void setAndLabelVBoxDelete(){
+        ContextMenu menu = new ContextMenu();
+        andLabelVBox.setOnContextMenuRequested(contextMenuEvent -> menu.show(andLabelVBox.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
+
+        MenuItem deleteMenu = new MenuItem("delete");
+        menu.getItems().add(deleteMenu);
+
+        deleteMenu.setOnAction(actionEvent -> {
+            Pane parent = (Pane) andLabelVBox.getParent().getParent();
+            parent.getChildren().remove(this.getGraphicalRepresentation());
+        });
+
+    }
+
     private VBox getHBox() {
         VBox box = new VBox();
 
@@ -230,6 +294,10 @@ public class AndBlock implements CustomNodes{
         //VBox.setVgrow(rightLabelVBox, Priority.ALWAYS);
 
         andLabelVBox = new VBox(andLabel);
+
+        setAndLabelVBoxDelete();
+
+
         andLabelVBox.setAlignment(Pos.CENTER);
 
         andLabel.setPadding(new Insets(30));
@@ -279,5 +347,15 @@ public class AndBlock implements CustomNodes{
         ruleMakerBox.setAlignment(Pos.CENTER);
 
         return ruleMakerBox;
+    }
+
+
+    @Override
+    public RuleOperator getOperator() {
+        return label;
+    }
+
+    public AndBlock getCopy(){
+        return new AndBlock(oQueEstaASerDragged, getOperator(), getBoxColor());
     }
 }
