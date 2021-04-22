@@ -3,9 +3,14 @@ package metric_extraction;
 import java.io.File;
 import java.util.ArrayList;
 
+import RuleEditor.AndBlock;
+import RuleEditor.ConditionBlock;
+import RuleEditor.RuleBlock;
 import code_smell_detection.*;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class Main {
+public class Main extends Application {
 
 //    public static void main(String[] args) throws InterruptedException, IOException {
 //        File class_file = new File("C:\\Users\\Henrique\\IdeaProjects\\MongoToMongo\\src\\main\\java\\org\\pisid\\MongoToMongo.java");
@@ -22,23 +27,27 @@ public class Main {
 //
 //    Andre main
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
+        launch(args);
+    }
 
+
+    @Override
+    public void start(Stage stage) throws Exception {
         String directory_src = System.getProperty("user.dir") + "\\src";
         File class_file = new File(directory_src);
         MetricExtractor extractor = new MetricExtractor(class_file, class_file.getName());
         extractor.executeExtraction();
         ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
-        RuleCondition left_condition = new RuleCondition("WMC_Class", 50, RuleOperator.GREATER);
-        RuleCondition right_condition = new RuleCondition("NOM_Class", 10, RuleOperator.GREATER);
-        RuleNode left_node = new RuleNode(left_condition);
-        RuleNode right_node = new RuleNode(right_condition);
-        RuleNode rule = new RuleNode(RuleOperator.OR, left_node, right_node);
+
+        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class", true), "50"));
+        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class", true), "10", null));
+
+        RuleNode rule = new RuleNode(new AndBlock(RuleOperator.OR), left_node, right_node);
+
         CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
         smells.add(god_class);
         CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
         detector.runDetection();
     }
-
-
 }

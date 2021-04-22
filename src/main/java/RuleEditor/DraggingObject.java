@@ -2,13 +2,13 @@ package RuleEditor;
 
 public class DraggingObject {
 
-    CustomNodes nodes;
+    CustomNode nodes;
 
-    public void setNodes(CustomNodes nodes) {
+    public void setNodes(CustomNode nodes) {
         this.nodes = nodes;
     }
 
-    public CustomNodes getNodes() {
+    public CustomNode getNodes() {
         return nodes;
     }
 
