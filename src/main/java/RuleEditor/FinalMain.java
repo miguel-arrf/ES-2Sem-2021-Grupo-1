@@ -309,6 +309,9 @@ public class FinalMain extends Application {
 
 }
 
+/**
+ * Class to order the Conditions and Rules blocks in the Rule Editor GUI.
+ */
 class SortBlockArrayList implements Comparator<CustomNode>{
 
     @Override
