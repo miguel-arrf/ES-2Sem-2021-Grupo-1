@@ -122,6 +122,10 @@ public class AndBlock implements CustomNode {
 
                     vBox.getChildren().clear();
                     vBox.getChildren().add(andBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(andBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(andBlock, this, "left");
 
                     if(vBox.equals(rightLabelVBox)){
                         FinalMain.ruleNodes.add(andBlock);
@@ -181,6 +185,10 @@ public class AndBlock implements CustomNode {
                     vBox.getChildren().clear();
 
                     vBox.getChildren().add(newBlock.getGraphicalRepresentation());
+                    if(vBox.equals(rightLabelVBox))
+                        FinalMain.rule.addToSide(newBlock, this, "right");
+                    else
+                        FinalMain.rule.addToSide(newBlock, this, "left");
 
                     if(vBox.equals(rightLabelVBox)){
                         FinalMain.ruleNodes.add(newBlock);
