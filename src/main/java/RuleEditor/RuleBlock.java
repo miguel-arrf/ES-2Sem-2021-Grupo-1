@@ -1,11 +1,12 @@
 package RuleEditor;
 
+import code_smell_detection.RuleOperator;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
-public class RuleBlock implements CustomNodes{
+public class RuleBlock implements CustomNode {
 
     private final String ruleMessage;
 
@@ -69,5 +70,15 @@ public class RuleBlock implements CustomNodes{
         ruleMakerBox.setAlignment(Pos.CENTER);
 
         return ruleMakerBox;
+    }
+
+    @Override
+    public RuleOperator getOperator() {
+        return null;
+    }
+
+    @Override
+    public CustomNode getCopy() {
+        return null;
     }
 }

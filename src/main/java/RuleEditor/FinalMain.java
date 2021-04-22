@@ -1,9 +1,8 @@
 package RuleEditor;
 
-import code_smell_detection.RuleNode;
 import code_smell_detection.RuleOperator;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,77 +13,80 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class FinalMain extends Application {
 
-    public static SplitPane splitPane;
-
-    public static final VBox mainPane = new VBox();
-    public static ScrollPane mainScrollPane;
-
-    private final ArrayList<CustomNodes> rectanglesTypes = new ArrayList<>();
-    private final DraggingObject oQueEstaASerDragged = new DraggingObject();
-
-    public static Scene scene;
     public static final DataFormat customFormat = new DataFormat("Node");
+    public static ArrayList<CustomNode> ruleNodes = new ArrayList<>();
+    private final VBox mainPane = new VBox();
+    private final ArrayList<CustomNode> rectanglesTypes = new ArrayList<>();
+    private final DraggingObject inDragObject = new DraggingObject();
 
-    private RuleNode rootRule;
+    public static void main(String[] args) {
+        launch(args);
+    }
 
     @Override
     public void start(Stage stage) {
 
-        mainScrollPane = new ScrollPane();
-
-        splitPane = new SplitPane();
-        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0");
-        splitPane.setDividerPositions(0.8);
-
-        configureSplitPane();
+        SplitPane splitPane = new SplitPane();
+        configureSceneMainView(splitPane);
 
         Scene scene = new Scene(splitPane, 1200, 1200);
-        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
 
-
-        stage.setTitle("Rule Builder");
-        stage.setScene(scene);
-
-        FinalMain.scene = scene;
+        configureSceneAndStage(scene, stage);
 
         stage.show();
     }
 
-    private VBox getVBox(){
+    private void configureSceneMainView(SplitPane splitPane) {
+        addDefaultBlocks();
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(mainPane);
+        scrollPane.setFitToWidth(true);
+
+        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0");
+        splitPane.setDividerPositions(0.8);
+        splitPane.getItems().add(scrollPane);
+
+        VBox rightVBox = rightVBox();
+
+        splitPane.getItems().add(rightVBox);
+
+        configureMainPane();
+    }
+
+    private void configureSceneAndStage(Scene scene, Stage stage) {
+        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+        stage.setTitle("Rule Builder");
+        stage.setScene(scene);
+    }
+
+
+
+    private VBox getBlocksVBox() {
         VBox vBoxItems = new VBox();
 
         HBox.setHgrow(vBoxItems, Priority.ALWAYS);
-
-
         vBoxItems.setSpacing(30);
         vBoxItems.setAlignment(Pos.CENTER);
-        vBoxItems.setPadding(new Insets(30,30,30,30));
+        vBoxItems.setPadding(new Insets(30, 30, 30, 30));
 
-        ArrayList<CustomNodes> sortedArrayList = new ArrayList<>(rectanglesTypes);
+        ArrayList<CustomNode> sortedArrayList = new ArrayList<>(rectanglesTypes);
+        sortedArrayList.sort(new SortBlockArrayList());
 
-        sortedArrayList.sort((a,b) -> {
-            if(a.getType() == Types.RuleBlock){
-                return -1;
-            }else if(a.getType() == b.getType()){
-                return 0;
-            }else if(a.getType() == Types.AndBlock && b.getType() == Types.ConditionBlock){
-                return 1;
-            }else if(b.getType() == Types.AndBlock && a.getType() == Types.ConditionBlock){
-                return -1;
-            }
-            return 1;
-
-        });
-
-        for(CustomNodes vBox1 : sortedArrayList){
+        for (CustomNode vBox1 : sortedArrayList) {
 
             Node node = vBox1.getRuleMakerBox();
 
@@ -98,28 +100,28 @@ public class FinalMain extends Application {
                 ClipboardContent content = new ClipboardContent();
                 content.put(customFormat, 1);
 
-                if(vBox1.getType() == Types.AndBlock){
-                    AndBlock block = (AndBlock)vBox1;
-                    AndBlock copyBlock = new AndBlock(oQueEstaASerDragged, block.getLabel(), block.getBoxColor());
+                if (vBox1.getType() == Types.AndBlock) {
+                    AndBlock block = (AndBlock) vBox1;
+                    AndBlock copyBlock = new AndBlock(inDragObject, block.getOperator(), block.getBoxColor());
 
-                    oQueEstaASerDragged.setNodes(copyBlock);
+                    inDragObject.setNodes(copyBlock);
 
-                }else if(vBox1.getType() == Types.ConditionBlock){
-                    ConditionBlock block = (ConditionBlock)vBox1;
-                    ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRuleBlock(), block.getValue(), oQueEstaASerDragged);
+                } else if (vBox1.getType() == Types.ConditionBlock) {
+                    ConditionBlock block = (ConditionBlock) vBox1;
+                    ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRuleBlock(), block.getValue(), inDragObject);
 
-                    oQueEstaASerDragged.setNodes(copyBlock);
+                    inDragObject.setNodes(copyBlock);
 
-                }else if(vBox1.getType() == Types.RuleBlock){
+                } else if (vBox1.getType() == Types.RuleBlock) {
 
-                    RuleBlock block = (RuleBlock)vBox1;
+                    RuleBlock block = (RuleBlock) vBox1;
                     RuleBlock copyBlock = new RuleBlock(block.getRuleMessage(), block.getIsNumeric());
 
-                    oQueEstaASerDragged.setNodes(copyBlock);
+                    inDragObject.setNodes(copyBlock);
                 }
 
 
-                System.out.println(oQueEstaASerDragged);
+                System.out.println(inDragObject);
                 db.setContent(content);
 
                 event.consume();
@@ -134,11 +136,11 @@ public class FinalMain extends Application {
         return vBoxItems;
     }
 
-    private ScrollPane getScrollPane(){
+    private ScrollPane getScrollPane() {
         ScrollPane scrollPane = new ScrollPane();
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(getVBox());
+        scrollPane.setContent(getBlocksVBox());
 
         scrollPane.setMinWidth(250);
         scrollPane.setPrefWidth(200);
@@ -158,7 +160,7 @@ public class FinalMain extends Application {
         return scrollPane;
     }
 
-    private VBox rightVBox(){
+    private VBox rightVBox() {
         VBox rightVBox = new VBox();
 
         rightVBox.setPrefWidth(250);
@@ -185,30 +187,19 @@ public class FinalMain extends Application {
         rightVBox.getChildren().addAll(stackPane, getSaveButton());
 
 
-        rightVBox.setPadding(new Insets(15,15,15,15));
+        rightVBox.setPadding(new Insets(15, 15, 15, 15));
 
         return rightVBox;
 
     }
 
-    private void transverseMainPaneChildren(){
-        ObservableList<Node> children = mainPane.getChildren();
-
-        for (Node node : children){
-            System.out.println("node: " + node);
-        }
-
-    }
-
-    private VBox getSaveButton(){
+    private VBox getSaveButton() {
         VBox saveButtonVBox = new VBox();
 
         Button saveButton = new Button("Save me :3");
         saveButton.setOnAction(actionEvent -> {
 
-            transverseMainPaneChildren();
-            mainPane.setId("teste");
-            System.out.println(mainPane.getId());
+            //RuleComplete.createCodeSmell(ruleCompleteNodes);
         });
 
 
@@ -217,13 +208,13 @@ public class FinalMain extends Application {
         return saveButtonVBox;
     }
 
-    private void configureSplitPane(){
-        ConditionBlock conditionBlock = new ConditionBlock("Operator", null,"Value", oQueEstaASerDragged);
+    private void addDefaultBlocks() {
+        ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
         RuleBlock classSizeBlock = new RuleBlock("Class Size", true);
         RuleBlock godBlock = new RuleBlock("God class", false);
 
-        AndBlock andBlock = new AndBlock(oQueEstaASerDragged, "AND", "#ffeebb");
-        AndBlock orBlock = new AndBlock(oQueEstaASerDragged, "OR", "#8f4068");
+        AndBlock andBlock = new AndBlock(inDragObject, RuleOperator.AND, "#ffeebb");
+        AndBlock orBlock = new AndBlock(inDragObject, RuleOperator.OR, "#8f4068");
 
         rectanglesTypes.add(classSizeBlock);
         rectanglesTypes.add(godBlock);
@@ -231,22 +222,9 @@ public class FinalMain extends Application {
         rectanglesTypes.add(andBlock);
         rectanglesTypes.add(orBlock);
         rectanglesTypes.add(conditionBlock);
-
-        splitPane.getItems().add(mainScrollPane);
-
-        mainScrollPane.setContent(mainPane);
-        //mainPaneStackPane.setMinHeight(2000);
-        mainScrollPane.setFitToWidth(true);
-
-
-        VBox rightVBox = rightVBox();
-
-        splitPane.getItems().add(rightVBox);
-
-        configureMainPane();
     }
 
-    private void configureMainPane(){
+    private void configureMainPane() {
         mainPane.setStyle("-fx-background-color: #3d3c40 ");
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
@@ -258,16 +236,26 @@ public class FinalMain extends Application {
 
         mainPane.getChildren().add(firstLabel);
 
+        mainPane.getChildren().addListener((ListChangeListener<Node>) change -> {
+            while (change.next()){
+                if(change.wasRemoved()  && mainPane.getChildren().size() == 0){
+                    if(!change.getRemoved().get(0).equals(firstLabel)){
+                        mainPane.getChildren().add(firstLabel);
+                    }
+                }
+            }
+        });
 
         mainPane.setOnDragOver(event -> {
-            if(event.getDragboard().hasContent(customFormat)){
+            if (event.getDragboard().hasContent(customFormat)) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             event.consume();
         });
 
         mainPane.setOnDragEntered(event -> {
-            if(event.getDragboard().hasString()){
+            if (event.getDragboard().hasContent(customFormat)) {
+                mainPane.setStyle("-fx-background-color: red ");
                 mainPane.getStylesheets().add("style.css");
                 mainPane.getStyleClass().add("background");
             }
@@ -284,65 +272,21 @@ public class FinalMain extends Application {
             Dragboard db = event.getDragboard();
             boolean success = false;
 
-            if(db.hasContent(customFormat)){
+            if (db.hasContent(customFormat)) {
                 success = true;
 
 
-                    if(mainPane.getChildren().contains(firstLabel)){
-                        if(oQueEstaASerDragged.getNodes().getType() != Types.RuleBlock) {
-                            mainPane.getChildren().clear();
-                        }
+                if (mainPane.getChildren().contains(firstLabel)) {
+                    if (inDragObject.getNodes().getType() != Types.RuleBlock) {
+                        mainPane.getChildren().clear();
                     }
+                }
 
 
+                if (mainPane.getChildren().size() < 1) {
+                    CustomNode copy = inDragObject.getNodes().getCopy();
+                    addCustomNode(copy);
 
-                if(mainPane.getChildren().size() <1){
-
-
-                    if(oQueEstaASerDragged.getNodes().getType() == Types.ConditionBlock){
-                        ConditionBlock c1 = (ConditionBlock) oQueEstaASerDragged.getNodes();
-
-                        ConditionBlock customRectangle3 = new ConditionBlock(c1.getOperator(), c1.getRuleBlock(), c1.getValue(), oQueEstaASerDragged);
-
-                        VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
-                        mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
-
-                        MenuItem deleteMenu = new MenuItem("delete");
-                        ContextMenu menu = new ContextMenu(deleteMenu);
-
-                        deleteMenu.setOnAction(actionEvent -> {
-                            mainPane.getChildren().remove(customRectangle3.getGraphicalRepresentation());
-                            if(mainPane.getChildren().isEmpty()){
-                                mainPane.getChildren().add(firstLabel);
-                            }
-                        });
-
-                        customRectangle3.getGraphicalRepresentation().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.getGraphicalRepresentation().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
-
-
-                    }else if(oQueEstaASerDragged.getNodes().getType() == Types.AndBlock){
-                        AndBlock c1 = (AndBlock) oQueEstaASerDragged.getNodes();
-
-                        AndBlock customRectangle3 = new AndBlock(oQueEstaASerDragged, c1.getLabel(), c1.getBoxColor());
-
-                        VBox.setVgrow(customRectangle3.getGraphicalRepresentation(), Priority.ALWAYS);
-
-                        mainPane.getChildren().add(customRectangle3.getGraphicalRepresentation());
-
-
-                        MenuItem deleteMenu = new MenuItem("delete");
-                        ContextMenu menu = new ContextMenu(deleteMenu);
-
-                        deleteMenu.setOnAction(actionEvent -> {
-                            mainPane.getChildren().remove(customRectangle3.getGraphicalRepresentation());
-                            if(mainPane.getChildren().isEmpty()){
-                                mainPane.getChildren().add(firstLabel);
-                            }
-                        });
-
-                        customRectangle3.getCentralBox().setOnContextMenuRequested(contextMenuEvent -> menu.show(customRectangle3.getCentralBox().getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
-
-                    }
                 }
 
             }
@@ -354,10 +298,33 @@ public class FinalMain extends Application {
 
     }
 
+    private void addCustomNode(CustomNode customNode) {
 
-    public static void main(String[] args) {
-        launch(args);
+        VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
+        mainPane.getChildren().add(customNode.getGraphicalRepresentation());
+        ruleNodes.add(customNode);
+
     }
 
 
+}
+
+/**
+ * Class to order the Conditions and Rules blocks in the Rule Editor GUI.
+ */
+class SortBlockArrayList implements Comparator<CustomNode>{
+
+    @Override
+    public int compare(CustomNode a, CustomNode b) {
+        if (a.getType() == Types.RuleBlock)
+            return -1;
+        if (a.getType() == b.getType())
+            return 0;
+        if (a.getType() == Types.AndBlock && b.getType() == Types.ConditionBlock)
+            return 1;
+        if (b.getType() == Types.AndBlock && a.getType() == Types.ConditionBlock)
+            return -1;
+
+        return 1;
+    }
 }
