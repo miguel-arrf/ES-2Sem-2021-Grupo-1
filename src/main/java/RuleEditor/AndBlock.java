@@ -122,16 +122,12 @@ public class AndBlock implements CustomNode {
 
                     vBox.getChildren().clear();
                     vBox.getChildren().add(andBlock.getGraphicalRepresentation());
-                    if(vBox.equals(rightLabelVBox))
+                    /*if(vBox.equals(rightLabelVBox))
                         FinalMain.rule.addToSide(andBlock, this, "right");
                     else
                         FinalMain.rule.addToSide(andBlock, this, "left");
-
-                    if(vBox.equals(rightLabelVBox)){
-                        FinalMain.ruleNodes.add(andBlock);
-                    }else{
-                        FinalMain.ruleNodes.add(andBlock);
-                    }
+*/
+                    FinalMain.ruleNodes.add(andBlock);
 
 
                     andBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
@@ -185,16 +181,14 @@ public class AndBlock implements CustomNode {
                     vBox.getChildren().clear();
 
                     vBox.getChildren().add(newBlock.getGraphicalRepresentation());
-                    if(vBox.equals(rightLabelVBox))
+                    /*if(vBox.equals(rightLabelVBox))
                         FinalMain.rule.addToSide(newBlock, this, "right");
                     else
                         FinalMain.rule.addToSide(newBlock, this, "left");
+*/
 
-                    if(vBox.equals(rightLabelVBox)){
                         FinalMain.ruleNodes.add(newBlock);
-                    }else{
-                        FinalMain.ruleNodes.add(newBlock);
-                    }
+
 
                     newBlock.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
                         Dragboard new_DB = newBlock.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -258,6 +252,7 @@ public class AndBlock implements CustomNode {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) andLabelVBox.getParent().getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
+            FinalMain.ruleNodes.remove(this);
         });
 
     }
@@ -358,4 +353,10 @@ public class AndBlock implements CustomNode {
     public AndBlock getCopy(){
         return new AndBlock(oQueEstaASerDragged, getOperator(), getBoxColor());
     }
+
+    @Override
+    public String toString() {
+        return getOperator().label;
+    }
+
 }

@@ -8,7 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -27,6 +30,7 @@ public class FinalMain extends Application {
 
     public static final DataFormat customFormat = new DataFormat("Node");
     public static ArrayList<CustomNode> ruleNodes = new ArrayList<>();
+
     private final VBox mainPane = new VBox();
     private final ArrayList<CustomNode> rectanglesTypes = new ArrayList<>();
     private final DraggingObject inDragObject = new DraggingObject();
@@ -72,7 +76,6 @@ public class FinalMain extends Application {
         stage.setTitle("Rule Builder");
         stage.setScene(scene);
     }
-
 
 
     private VBox getBlocksVBox() {
@@ -199,7 +202,7 @@ public class FinalMain extends Application {
         Button saveButton = new Button("Save me :3");
         saveButton.setOnAction(actionEvent -> {
 
-            //RuleComplete.createCodeSmell(ruleCompleteNodes);
+            RuleComplete.createCodeSmell(ruleNodes);
         });
 
 
@@ -237,9 +240,9 @@ public class FinalMain extends Application {
         mainPane.getChildren().add(firstLabel);
 
         mainPane.getChildren().addListener((ListChangeListener<Node>) change -> {
-            while (change.next()){
-                if(change.wasRemoved()  && mainPane.getChildren().size() == 0){
-                    if(!change.getRemoved().get(0).equals(firstLabel)){
+            while (change.next()) {
+                if (change.wasRemoved() && mainPane.getChildren().size() == 0) {
+                    if (!change.getRemoved().get(0).equals(firstLabel)) {
                         mainPane.getChildren().add(firstLabel);
                     }
                 }
@@ -312,7 +315,7 @@ public class FinalMain extends Application {
 /**
  * Class to order the Conditions and Rules blocks in the Rule Editor GUI.
  */
-class SortBlockArrayList implements Comparator<CustomNode>{
+class SortBlockArrayList implements Comparator<CustomNode> {
 
     @Override
     public int compare(CustomNode a, CustomNode b) {

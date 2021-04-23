@@ -340,6 +340,7 @@ public class ConditionBlock implements CustomNode {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) box.getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
+            FinalMain.ruleNodes.remove(this);
         });
 
     }
@@ -476,5 +477,13 @@ public class ConditionBlock implements CustomNode {
         return new ConditionBlock(getOperator(), getRuleBlock(), getValue(), oQueEstaASerDragged);
     }
 
+    @Override
+    public String toString() {
+        return "ConditionBlock{" +
+                "operator= " + operator.label +
+                ", ruleLabel= " + ruleLabel.getText() +
+                ", valueLabel= " + valueLabel.getText() +
+                '}';
+    }
 }
 

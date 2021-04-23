@@ -15,26 +15,8 @@ public class RuleComplete {
     private RuleComplete left;
     private RuleComplete right;
 
-    public CustomNode getNode() {
-        return node;
-    }
 
-    public RuleComplete getLeft() {
-        return left;
-    }
-
-    public RuleComplete getRight() {
-        return right;
-    }
-
-    public RuleComplete(CustomNode node) {
-        this.node = node;
-        this.left = null;
-        this.right = null;
-    }
-
-
-    /*public static void createCodeSmell(ArrayList<CustomNode> customNodeArrayList){
+    public static void createCodeSmell(ArrayList<CustomNode> customNodeArrayList){
         CustomNode firstCustomNode = customNodeArrayList.get(0); // Yes, we need a auxiliary variable to hold which one is the first....
         System.out.println("firstCustomNode: " + firstCustomNode);
 
@@ -64,7 +46,8 @@ public class RuleComplete {
     public static RuleNode createRuleNode(CustomNode customNode, ArrayList<CustomNode> customNodeArrayList){
 
         if(customNode.getType() == Types.ConditionBlock){
-            return new RuleNode(RuleOperator.GREATER, null, null);
+            ConditionBlock conditionBlock = (ConditionBlock) customNode;
+            return new RuleNode(conditionBlock);
         }else{
             //significa que é um ANd ou um OR block
             ArrayList<CustomNode> children = getChild(customNode, customNodeArrayList);
@@ -73,15 +56,12 @@ public class RuleComplete {
                 return null;
 
             if(children.size() == 1){
-                return new RuleNode(RuleOperator.AND,
-                        createRuleNode(children.get(0), customNodeArrayList),
-                        null
-                );
+                return new RuleNode(customNode, createRuleNode(children.get(0), customNodeArrayList), null);
+
             }else{
-                return new RuleNode(RuleOperator.AND,
-                        createRuleNode(children.get(0), customNodeArrayList),
-                        createRuleNode(children.get(1), customNodeArrayList)
-                );
+                return new RuleNode(customNode, createRuleNode(children.get(0), customNodeArrayList),
+                        createRuleNode(children.get(1), customNodeArrayList));
+
             }
 
 
@@ -108,7 +88,7 @@ public class RuleComplete {
         }
 
         return childrens;
-    }*/
+    }
 
     private String getRule(){
         String rule = "";
@@ -134,42 +114,6 @@ public class RuleComplete {
         return "(" + left.getRule() + ") " + rule + " (" + right.getRule() + ")";
     }
 
-    public void saveRule(){
-        File file = new File("Rules.txt");
-        try {
-            file.createNewFile();
-            BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
-            out.write(getRule() + "\n");
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-
-    public RuleComplete search(RuleComplete root, CustomNode blockToBeFound){
-
-        if(root.getNode().equals(blockToBeFound)){
-            return root;
-        }else{
-            if(root.getLeft() == null && root.getRight() == null){
-                return null;
-            }
-            if (root.getLeft() != null) {
-                RuleComplete leftSearchRule = search(root.getLeft(), blockToBeFound);
-                if (leftSearchRule != null) {
-                    return leftSearchRule;
-                }
-            }
-             if (root.getRight() != null){
-                RuleComplete rightSearchRule = search(root.getRight(), blockToBeFound);
-                if(rightSearchRule != null){
-                    return rightSearchRule;
-                }
-            }
-            return null;
-        }
-
-    }
 
 }
