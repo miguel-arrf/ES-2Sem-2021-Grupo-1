@@ -55,7 +55,7 @@ public class RuleBlock implements CustomNode {
     }
 
     @Override
-    public HBox getRuleMakerBox() {
+    public Node getWidgetGraphicalRepresentation() {
 
         String color = isNumeric ? "lightpink" : "lightgreen";
 

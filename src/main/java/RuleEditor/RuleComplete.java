@@ -1,28 +1,18 @@
 package RuleEditor;
 
 import code_smell_detection.RuleNode;
-import code_smell_detection.RuleOperator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class RuleComplete {
 
-    private CustomNode node;
-    private RuleComplete left;
-    private RuleComplete right;
-
 
     public static void createCodeSmell(ArrayList<CustomNode> customNodeArrayList){
-        CustomNode firstCustomNode = customNodeArrayList.get(0); // Yes, we need a auxiliary variable to hold which one is the first....
-        System.out.println("firstCustomNode: " + firstCustomNode);
+        //The first node is always in the zero index.
+        CustomNode firstCustomNode = customNodeArrayList.get(0);
 
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
-        System.out.println("Rule: "+ rule);
         print(rule, "\t");
 
     }
@@ -76,11 +66,11 @@ public class RuleComplete {
             return  new ArrayList<>();
         }else{
             //É And ou OR block
-            AndBlock andBlock = (AndBlock) parent;
+            LogicBlock logicBlock = (LogicBlock) parent;
 
             for(CustomNode node: customNodeArrayList){
 
-                if(andBlock.getLeftLabelVBox().getChildren().contains(node.getGraphicalRepresentation()) || andBlock.getRightLabelVBox().getChildren().contains(node.getGraphicalRepresentation())){
+                if(logicBlock.getLeftLabelVBox().getChildren().contains(node.getGraphicalRepresentation()) || logicBlock.getRightLabelVBox().getChildren().contains(node.getGraphicalRepresentation())){
                     childrens.add(node);
                 }
             }
@@ -90,29 +80,30 @@ public class RuleComplete {
         return childrens;
     }
 
-    private String getRule(){
-        String rule = "";
-        if(node.getType() == Types.AndBlock) {
-            AndBlock c;
-            c = (AndBlock) node;
-            rule = c.getLabel();
-        }
-        if(node.getType() == Types.ConditionBlock) {
-            ConditionBlock c;
-            c = (ConditionBlock) node;
-            if(c.getRuleBlock() == null)
-                rule = "() " + c.getOperator() + " " + c.getValue();
-            else
-                rule = c.getRuleBlock().getRuleMessage() + " " + c.getOperator() + " " + c.getValue();
-        }
-        if (left == null && right == null)
-            return rule;
-        if (left == null)
-            return rule + " (" + right.getRule() + ")";
-        if (right == null)
-            return "(" + left.getRule() + ") " + rule;
-        return "(" + left.getRule() + ") " + rule + " (" + right.getRule() + ")";
-    }
+
+//    private String getRule(){
+//        String rule = "";
+//        if(node.getType() == Types.AndBlock) {
+//            AndBlock c;
+//            c = (AndBlock) node;
+//            rule = c.getLabel();
+//        }
+//        if(node.getType() == Types.ConditionBlock) {
+//            ConditionBlock c;
+//            c = (ConditionBlock) node;
+//            if(c.getRuleBlock() == null)
+//                rule = "() " + c.getOperator() + " " + c.getValue();
+//            else
+//                rule = c.getRuleBlock().getRuleMessage() + " " + c.getOperator() + " " + c.getValue();
+//        }
+//        if (left == null && right == null)
+//            return rule;
+//        if (left == null)
+//            return rule + " (" + right.getRule() + ")";
+//        if (right == null)
+//            return "(" + left.getRule() + ") " + rule;
+//        return "(" + left.getRule() + ") " + rule + " (" + right.getRule() + ")";
+//    }
 
 
 

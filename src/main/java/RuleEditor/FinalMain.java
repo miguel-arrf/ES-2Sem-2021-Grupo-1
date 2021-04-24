@@ -91,7 +91,7 @@ public class FinalMain extends Application {
 
         for (CustomNode vBox1 : sortedArrayList) {
 
-            Node node = vBox1.getRuleMakerBox();
+            Node node = vBox1.getWidgetGraphicalRepresentation();
 
             node.setOnDragDetected(event -> {
                 Dragboard db = node.startDragAndDrop(TransferMode.ANY);
@@ -103,9 +103,9 @@ public class FinalMain extends Application {
                 ClipboardContent content = new ClipboardContent();
                 content.put(customFormat, 1);
 
-                if (vBox1.getType() == Types.AndBlock) {
-                    AndBlock block = (AndBlock) vBox1;
-                    AndBlock copyBlock = new AndBlock(inDragObject, block.getOperator(), block.getBoxColor());
+                if (vBox1.getType() == Types.LogicBlock) {
+                    LogicBlock block = (LogicBlock) vBox1;
+                    LogicBlock copyBlock = new LogicBlock(inDragObject, block.getOperator(), block.getBoxColor());
 
                     inDragObject.setNodes(copyBlock);
 
@@ -216,13 +216,13 @@ public class FinalMain extends Application {
         RuleBlock classSizeBlock = new RuleBlock("Class Size", true);
         RuleBlock godBlock = new RuleBlock("God class", false);
 
-        AndBlock andBlock = new AndBlock(inDragObject, RuleOperator.AND, "#ffeebb");
-        AndBlock orBlock = new AndBlock(inDragObject, RuleOperator.OR, "#8f4068");
+        LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
+        LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");
 
         rectanglesTypes.add(classSizeBlock);
         rectanglesTypes.add(godBlock);
 
-        rectanglesTypes.add(andBlock);
+        rectanglesTypes.add(logicBlock);
         rectanglesTypes.add(orBlock);
         rectanglesTypes.add(conditionBlock);
     }
@@ -305,6 +305,8 @@ public class FinalMain extends Application {
 
         VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
         mainPane.getChildren().add(customNode.getGraphicalRepresentation());
+
+        ruleNodes.clear();
         ruleNodes.add(customNode);
 
     }
@@ -323,9 +325,9 @@ class SortBlockArrayList implements Comparator<CustomNode> {
             return -1;
         if (a.getType() == b.getType())
             return 0;
-        if (a.getType() == Types.AndBlock && b.getType() == Types.ConditionBlock)
+        if (a.getType() == Types.LogicBlock && b.getType() == Types.ConditionBlock)
             return 1;
-        if (b.getType() == Types.AndBlock && a.getType() == Types.ConditionBlock)
+        if (b.getType() == Types.LogicBlock && a.getType() == Types.ConditionBlock)
             return -1;
 
         return 1;

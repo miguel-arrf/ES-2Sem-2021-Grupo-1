@@ -3,7 +3,7 @@ package metric_extraction;
 import java.io.File;
 import java.util.ArrayList;
 
-import RuleEditor.AndBlock;
+import RuleEditor.LogicBlock;
 import RuleEditor.ConditionBlock;
 import RuleEditor.RuleBlock;
 import code_smell_detection.*;
@@ -43,7 +43,7 @@ public class Main extends Application {
         RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class", true), "50"));
         RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class", true), "10", null));
 
-        RuleNode rule = new RuleNode(new AndBlock(RuleOperator.OR), left_node, right_node);
+        RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
 
         CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
         smells.add(god_class);
