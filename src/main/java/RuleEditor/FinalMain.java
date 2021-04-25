@@ -22,7 +22,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -124,7 +126,7 @@ public class FinalMain extends Application {
                 }
 
 
-                System.out.println(inDragObject);
+                //System.out.println(inDragObject);
                 db.setContent(content);
 
                 event.consume();
@@ -187,7 +189,7 @@ public class FinalMain extends Application {
         stackPane.getChildren().add(scrollPane);
 
 
-        rightVBox.getChildren().addAll(stackPane, getSaveButton());
+        rightVBox.getChildren().addAll(stackPane, getSaveButton(), getLoadButton());
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
@@ -203,6 +205,29 @@ public class FinalMain extends Application {
         saveButton.setOnAction(actionEvent -> {
 
             RuleComplete.createCodeSmell(ruleNodes);
+            //RuleComplete.saveToFileSerialize(ruleNodes);
+        });
+
+
+        saveButtonVBox.getChildren().add(saveButton);
+
+        return saveButtonVBox;
+    }
+
+    private VBox getLoadButton() {
+        VBox saveButtonVBox = new VBox();
+
+        Button saveButton = new Button("Load me papi :c");
+        saveButton.setOnAction(actionEvent -> {
+
+            try {
+                CustomNode firstCustomNode = RuleComplete.loadJSONFile();
+                addCustomNode(firstCustomNode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         });
 
 

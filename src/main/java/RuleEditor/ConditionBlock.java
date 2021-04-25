@@ -19,25 +19,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.json.simple.JSONObject;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 
-public class ConditionBlock implements CustomNode {
+public class ConditionBlock implements CustomNode , Serializable {
 
     private RuleOperator operator;
 
     private Node graphicalRepresentationNode;
 
-    private String rule;
-    private String value;
-
     public String getRule() {
-        return rule;
+        return ruleLabel.getText();
     }
 
-    private Label ruleLabel;
-    private Label valueLabel;
+    private final Label ruleLabel;
+    private final Label valueLabel;
     private Label operatorLabel;
 
 
@@ -57,12 +56,16 @@ public class ConditionBlock implements CustomNode {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
         this.operator = operator;
-        this.value = value;
+
+        valueLabel = new Label(value);
+
         this.ruleBlock = ruleBlock;
+
+        ruleLabel = new Label();
         if(ruleBlock == null){
-            this.rule = "Rule";
+            ruleLabel.setText("No Rule Block");
         }else{
-            this.rule = ruleBlock.getRuleMessage();
+            ruleLabel.setText(ruleBlock.getRuleMessage());
         }
 
 
@@ -73,9 +76,12 @@ public class ConditionBlock implements CustomNode {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
         this.operator = operator;
-        this.value = value;
+        valueLabel = new Label(value);
+
         this.ruleBlock = null;
-        this.rule = "Rule";
+
+        ruleLabel = new Label();
+        ruleLabel.setText("No Rule Block");
 
         graphicalRepresentationNode = getHBox();
     }
@@ -84,13 +90,16 @@ public class ConditionBlock implements CustomNode {
 
         this.oQueEstaASerDragged = null;
         this.operator = operator;
-        this.value = value;
+        valueLabel = new Label(value);
         this.ruleBlock = ruleBlock;
+
+        ruleLabel = new Label();
         if(ruleBlock == null){
-            this.rule = "Rule";
+            ruleLabel.setText("No Rule Block");
         }else{
-            this.rule = ruleBlock.getRuleMessage();
+            ruleLabel.setText(ruleBlock.getRuleMessage());
         }
+
 
     }
 
@@ -115,20 +124,18 @@ public class ConditionBlock implements CustomNode {
             if(db.hasContent(FinalMain.customFormat)){
                 success = true;
 
-                System.out.println("conditionblock: " + oQueEstaASerDragged);
+                //System.out.println("conditionblock: " + oQueEstaASerDragged);
                 if(oQueEstaASerDragged.getNodes().getType() == Types.RuleBlock){
                     RuleBlock c1 = (RuleBlock) oQueEstaASerDragged.getNodes();
 
                     ruleBlock = c1;
 
                     ruleLabel.setText(c1.getRuleMessage());
-                    this.rule = c1.getRuleMessage();
 
-                    value = "Value";
                     operator = RuleOperator.DEFAULT;
 
                     operatorLabel.setText(operator.label);
-                    valueLabel.setText(value);
+                    valueLabel.setText("Value");
                 }
 
 
@@ -229,8 +236,7 @@ public class ConditionBlock implements CustomNode {
             TextField textField = new TextField("0.0");
 
             updateButton.setOnAction(actionEvent -> {
-                value = textField.getText();
-                valueLabel.setText(value);
+                valueLabel.setText(textField.getText());
 
                 Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
             });
@@ -266,12 +272,10 @@ public class ConditionBlock implements CustomNode {
 
             trueButton.setOnMouseClicked(mouseEvent -> {
                 valueLabel.setText("TRUE");
-                value = "TRUE";
                 Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
             });
 
             falseButton.setOnMouseClicked(mouseEvent -> {
-                value = "FALSE";
                 valueLabel.setText("FALSE");
                 Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
             });
@@ -317,8 +321,6 @@ public class ConditionBlock implements CustomNode {
         HBox box = new HBox();
 
 
-        ruleLabel = new Label(rule);
-        valueLabel = new Label(value);
         operatorLabel = new Label(operator.label);
 
         VBox ruleLabelVbox = new VBox(ruleLabel);
@@ -391,6 +393,10 @@ public class ConditionBlock implements CustomNode {
         return box;
     }
 
+
+
+
+
     @Override
     public Node getGraphicalRepresentation() {
         setHBoxDelete(graphicalRepresentationNode);
@@ -402,7 +408,7 @@ public class ConditionBlock implements CustomNode {
     }
 
     public String getValue() {
-        return value;
+        return valueLabel.getText();
     }
 
     @Override
@@ -429,11 +435,19 @@ public class ConditionBlock implements CustomNode {
 
     @Override
     public String toString() {
-        return "ConditionBlock{" +
-                "operator= " + operator.label +
-                ", ruleLabel= " + ruleLabel.getText() +
-                ", valueLabel= " + valueLabel.getText() +
-                '}';
+        JSONObject object = new JSONObject();
+        object.put("operator", getOperator().label);
+        object.put("ruleLabel", ruleLabel.getText());
+        object.put("valueLabel", valueLabel.getText());
+        return object.toJSONString();
+//        return "ConditionBlock [ " +
+//                "operator: " + operator.label +
+//                "; ruleLabel: " + ruleLabel.getText() +
+//                "; valueLabel: " + valueLabel.getText() +
+//                " ]";
+
     }
+
+
 }
 

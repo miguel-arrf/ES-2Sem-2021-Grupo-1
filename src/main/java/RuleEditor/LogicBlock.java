@@ -18,8 +18,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.json.simple.JSONObject;
 
-public class LogicBlock implements CustomNode {
+public class LogicBlock implements CustomNode  {
 
     private final Node graphicalRepresentationNode;
 
@@ -205,7 +206,7 @@ public class LogicBlock implements CustomNode {
             content.put(FinalMain.customFormat, 1);
             oQueEstaASerDragged.setNodes(customNode);
 
-            System.out.println(oQueEstaASerDragged);
+            //System.out.println(oQueEstaASerDragged);
             new_DB.setContent(content);
 
             vBox.getChildren().clear();
@@ -214,6 +215,17 @@ public class LogicBlock implements CustomNode {
         });
 
     }
+
+
+    public void addToRight(CustomNode customNode){
+        addCustomNodeOnDrag(rightLabelVBox, customNode);
+    }
+
+    public void addToLeft(CustomNode customNode){
+            addCustomNodeOnDrag(leftLabelVBox, customNode);
+    }
+
+
 
     public String getBoxColor() {
         return boxColor;
@@ -245,7 +257,12 @@ public class LogicBlock implements CustomNode {
 
     @Override
     public String toString() {
-        return getOperator().label;
+        JSONObject object = new JSONObject();
+        object.put("operator", getOperator().label);
+        return object.toJSONString();
+        //return "LogicBlock [ operator: " + getOperator().label + " ]";
+
     }
+
 
 }
