@@ -48,10 +48,6 @@ public class ConditionBlock implements CustomNode {
 
     private final DraggingObject oQueEstaASerDragged;
 
-    public DraggingObject getoQueEstaASerDragged() {
-        return oQueEstaASerDragged;
-    }
-
     public RuleBlock getRuleBlock() {
         return ruleBlock;
     }
@@ -144,10 +140,10 @@ public class ConditionBlock implements CustomNode {
     }
 
     private Button getStyledButton(RuleOperator label){
-        return getStyledButton(label, null, true);
+        return getStyledButton(label, null);
     }
 
-    private Button getStyledButton(RuleOperator operatorToPut, String customColor, boolean isOperator){
+    private Button getStyledButton(RuleOperator operatorToPut, String customColor){
         Button button = new Button(operatorToPut.label);
         button.getStyleClass().add(ruleBlock.getIsNumeric() ? "roundedAddButton" : "textualRuleButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
@@ -155,14 +151,12 @@ public class ConditionBlock implements CustomNode {
 
         button.setPadding(new Insets(10, 20, 10, 20));
 
-        if(isOperator){
-            button.setOnMouseClicked(mouseEvent -> {
-                operator = operatorToPut;
-                operatorLabel.setText(operator.label);
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+        button.setOnMouseClicked(mouseEvent -> {
+            operator = operatorToPut;
+            operatorLabel.setText(operator.label);
+            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
 
-            });
-        }
+        });
 
         if(customColor!=null){
             button.setStyle("-fx-background-color: " + customColor);
@@ -188,6 +182,8 @@ public class ConditionBlock implements CustomNode {
     }
 
     private HBox optionsHBox(){
+        HBox hBox = new HBox();
+
         if(ruleBlock.getIsNumeric()){
             Button lessButton = getStyledButton(RuleOperator.LESSER);
             Button lessOrEqualButton = getStyledButton(RuleOperator.LESSER_EQUAL);
@@ -196,37 +192,26 @@ public class ConditionBlock implements CustomNode {
             Button equalButton = getStyledButton(RuleOperator.EQUAL);
             Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
 
-            HBox hBox = new HBox(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
-            hBox.getStyleClass().add("ruleBuilderMenu");
-
-            hBox.setPadding(new Insets(10));
-            hBox.setSpacing(10);
-
-            hBox.setMaxHeight(100);
-            hBox.setMaxWidth(400);
-            hBox.setEffect(AppStyle.getDropShadow());
-
-            hBox.setAlignment(Pos.CENTER);
-
-            return hBox;
+            hBox.getChildren().addAll(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
         }else{
             Button equalButton = getStyledButton(RuleOperator.EQUAL);
             Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
 
-            HBox hBox = new HBox(equalButton,differentButton);
-            hBox.getStyleClass().add("ruleBuilderMenu");
-
-            hBox.setPadding(new Insets(10));
-            hBox.setSpacing(10);
-
-            hBox.setMaxHeight(100);
-            hBox.setMaxWidth(400);
-            hBox.setEffect(AppStyle.getDropShadow());
-
-            hBox.setAlignment(Pos.CENTER);
-
-            return hBox;
+            hBox.getChildren().addAll(equalButton, differentButton);
         }
+
+        hBox.getStyleClass().add("ruleBuilderMenu");
+
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
+
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(400);
+        hBox.setEffect(AppStyle.getDropShadow());
+
+        hBox.setAlignment(Pos.CENTER);
+
+        return hBox;
 
     }
 
@@ -314,9 +299,7 @@ public class ConditionBlock implements CustomNode {
 
     private void setHBoxDelete(Node box){
         ContextMenu menu = new ContextMenu();
-        box.setOnContextMenuRequested(contextMenuEvent -> {
-            menu.show(box.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-        });
+        box.setOnContextMenuRequested(contextMenuEvent -> menu.show(box.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
         MenuItem deleteMenu = new MenuItem("delete");
         menu.getItems().add(deleteMenu);

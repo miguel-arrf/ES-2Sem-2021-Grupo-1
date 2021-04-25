@@ -41,13 +41,15 @@ public class LogicBlock implements CustomNode {
         graphicalRepresentationNode = getHBox();
     }
 
-    public LogicBlock(DraggingObject oQueEstaASerDragged, RuleOperator label, String boxColor, Node graphicalRepresentationNode) {
-        this.label = label;
-        this.oQueEstaASerDragged = oQueEstaASerDragged;
-        this.boxColor = boxColor;
-
-        andLabel = new Label(label.label);
-        this.graphicalRepresentationNode = graphicalRepresentationNode;
+    public LogicBlock(LogicBlock logicBlock){
+        this.label = logicBlock.label;
+        this.oQueEstaASerDragged = logicBlock.oQueEstaASerDragged;
+        this.boxColor = logicBlock.boxColor;
+        andLabel = logicBlock.andLabel;
+        this.graphicalRepresentationNode = logicBlock.graphicalRepresentationNode;
+        this.leftLabelVBox = logicBlock.leftLabelVBox;
+        this.rightLabelVBox = logicBlock.rightLabelVBox;
+        this.andLabelVBox = logicBlock.andLabelVBox;
     }
 
     public LogicBlock(RuleOperator label) {
@@ -65,7 +67,6 @@ public class LogicBlock implements CustomNode {
     public VBox getRightLabelVBox() {
         return rightLabelVBox;
     }
-
 
     private void setDrag(VBox vBox) {
 
@@ -239,7 +240,7 @@ public class LogicBlock implements CustomNode {
     }
 
     public LogicBlock getCopy() {
-        return new LogicBlock(oQueEstaASerDragged, getOperator(), getBoxColor(), getGraphicalRepresentation());
+        return new LogicBlock(this);
     }
 
     @Override
