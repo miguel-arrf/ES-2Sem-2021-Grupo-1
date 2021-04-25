@@ -40,6 +40,7 @@ public class ConditionBlock implements CustomNode {
     private Label valueLabel;
     private Label operatorLabel;
 
+
     private Stage popupStage;
 
     private HBox optionsHBox;
