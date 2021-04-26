@@ -34,9 +34,26 @@ public class RuleComplete implements Serializable {
 //
 //    }
 
+    private File file;
+
+    public RuleComplete(){
+
+    }
+
+    public RuleComplete(File file){
+        this.file = file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
 
 
-    public static JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+    public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
 
@@ -67,7 +84,7 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static void arrayListToJSON(ObservableList<JSONObject> jsonObjectObservableList){
+    public  void arrayListToJSON(ObservableList<JSONObject> jsonObjectObservableList){
 
         JSONArray jsonObject = new JSONArray();
 
@@ -85,11 +102,11 @@ public class RuleComplete implements Serializable {
     }
 
 
-    public static JSONObject toJSON(CustomNode node, List<CustomNode> others) {
+    public  JSONObject toJSON(CustomNode node, List<CustomNode> others) {
         JSONObject json = new JSONObject();
         json.put("id", node); // and so on
 
-        ArrayList<CustomNode> childrenCustomNode = RuleComplete.getChild(node, others);
+        ArrayList<CustomNode> childrenCustomNode = getChild(node, others);
         List<JSONObject> children = new ArrayList<JSONObject>();
 
         for(CustomNode subnode : childrenCustomNode) {
@@ -100,18 +117,22 @@ public class RuleComplete implements Serializable {
         return json;
     }
 
-    public static ArrayList<CustomNode> loadJSONRuleFile() throws FileNotFoundException {
-        ArrayList<CustomNode> customNodes = new ArrayList<>();
+    public  ArrayList<JSONObject> loadJSONRuleFile() throws IOException, ParseException {
+        ArrayList<JSONObject> customNodes = new ArrayList<>();
 
         JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader("Rules.txt");
+        Reader reader = new FileReader(file);
 
+        JSONArray jsonArray = (JSONArray) jsonParser.parse(reader);
 
+        for(Object jsonObject : jsonArray){
+            customNodes.add((JSONObject) jsonObject);
+        }
 
         return customNodes;
     }
 
-    public static CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
+    public  CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
         Reader reader = new FileReader(file);
 
@@ -130,9 +151,9 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
+    public  CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader("Rules.txt");
+        Reader reader = new FileReader(file);
 
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
         JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
@@ -151,7 +172,7 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
+    public  void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
 
         if(child.size() == 1){
@@ -181,7 +202,7 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
+    public  CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();
 
         CustomNode firstCustomNode = null;
@@ -202,7 +223,7 @@ public class RuleComplete implements Serializable {
     }
 
 
-    private static RuleOperator getRuleOperator(String operator){
+    private  RuleOperator getRuleOperator(String operator){
 
         if(operator.equals(RuleOperator.GREATER.label)){
             return RuleOperator.GREATER;
@@ -226,15 +247,15 @@ public class RuleComplete implements Serializable {
         return RuleOperator.DEFAULT;
     }
 
-    public static void saveFile(String rule) throws IOException {
-        FileWriter fileWriter = new FileWriter("rules.txt");
+    public  void saveFile(String rule) throws IOException {
+        FileWriter fileWriter = new FileWriter(file);
         PrintWriter printWriter = new PrintWriter(fileWriter);
         printWriter.print(rule);
         printWriter.close();
         fileWriter.close();
     }
 
-    public static RuleNode createRuleNode(CustomNode customNode, ArrayList<CustomNode> customNodeArrayList){
+    public  RuleNode createRuleNode(CustomNode customNode, ArrayList<CustomNode> customNodeArrayList){
 
         if(customNode.getType() == Types.ConditionBlock){
             ConditionBlock conditionBlock = (ConditionBlock) customNode;
@@ -263,7 +284,7 @@ public class RuleComplete implements Serializable {
     }
 
 
-    private static void print(RuleNode ruleNode, String tab, StringBuilder representation){
+    private  void print(RuleNode ruleNode, String tab, StringBuilder representation){
         representation.append(tab).append(ruleNode.getElement());
         //System.out.println(tab + ruleNode.getElement());
         if(ruleNode.getLeft_node() != null){
@@ -275,7 +296,7 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static ArrayList<CustomNode> getChild(CustomNode parent, List<CustomNode> customNodeArrayList){
+    public  ArrayList<CustomNode> getChild(CustomNode parent, List<CustomNode> customNodeArrayList){
         ArrayList<CustomNode> childrens = new ArrayList<>();
 
         if (parent.getType() == Types.ConditionBlock){

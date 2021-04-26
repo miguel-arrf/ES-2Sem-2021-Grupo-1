@@ -37,6 +37,7 @@ public class FinalMain extends Application {
 
     private JSONObject rule;
     private String ruleName;
+    private RuleComplete ruleComplete;
 
     public String getRuleName() {
         return ruleName;
@@ -63,7 +64,8 @@ public class FinalMain extends Application {
         stage.show();
     }
 
-    public SplitPane getRuleEditor(Stage stage){
+    public SplitPane getRuleEditor(Stage stage, RuleComplete ruleComplete){
+        this.ruleComplete = ruleComplete;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
@@ -271,7 +273,7 @@ public class FinalMain extends Application {
         popupStage.setOnCloseRequest(windowEvent -> {
             ruleName = textField.getText();
             stage.setTitle(ruleName);
-            rule = RuleComplete.createCodeSmell(ruleNodes, getRuleName());
+            rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
             System.out.println("rule: " + rule.toJSONString());
 
         });
@@ -309,7 +311,7 @@ public class FinalMain extends Application {
 
             try {
                 mainPane.getChildren().clear();
-                CustomNode firstCustomNode = RuleComplete.loadJSONFile(inDragObject);
+                CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
                 addCustomNode(firstCustomNode);
             } catch (IOException | ParseException e) {
                 e.printStackTrace();
