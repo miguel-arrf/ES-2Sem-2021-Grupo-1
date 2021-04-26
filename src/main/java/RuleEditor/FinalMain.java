@@ -1,6 +1,7 @@
 package RuleEditor;
 
 import code_smell_detection.RuleOperator;
+import g1.ISCTE.AppStyle;
 import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
@@ -8,18 +9,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
@@ -45,7 +41,7 @@ public class FinalMain extends Application {
     public void start(Stage stage) {
 
         SplitPane splitPane = new SplitPane();
-        configureSceneMainView(splitPane);
+        configureSceneMainView(splitPane, stage);
 
         Scene scene = new Scene(splitPane, 1200, 1200);
 
@@ -54,7 +50,7 @@ public class FinalMain extends Application {
         stage.show();
     }
 
-    private void configureSceneMainView(SplitPane splitPane) {
+    private void configureSceneMainView(SplitPane splitPane, Stage stage) {
         addDefaultBlocks();
 
         ScrollPane scrollPane = new ScrollPane();
@@ -69,16 +65,32 @@ public class FinalMain extends Application {
 
         splitPane.getItems().add(rightVBox);
 
-        configureMainPane();
+        configureMainPane(stage);
     }
 
     private void configureSceneAndStage(Scene scene, Stage stage) {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
 
         stage.setTitle("Rule Builder");
+        stage.getIcons().add(new Image(AppStyle.class.getResourceAsStream("/RuleBuilderIcon.gif")));
+
         stage.setScene(scene);
     }
 
+
+    private VBox getOptionsVBox(){
+        VBox vBoxOptions = new VBox();
+
+        HBox.setHgrow(vBoxOptions, Priority.ALWAYS);
+        vBoxOptions.setSpacing(30);
+        vBoxOptions.setAlignment(Pos.CENTER);
+        vBoxOptions.setPadding(new Insets(30, 30, 30, 30));
+
+        vBoxOptions.getChildren().addAll(getSaveButton(), getLoadButton());
+
+
+        return vBoxOptions;
+    }
 
     private VBox getBlocksVBox() {
         VBox vBoxItems = new VBox();
@@ -133,26 +145,53 @@ public class FinalMain extends Application {
             });
 
 
+
             vBoxItems.getChildren().add(node);
 
 
         }
 
+        int alreadyAddedIncrement = 0;
+        for (int i = 1; i < sortedArrayList.size(); i++) {
+
+            if(sortedArrayList.get(i-1).getType() != sortedArrayList.get(i).getType()){
+
+                vBoxItems.getChildren().add(i+alreadyAddedIncrement, new Separator());
+                alreadyAddedIncrement++;
+            }
+        }
+
+
         return vBoxItems;
     }
 
-    private ScrollPane getScrollPane() {
+    private StackPane getStackPane(VBox content){
+        //ScrollPane where boxes go
+        ScrollPane scrollPane = getScrollPane(content);
+
+        //StackPane due to rounded corners...
+        StackPane stackPane = new StackPane();
+        VBox emptyPane = new VBox();
+        emptyPane.getStyleClass().add("emptyLeftPane");
+        VBox.setVgrow(emptyPane, Priority.ALWAYS);
+
+        stackPane.getChildren().add(emptyPane);//Background...
+        stackPane.getChildren().add(scrollPane);
+
+        return stackPane;
+    }
+
+    private ScrollPane getScrollPane(VBox content) {
         ScrollPane scrollPane = new ScrollPane();
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(getBlocksVBox());
+        scrollPane.setContent(content);
 
         scrollPane.setMinWidth(250);
         scrollPane.setPrefWidth(200);
         scrollPane.setMaxWidth(350);
 
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
-
 
         scrollPane.setFitToWidth(true);
 
@@ -170,26 +209,14 @@ public class FinalMain extends Application {
 
         rightVBox.setPrefWidth(250);
         rightVBox.setMaxWidth(400);
+        rightVBox.setSpacing(20);
 
         rightVBox.setAlignment(Pos.TOP_CENTER);
 
         rightVBox.setStyle("-fx-background-color: #1c1c1e");
 
 
-        //ScrollPane where boxes go
-        ScrollPane scrollPane = getScrollPane();
-
-        //StackPane due to rounded corners...
-        StackPane stackPane = new StackPane();
-        VBox emptyPane = new VBox();
-        emptyPane.getStyleClass().add("emptyLeftPane");
-        VBox.setVgrow(emptyPane, Priority.ALWAYS);
-
-        stackPane.getChildren().add(emptyPane);//Background...
-        stackPane.getChildren().add(scrollPane);
-
-
-        rightVBox.getChildren().addAll(stackPane, getSaveButton(), getLoadButton());
+        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), getStackPane(getOptionsVBox()));
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
@@ -198,8 +225,8 @@ public class FinalMain extends Application {
 
     }
 
-    private VBox getSaveButton() {
-        VBox saveButtonVBox = new VBox();
+    private Button getSaveButton() {
+
 
         Button saveButton = new Button("Save me :3");
         saveButton.setOnAction(actionEvent -> {
@@ -209,13 +236,20 @@ public class FinalMain extends Application {
         });
 
 
-        saveButtonVBox.getChildren().add(saveButton);
+        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: #a29bfe");
+        saveButton.setMinWidth(150);
+        saveButton.setMinHeight(50);
+        saveButton.setAlignment(Pos.CENTER);
 
-        return saveButtonVBox;
+        saveButton.setMaxWidth(Double.MAX_VALUE);
+
+
+        return saveButton;
     }
 
-    private VBox getLoadButton() {
-        VBox saveButtonVBox = new VBox();
+    private Button getLoadButton() {
 
         Button saveButton = new Button("Load me papi :c");
         saveButton.setOnAction(actionEvent -> {
@@ -231,9 +265,17 @@ public class FinalMain extends Application {
         });
 
 
-        saveButtonVBox.getChildren().add(saveButton);
+        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: #d5ecc2");
+        saveButton.setMinWidth(150);
+        saveButton.setMinHeight(50);
+        saveButton.setAlignment(Pos.CENTER);
 
-        return saveButtonVBox;
+        saveButton.setMaxWidth(Double.MAX_VALUE);
+
+
+        return saveButton;
     }
 
     private void addDefaultBlocks() {
@@ -252,13 +294,21 @@ public class FinalMain extends Application {
         rectanglesTypes.add(conditionBlock);
     }
 
-    private void configureMainPane() {
+    private void configureMainPane(Stage stage) {
         mainPane.setStyle("-fx-background-color: #3d3c40 ");
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
 
         Label firstLabel = new Label("Drag & Drop here");
+
+        stage.heightProperty().addListener((observableValue, number, t1) -> firstLabel.setMinHeight(t1.doubleValue()-80));
+
+        firstLabel.setMaxWidth(Double.MAX_VALUE);
         firstLabel.setTextFill(Color.WHITE);
+        firstLabel.setAlignment(Pos.CENTER);
+        firstLabel.setPadding(new Insets(20,100,20,100));
+        firstLabel.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
+        firstLabel.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
 
         mainPane.setAlignment(Pos.CENTER);
 
@@ -281,14 +331,7 @@ public class FinalMain extends Application {
             event.consume();
         });
 
-        mainPane.setOnDragEntered(event -> {
-            if (event.getDragboard().hasContent(customFormat)) {
-                mainPane.setStyle("-fx-background-color: red ");
-                mainPane.getStylesheets().add("style.css");
-                mainPane.getStyleClass().add("background");
-            }
-            event.consume();
-        });
+
 
         mainPane.setOnDragExited(event -> {
             mainPane.getStyleClass().remove("background");

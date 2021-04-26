@@ -307,7 +307,7 @@ public class ConditionBlock implements CustomNode , Serializable {
                 if(ruleBlock != null){
                     optionsHBox = optionsHBox();
 
-                    Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                    Stage newStage = AppStyle.setUpPopup("Operator", "/PreferencesPanelIcon.gif", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     popupStage = newStage;
 
                     //newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, FinalMain.splitPane));
@@ -330,7 +330,7 @@ public class ConditionBlock implements CustomNode , Serializable {
                 if(ruleBlock != null){
                     optionsHBox = valueHBox();
 
-                    Stage newStage = AppStyle.setUpPopup("Value", "noIcon", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                    Stage newStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     popupStage = newStage;
 
                     newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
