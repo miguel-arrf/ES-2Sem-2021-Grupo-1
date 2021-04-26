@@ -18,6 +18,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -33,8 +35,19 @@ public class FinalMain extends Application {
     private final ArrayList<CustomNode> rectanglesTypes = new ArrayList<>();
     private final DraggingObject inDragObject = new DraggingObject();
 
+    private JSONObject rule;
+    private String ruleName;
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public JSONObject getRule() {
+        return rule;
     }
 
     @Override
@@ -50,6 +63,13 @@ public class FinalMain extends Application {
         stage.show();
     }
 
+    public SplitPane getRuleEditor(Stage stage){
+        SplitPane splitPane = new SplitPane();
+        configureSceneMainView(splitPane, stage);
+
+        return splitPane;
+    }
+
     private void configureSceneMainView(SplitPane splitPane, Stage stage) {
         addDefaultBlocks();
 
@@ -61,7 +81,7 @@ public class FinalMain extends Application {
         splitPane.setDividerPositions(0.8);
         splitPane.getItems().add(scrollPane);
 
-        VBox rightVBox = rightVBox();
+        VBox rightVBox = rightVBox(stage);
 
         splitPane.getItems().add(rightVBox);
 
@@ -78,7 +98,7 @@ public class FinalMain extends Application {
     }
 
 
-    private VBox getOptionsVBox(){
+    private VBox getOptionsVBox(Stage stage){
         VBox vBoxOptions = new VBox();
 
         HBox.setHgrow(vBoxOptions, Priority.ALWAYS);
@@ -86,7 +106,7 @@ public class FinalMain extends Application {
         vBoxOptions.setAlignment(Pos.CENTER);
         vBoxOptions.setPadding(new Insets(30, 30, 30, 30));
 
-        vBoxOptions.getChildren().addAll(getSaveButton(), getLoadButton());
+        vBoxOptions.getChildren().addAll(getSaveButton(stage)/*, getLoadButton()*/);
 
 
         return vBoxOptions;
@@ -204,7 +224,7 @@ public class FinalMain extends Application {
         return scrollPane;
     }
 
-    private VBox rightVBox() {
+    private VBox rightVBox(Stage stage) {
         VBox rightVBox = new VBox();
 
         rightVBox.setPrefWidth(250);
@@ -216,7 +236,7 @@ public class FinalMain extends Application {
         rightVBox.setStyle("-fx-background-color: #1c1c1e");
 
 
-        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), getStackPane(getOptionsVBox()));
+        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), getStackPane(getOptionsVBox(stage)));
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
@@ -225,13 +245,46 @@ public class FinalMain extends Application {
 
     }
 
-    private Button getSaveButton() {
+
+    private void textFieldStage(Stage stage){
+
+        Button closeWindow = new Button("Save");
+        TextField textField = new TextField("Rule name");
+
+        HBox hBox = new HBox(closeWindow, textField);
+
+
+        Stage popupStage = AppStyle.setUpPopupStage("Rule name", "/RuleBuilderIcon.gif", true);
+
+        VBox.setMargin(hBox, new Insets(20));
+        hBox.setPadding(new Insets(10));
+
+        Scene scene = new Scene(hBox);
+        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+        popupStage.setScene(scene);
+
+        closeWindow.setOnAction(actionEvent -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+
+        popupStage.show();
+
+        popupStage.setOnCloseRequest(windowEvent -> {
+            ruleName = textField.getText();
+            stage.setTitle(ruleName);
+            rule = RuleComplete.createCodeSmell(ruleNodes, getRuleName());
+            System.out.println("rule: " + rule.toJSONString());
+
+        });
+
+    }
+
+
+    private Button getSaveButton(Stage stage) {
 
 
         Button saveButton = new Button("Save me :3");
         saveButton.setOnAction(actionEvent -> {
-
-            RuleComplete.createCodeSmell(ruleNodes);
+            textFieldStage(stage);
             //RuleComplete.saveToFileSerialize(ruleNodes);
         });
 
@@ -255,11 +308,10 @@ public class FinalMain extends Application {
         saveButton.setOnAction(actionEvent -> {
 
             try {
+                mainPane.getChildren().clear();
                 CustomNode firstCustomNode = RuleComplete.loadJSONFile(inDragObject);
                 addCustomNode(firstCustomNode);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
+            } catch (IOException | ParseException e) {
                 e.printStackTrace();
             }
         });

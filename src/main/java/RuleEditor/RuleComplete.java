@@ -2,6 +2,7 @@ package RuleEditor;
 
 import code_smell_detection.RuleNode;
 import code_smell_detection.RuleOperator;
+import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -33,7 +34,9 @@ public class RuleComplete implements Serializable {
 //
 //    }
 
-    public static void createCodeSmell(ArrayList<CustomNode> customNodeArrayList){
+
+
+    public static JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
 
@@ -44,22 +47,42 @@ public class RuleComplete implements Serializable {
         print(rule, "", stringBuilder);
         System.out.println(stringBuilder);
 
+        JSONObject jsonObject = toJSON(firstCustomNode, customNodeArrayList);
 
-        System.out.println("TEEEEEESTE");
+        CustomNode id = (CustomNode) jsonObject.get("id");
+        JSONObject newID = new JSONObject();
+        newID.put("id", id);
+        newID.put("name", name);
+        jsonObject.replace("id", newID);
 
-        JSONObject teste = toJSON(firstCustomNode, customNodeArrayList);
-        System.out.println(teste.toJSONString());
+
+
+        /*try {
+            saveFile(jsonObject.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        return jsonObject;
+
+    }
+
+    public static void arrayListToJSON(ObservableList<JSONObject> jsonObjectObservableList){
+
+        JSONArray jsonObject = new JSONArray();
+
+        for(JSONObject object : jsonObjectObservableList){
+            jsonObject.add(object);
+        }
 
         try {
-            saveFile(teste.toJSONString());
+            saveFile(jsonObject.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
     }
-
-
 
 
     public static JSONObject toJSON(CustomNode node, List<CustomNode> others) {
@@ -77,11 +100,43 @@ public class RuleComplete implements Serializable {
         return json;
     }
 
+    public static ArrayList<CustomNode> loadJSONRuleFile() throws FileNotFoundException {
+        ArrayList<CustomNode> customNodes = new ArrayList<>();
+
+        JSONParser jsonParser = new JSONParser();
+        Reader reader = new FileReader("Rules.txt");
+
+
+
+        return customNodes;
+    }
+
+    public static CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
+        JSONParser jsonParser = new JSONParser();
+        Reader reader = new FileReader(file);
+
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+
+        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
+
+        System.out.println("firstCustomNode :" + firstCustomNode);
+        if(firstCustomNode.getType() ==  Types.LogicBlock){
+            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
+
+            return firstCustomNode;
+        }
+
+        return firstCustomNode;
+
+    }
+
     public static CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
         Reader reader = new FileReader("Rules.txt");
 
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+        JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
+        jsonObject.replace("id", (JSONObject)idWithoutName.get("id"));
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
@@ -125,8 +180,6 @@ public class RuleComplete implements Serializable {
         }
 
     }
-
-
 
     public static CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();

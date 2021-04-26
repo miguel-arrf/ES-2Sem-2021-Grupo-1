@@ -105,7 +105,7 @@ public class AppStyle {
      * @param iconPlace path for popup icon
      * @param content content to be displayed in the popup
      * @param styleSheet pop stylesheet name
-     * @return popup stage
+     * @return
      */
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
@@ -116,6 +116,7 @@ public class AppStyle {
 
         return popupStage;
     }
+
 
     /**
      * Creates popup with given title, icon, content and style.
@@ -147,7 +148,7 @@ public class AppStyle {
      * @param popupStage popup stage
      * @param styleSheet pop stylesheet name
      */
-    private static void setUpPoupScene(HBox content, Stage popupStage, String styleSheet) {
+    private static void setUpPoupScene(Pane content, Stage popupStage, String styleSheet) {
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));

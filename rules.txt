@@ -1,1 +1,1 @@
-{"children":[{"children":[{"children":[],"id":{"ruleLabel":"God class","valueLabel":"10","operator":"="}},{"children":[],"id":{"ruleLabel":"Class Size","valueLabel":"20","operator":"<"}}],"id":{"operator":"OR"}},{"children":[],"id":{"ruleLabel":"God class","valueLabel":"20","operator":"<="}}],"id":{"operator":"AND"}}
+[{"children":[],"id":{"name":"Miguel","id":{"ruleLabel":"God class","valueLabel":"20","operator":"<"}}},{"children":[],"id":{"name":"Matilde","id":{"ruleLabel":"God class","valueLabel":"20000","operator":">="}}}]
