@@ -40,8 +40,8 @@ public class Main extends Application {
         extractor.executeExtraction();
         ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
 
-        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class", true), "50"));
-        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class", true), "10", null));
+        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class"), "50"));
+        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class"), "10", null));
 
         RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
 

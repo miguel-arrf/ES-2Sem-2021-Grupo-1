@@ -120,7 +120,7 @@ public class FinalMain extends Application {
                 } else if (vBox1.getType() == Types.RuleBlock) {
 
                     RuleBlock block = (RuleBlock) vBox1;
-                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage(), block.getIsNumeric());
+                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage());
 
                     inDragObject.setNodes(copyBlock);
                 }
@@ -221,7 +221,7 @@ public class FinalMain extends Application {
         saveButton.setOnAction(actionEvent -> {
 
             try {
-                CustomNode firstCustomNode = RuleComplete.loadJSONFile();
+                CustomNode firstCustomNode = RuleComplete.loadJSONFile(inDragObject);
                 addCustomNode(firstCustomNode);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -238,8 +238,8 @@ public class FinalMain extends Application {
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
-        RuleBlock classSizeBlock = new RuleBlock("Class Size", true);
-        RuleBlock godBlock = new RuleBlock("God class", false);
+        RuleBlock classSizeBlock = new RuleBlock("Class Size");
+        RuleBlock godBlock = new RuleBlock("God class");
 
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
         LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");

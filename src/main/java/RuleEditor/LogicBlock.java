@@ -3,6 +3,7 @@ package RuleEditor;
 import code_smell_detection.RuleOperator;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -87,7 +88,10 @@ public class LogicBlock implements CustomNode  {
             if (db.hasContent(FinalMain.customFormat)) {
                 success = true;
 
-                addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNodes().getCopy());
+                if(oQueEstaASerDragged.getNodes().getType() != Types.RuleBlock){
+                    addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNodes().getCopy());
+
+                }
 
             }
 
@@ -98,21 +102,37 @@ public class LogicBlock implements CustomNode  {
     }
 
     private void setLabelListener(VBox vBox, Label label) {
-        final ObservableList<Node> children = vBox.getChildren();
+        ObservableList<Node> children = vBox.getChildren();
+
 
         children.addListener((ListChangeListener<Node>) change -> {
+
+
             while (change.next()) {
                 if (change.wasRemoved()) {
-                    for (Node item : change.getRemoved()) {
-                        children.remove(item);
-                        if (!item.equals(label)) {
-                            if (!children.contains(label)) {
-                                children.add(label);
-                            }
+
+                    if(!change.getRemoved().contains(label)){
+                        if (!vBox.getChildren().contains(label)) {
+                            vBox.getChildren().add(label);
                         }
                     }
+
                 }
+                    /*for (Node item : change.getRemoved()) {
+                        vBox.getChildren().remove(item);
+                        if (!item.equals(label)) {
+                            if (!vBox.getChildren().contains(label)) {
+                                vBox.getChildren().add(label);
+                            }
+                        }
+                    }*/
+
             }
+
+            if(vBox.getChildren().size() == 2){
+                Platform.runLater(() -> vBox.getChildren().remove(label));
+            }
+
         });
 
     }
@@ -189,8 +209,9 @@ public class LogicBlock implements CustomNode  {
     }
 
     public void addCustomNodeOnDrag(VBox vBox, CustomNode customNode ){
-        vBox.getChildren().clear();
-        vBox.getChildren().add(customNode.getGraphicalRepresentation());
+        Platform.runLater(() -> vBox.getChildren().clear());
+        Platform.runLater(() -> vBox.getChildren().add(customNode.getGraphicalRepresentation()));
+
 
         FinalMain.ruleNodes.add(customNode);
 

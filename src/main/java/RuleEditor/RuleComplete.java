@@ -77,17 +77,17 @@ public class RuleComplete implements Serializable {
         return json;
     }
 
-    public static CustomNode loadJSONFile() throws IOException, ParseException {
+    public static CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
         Reader reader = new FileReader("Rules.txt");
 
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 
-        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject);
+        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
         System.out.println("firstCustomNode :" + firstCustomNode);
         if(firstCustomNode.getType() ==  Types.LogicBlock){
-            toCustomNode((LogicBlock) firstCustomNode, jsonObject);
+            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
 
             return firstCustomNode;
         }
@@ -96,55 +96,58 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public static void toCustomNode(LogicBlock parent, JSONObject jsonList){
+    public static void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
 
         if(child.size() == 1){
-            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0));
+            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
             parent.addToRight(nodeToAddRight);
 
             if(nodeToAddRight.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0) );
+                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0), draggingObject );
             }
 
         }else if(child.size() == 2){
-            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0));
+            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
             parent.addToRight(nodeToAddRight);
 
             if(nodeToAddRight.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0) );
+                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0), draggingObject );
             }
 
-            CustomNode nodeToAddLeft = jsonObjectToCustomNode((JSONObject) child.get(1));
+            CustomNode nodeToAddLeft = jsonObjectToCustomNode((JSONObject) child.get(1), draggingObject);
             parent.addToLeft(nodeToAddLeft);
 
             if(nodeToAddLeft.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(0) );
+                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(0), draggingObject );
             }
 
         }
 
     }
 
-    public static CustomNode jsonObjectToCustomNode(JSONObject jsonObject){
+
+
+    public static CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();
 
         CustomNode firstCustomNode = null;
         if (firstCustomNodeString.equals("AND")){
-            firstCustomNode = new LogicBlock(null,RuleOperator.AND, "red" );
+            firstCustomNode = new LogicBlock(draggingObject,RuleOperator.AND, "red" );
         }else if(firstCustomNodeString.equals("OR")){
-            firstCustomNode = new LogicBlock(null,RuleOperator.OR, "blue" );
+            firstCustomNode = new LogicBlock(draggingObject,RuleOperator.OR, "blue" );
         }else{
             JSONObject parameters = ((JSONObject) jsonObject.get("id"));
             String operator = parameters.get("operator").toString();
             String ruleBlock = parameters.get("ruleLabel").toString();
             String value = parameters.get("valueLabel").toString();
 
-            return new ConditionBlock(getRuleOperator(operator),new RuleBlock(ruleBlock, false),value,null);
+            return new ConditionBlock(getRuleOperator(operator),new RuleBlock(ruleBlock),value,draggingObject);
         }
 
         return firstCustomNode;
     }
+
 
     private static RuleOperator getRuleOperator(String operator){
 

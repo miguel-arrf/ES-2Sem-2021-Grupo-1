@@ -153,7 +153,7 @@ public class ConditionBlock implements CustomNode , Serializable {
 
     private Button getStyledButton(RuleOperator operatorToPut, String customColor){
         Button button = new Button(operatorToPut.label);
-        button.getStyleClass().add(ruleBlock.getIsNumeric() ? "roundedAddButton" : "textualRuleButton");
+        button.getStyleClass().add("roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
@@ -175,7 +175,7 @@ public class ConditionBlock implements CustomNode , Serializable {
 
     private Button getStyledButton(String operatorToPut, String customColor){
         Button button = new Button(operatorToPut);
-        button.getStyleClass().add(ruleBlock.getIsNumeric() ? "roundedAddButton" : "textualRuleButton");
+        button.getStyleClass().add( "roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
@@ -192,7 +192,6 @@ public class ConditionBlock implements CustomNode , Serializable {
     private HBox optionsHBox(){
         HBox hBox = new HBox();
 
-        if(ruleBlock.getIsNumeric()){
             Button lessButton = getStyledButton(RuleOperator.LESSER);
             Button lessOrEqualButton = getStyledButton(RuleOperator.LESSER_EQUAL);
             Button greaterButton = getStyledButton(RuleOperator.GREATER);
@@ -201,12 +200,7 @@ public class ConditionBlock implements CustomNode , Serializable {
             Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
 
             hBox.getChildren().addAll(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
-        }else{
-            Button equalButton = getStyledButton(RuleOperator.EQUAL);
-            Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
 
-            hBox.getChildren().addAll(equalButton, differentButton);
-        }
 
         hBox.getStyleClass().add("ruleBuilderMenu");
 
@@ -232,7 +226,6 @@ public class ConditionBlock implements CustomNode , Serializable {
 
         HBox hBox = new HBox();
 
-        if(ruleBlock.getIsNumeric()){
             TextField textField = new TextField("0.0");
 
             updateButton.setOnAction(actionEvent -> {
@@ -241,7 +234,7 @@ public class ConditionBlock implements CustomNode , Serializable {
                 Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
             });
 
-            DecimalFormat format = new DecimalFormat( "#.0" );
+            DecimalFormat format = new DecimalFormat( "-#.0;#.0" );
 
             textField.setTextFormatter( new TextFormatter<>(c ->
             {
@@ -265,26 +258,6 @@ public class ConditionBlock implements CustomNode , Serializable {
             textField.setMaxWidth(150);
 
             hBox.getChildren().addAll( textField,updateButton, cancelButton);
-
-        }else{
-            Button trueButton = getStyledButton("TRUE", "#a3ddcb");
-            Button falseButton = getStyledButton("FALSE", "#d8345f");
-
-            trueButton.setOnMouseClicked(mouseEvent -> {
-                valueLabel.setText("TRUE");
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-            });
-
-            falseButton.setOnMouseClicked(mouseEvent -> {
-                valueLabel.setText("FALSE");
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-            });
-
-            hBox.getChildren().addAll(trueButton, falseButton);
-        }
-
-
-
 
 
         hBox.getStyleClass().add("ruleBuilderMenu");
@@ -393,10 +366,6 @@ public class ConditionBlock implements CustomNode , Serializable {
         return box;
     }
 
-
-
-
-
     @Override
     public Node getGraphicalRepresentation() {
         setHBoxDelete(graphicalRepresentationNode);
@@ -415,7 +384,6 @@ public class ConditionBlock implements CustomNode , Serializable {
     public Types getType() {
         return Types.ConditionBlock;
     }
-
 
     public boolean evaluate(int value) {
         switch (operator) {
