@@ -22,6 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
@@ -225,7 +226,9 @@ public class RuleEditor extends Application {
                 System.out.println("o que saiu: "  + ruleToADD);
 
                 if (ruleToADD != null) {
-                    rules.add(finalMain.getRule());
+
+
+                    rules.add(ruleToADD);
 
                     ruleComplete.arrayListToJSON(rules);
 

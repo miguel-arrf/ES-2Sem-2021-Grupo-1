@@ -203,6 +203,7 @@ public class RuleComplete implements Serializable {
     }
 
     public  CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
+        System.out.println("jsonObjectToCustomNode: " + jsonObject.toJSONString());
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();
 
         CustomNode firstCustomNode = null;

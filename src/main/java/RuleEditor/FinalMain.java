@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -50,7 +51,14 @@ public class FinalMain extends Application {
     }
 
     public JSONObject getRule() {
-        return rule;
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            json = (JSONObject) parser.parse(rule.toJSONString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
     @Override
@@ -86,6 +94,7 @@ public class FinalMain extends Application {
         mainPane.getChildren().clear();
         //CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
         //System.out.println("aqui dentro: "  + jsonObject.toJSONString());
+        System.out.println("o que vai para o rule complete: " + ((JSONObject) jsonObject.get("id")).toJSONString());
         CustomNode firstCustomNode = ruleComplete.jsonObjectToCustomNode((JSONObject) jsonObject.get("id"), inDragObject);
         addCustomNode(firstCustomNode);
 
