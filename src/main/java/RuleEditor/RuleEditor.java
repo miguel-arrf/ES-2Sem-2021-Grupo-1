@@ -1,6 +1,8 @@
 package RuleEditor;
 
 import g1.ISCTE.AppStyle;
+import g1.ISCTE.FontType;
+import g1.ISCTE.MyTree;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,7 +17,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -52,11 +56,12 @@ public class RuleEditor extends Application {
         fileChooser.setTitle("Select Rules File");
 
         Button setDirectoryButton = styledButton("Load Rules", "#a3ddcb");
+        setButtonIcon(setDirectoryButton, "icons8-download-96.png");
+
         setDirectoryButton.setOnAction(actionEvent -> {
             File tempFile;
             tempFile = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
 
-            System.out.println("tempFile: " + tempFile);
             if (tempFile != null) {
                 if (tempFile.getName().endsWith(".txt")) {
                     rulesFile = tempFile;
@@ -68,11 +73,6 @@ public class RuleEditor extends Application {
 
                         //If we don't do it this way, the listener for the label, wouldn't work.
                         rules.addAll(arrayList);
-
-//                        System.out.println("reading: ");
-//                        for (JSONObject jsonObject : rules) {
-//                            System.out.println(jsonObject);
-//                        }
 
                         updateRulesEditorPanel();
                         addNewRuleButton.setDisable(false);
@@ -98,11 +98,12 @@ public class RuleEditor extends Application {
         fileChooser.setTitle("Save Rules File");
 
         Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
+        setButtonIcon(setDirectoryButton, "icons8-add-file-96.png");
+
         setDirectoryButton.setOnAction(actionEvent -> {
             File tempFile;
             tempFile = fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
 
-            System.out.println("tempFile: " + tempFile);
             if (tempFile != null) {
                 if (tempFile.getName().endsWith(".txt")) {
                     rulesFile = tempFile;
@@ -137,7 +138,6 @@ public class RuleEditor extends Application {
 
         updateButton.setOnAction(actionEvent -> {
             label.setText(textField.getText());
-            System.out.println("here: " + jsonObject.toJSONString());
 
             jsonObject.replace("name", textField.getText());
 
@@ -166,15 +166,36 @@ public class RuleEditor extends Application {
         return hBox;
     }
 
+    private ImageView getIcon(String imageLocation){
+        Image image = new Image(MyTree.class.getResource("/icons/" + imageLocation).toExternalForm());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(15);
+        imageView.setPreserveRatio(true);
+        imageView.setBlendMode(BlendMode.DIFFERENCE);
+
+        return imageView;
+    }
+
+    private void setButtonIcon(Button button, String imageLocation){
+        button.setGraphic(getIcon(imageLocation));
+
+    }
+
     private Node getRulePane(JSONObject nodeJSON) {
 
         HBox pane = new HBox();
         pane.setSpacing(20);
 
         Label label = new Label((String) nodeJSON.get("name"));
+        label.setFont(AppStyle.getFont(FontType.BOLD, 12));
+
+        label.setAlignment(Pos.CENTER);
+
+        HBox.setHgrow(label, Priority.ALWAYS);
+        label.setMaxWidth(Double.MAX_VALUE);
 
         label.setMinWidth(Region.USE_PREF_SIZE);
-        label.setTextFill(Color.WHITE);
+        label.setTextFill(Color.BLACK);
         label.setPadding(new Insets(5));
         label.setStyle("-fx-background-radius: 7 7 7 7;\n"
                 + "    -fx-border-radius: 7 7 7 7;\n" +
@@ -182,6 +203,9 @@ public class RuleEditor extends Application {
 
 
         Button delete = styledButton("Delete", "#f39189");
+        setButtonIcon(delete,"icons8-full-trash-96.png" );
+
+
         delete.setOnAction(actionEvent -> {
             rules.remove(nodeJSON);
             ruleComplete.arrayListToJSON(rules);
@@ -191,14 +215,14 @@ public class RuleEditor extends Application {
         delete.setMinHeight(0);
 
         Button edit = styledButton("Edit", "#ece2e1");
+        setButtonIcon(edit, "icons8-edit-384.png");
+
         edit.setOnAction(actionEvent -> {
 
             Stage popupStage = AppStyle.setUpPopupStage("Edit Rule", "/RuleBuilderIcon.gif", true);
 
             FinalMain finalMain = new FinalMain();
             String ruleName = (String) nodeJSON.get("name");
-            System.out.println("nome regra: "  + ruleName);
-            System.out.println("o que entrou: "  + nodeJSON);
 
             SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleComplete, nodeJSON, ruleName);
 
@@ -214,24 +238,16 @@ public class RuleEditor extends Application {
             popupStage.setMinWidth(700);
 
             popupStage.setOnCloseRequest(windowEvent -> {
-                //TODO UPDATE HERE!
                 rules.remove(nodeJSON);
 
                 JSONObject ruleToADD = finalMain.getRule();
 
-                System.out.println("o que saiu: "  + ruleToADD);
-
                 if (ruleToADD != null) {
 
-
                     rules.add(ruleToADD);
-
                     ruleComplete.arrayListToJSON(rules);
-
                     updateRulesEditorPanel();
-
                 }
-
 
             });
 
@@ -241,6 +257,8 @@ public class RuleEditor extends Application {
         edit.setMinHeight(0);
 
         Button rename = styledButton("Rename", "#ded7b1");
+        setButtonIcon(rename, "icons8-rename-96.png");
+
         rename.setOnAction(actionEvent -> {
 
 
@@ -268,11 +286,8 @@ public class RuleEditor extends Application {
         rulesPanel.getChildren().clear();
 
         for (JSONObject entry : rules) {
-            //JSONObject jsonObject = (JSONObject) entry.get("id");
-            rulesPanel.getChildren().add(getRulePane(entry));
-            //Label label = new Label((String) jsonObject.get("name"));
-            //label.setTextFill(Color.WHITE);
-            //rulesPanel.getChildren().add(label);
+            Node rulePane = getRulePane(entry);
+            rulesPanel.getChildren().add(rulePane);
         }
 
         rulesPanel.getScene().getWindow().sizeToScene();
@@ -281,6 +296,8 @@ public class RuleEditor extends Application {
 
     private Button setUpAddNewRuleButton() {
         Button addNewRule = styledButton("Add rule", "#a29bfe");
+        setButtonIcon(addNewRule, "icons8-add-96.png");
+
         addNewRule.setMaxHeight(30);
 
 
@@ -302,7 +319,6 @@ public class RuleEditor extends Application {
             popupStage.setMinWidth(700);
 
             popupStage.setOnCloseRequest(windowEvent -> {
-                System.out.println("Closed! Rule name: " + finalMain.getRuleName());
                 JSONObject ruleToADD = finalMain.getRule();
                 if (ruleToADD != null) {
                     rules.add(finalMain.getRule());
@@ -319,7 +335,6 @@ public class RuleEditor extends Application {
         });
 
         return addNewRule;
-        //mainPane.getChildren().add(addNewRule);
     }
 
     private void setUpMainPane() {
@@ -332,12 +347,17 @@ public class RuleEditor extends Application {
         rules.addListener((ListChangeListener<JSONObject>) change -> {
             if (rules.size() == 0) {
                 numberOfRules.setText("No Rules");
+                numberOfRules.setGraphic(getIcon("icons8-bird-96.png"));
             } else {
                 numberOfRules.setText(rules.size() + " rules");
+                numberOfRules.setGraphic(null);
             }
         });
 
         numberOfRules.setTextFill(Color.WHITE);
+        numberOfRules.setFont(AppStyle.getFont(FontType.BOLD, 12));
+        numberOfRules.setGraphic(getIcon("icons8-bird-96.png"));
+
         rulesPanel.getChildren().add(numberOfRules);
 
         rulesPanel.setSpacing(20);
@@ -371,6 +391,8 @@ public class RuleEditor extends Application {
 
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
+        button.setFont(AppStyle.getFont(FontType.BOLD, 12));
+
 
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +

@@ -87,20 +87,15 @@ public class FinalMain extends Application {
     public SplitPane getEditRuleEditor(Stage stage, RuleComplete ruleComplete, JSONObject jsonObject, String ruleName){
         isNewRule = false;
 
-        //System.out.println("inside rule name: "  + ruleName);
         this.ruleName = ruleName;
         this.ruleComplete = ruleComplete;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
         mainPane.getChildren().clear();
-        //CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
-        //System.out.println("aqui dentro: "  + jsonObject.toJSONString());
         CustomNode firstCustomNode = ruleComplete.teste(jsonObject, inDragObject);
         addCustomNodeWithouClear(firstCustomNode);
 
-
-        //rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
 
         return splitPane;
     }
@@ -195,7 +190,6 @@ public class FinalMain extends Application {
                 }
 
 
-                //System.out.println(inDragObject);
                 db.setContent(content);
 
                 event.consume();
@@ -251,9 +245,6 @@ public class FinalMain extends Application {
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
 
         scrollPane.setFitToWidth(true);
-
-
-        //scrollPane.setFitToHeight(true);
 
         scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
 
@@ -317,7 +308,6 @@ public class FinalMain extends Application {
 
 
             rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
-            System.out.println("rule: " + rule.toJSONString());
 
         });
 
@@ -330,7 +320,6 @@ public class FinalMain extends Application {
         Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
             textFieldStage(stage);
-            //RuleComplete.saveToFileSerialize(ruleNodes);
         });
 
 
@@ -346,34 +335,6 @@ public class FinalMain extends Application {
 
         return saveButton;
     }
-
-//    private Button getLoadButton() {
-//
-//        Button saveButton = new Button("Load me papi :c");
-//        saveButton.setOnAction(actionEvent -> {
-//
-//            try {
-//                mainPane.getChildren().clear();
-//                CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
-//                addCustomNode(firstCustomNode);
-//            } catch (IOException | ParseException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//
-//        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-//                "    -fx-border-radius: 7 7 7 7;\n" +
-//                "    -fx-background-color: #d5ecc2");
-//        saveButton.setMinWidth(150);
-//        saveButton.setMinHeight(50);
-//        saveButton.setAlignment(Pos.CENTER);
-//
-//        saveButton.setMaxWidth(Double.MAX_VALUE);
-//
-//
-//        return saveButton;
-//    }
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);

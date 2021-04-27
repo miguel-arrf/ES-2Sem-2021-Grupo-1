@@ -9,31 +9,11 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RuleComplete implements Serializable {
 
-//    public static void loadDataToGUI() throws FileNotFoundException {
-//        File file = new File("Rules.txt");
-//        Scanner myReader = new Scanner(file);
-//
-//        CustomNode parent = null;
-//
-//        while(myReader.hasNextLine()){
-//            String line = myReader.nextLine();
-//
-//            if(line.contains("LogicBlock")){
-//                CustomNode logicBlock =
-//            }else if(line.contains("ConditionBlock")){
-//
-//            }
-//
-//        }
-//
-//
-//    }
 
     private File file;
 
@@ -59,10 +39,8 @@ public class RuleComplete implements Serializable {
 
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
-        System.out.println("firstCustomNode here: " + firstCustomNode + " <-> " + customNodeArrayList.size());
 
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
-        System.out.println("rule: "  + rule);
 
         StringBuilder stringBuilder = new StringBuilder("");
         print(rule, "", stringBuilder);
@@ -143,7 +121,6 @@ public class RuleComplete implements Serializable {
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
-        //System.out.println("firstCustomNode :" + firstCustomNode);
         if(firstCustomNode.getType() ==  Types.LogicBlock){
             toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
 
@@ -154,46 +131,6 @@ public class RuleComplete implements Serializable {
 
     }
 
-
-//    public  CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
-//        JSONParser jsonParser = new JSONParser();
-//        Reader reader = new FileReader(file);
-//
-//        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-//
-//        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-//
-//        System.out.println("firstCustomNode :" + firstCustomNode);
-//        if(firstCustomNode.getType() ==  Types.LogicBlock){
-//            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
-//
-//            return firstCustomNode;
-//        }
-//
-//        return firstCustomNode;
-//
-//    }
-
-//    public  CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
-//        JSONParser jsonParser = new JSONParser();
-//        Reader reader = new FileReader(file);
-//
-//        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-//        JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
-//        jsonObject.replace("id", idWithoutName.get("id"));
-//
-//        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-//
-//        System.out.println("firstCustomNode :" + firstCustomNode);
-//        if(firstCustomNode.getType() ==  Types.LogicBlock){
-//            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
-//
-//            return firstCustomNode;
-//        }
-//
-//        return firstCustomNode;
-//
-//    }
 
     public  void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
@@ -226,7 +163,6 @@ public class RuleComplete implements Serializable {
     }
 
     public  CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
-        //System.out.println("jsonObjectToCustomNode: " + jsonObject.toJSONString());
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();
 
         CustomNode firstCustomNode = null;
@@ -289,7 +225,6 @@ public class RuleComplete implements Serializable {
         }else{
             //significa que é um ANd ou um OR block
             ArrayList<CustomNode> children = getChild(customNode, customNodeArrayList);
-            System.out.println("children size: "  + children.size());
 
             if(children.size() == 0)
                 return null;
@@ -311,7 +246,6 @@ public class RuleComplete implements Serializable {
 
     private  void print(RuleNode ruleNode, String tab, StringBuilder representation){
         representation.append(tab).append(ruleNode.getElement());
-        //System.out.println(tab + ruleNode.getElement());
         if(ruleNode.getLeft_node() != null){
             print(ruleNode.getLeft_node(), tab + "\n\t", representation);
         }

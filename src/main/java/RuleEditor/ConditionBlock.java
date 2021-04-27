@@ -151,7 +151,7 @@ public class ConditionBlock implements CustomNode, Serializable {
     private Button getStyledButton(RuleOperator operatorToPut, String customColor) {
         Button button = new Button(operatorToPut.label);
         button.getStyleClass().add("roundedAddButton");
-        button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
+        button.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
         button.setPadding(new Insets(10, 20, 10, 20));
@@ -173,7 +173,7 @@ public class ConditionBlock implements CustomNode, Serializable {
     private Button getStyledButton(String operatorToPut, String customColor) {
         Button button = new Button(operatorToPut);
         button.getStyleClass().add("roundedAddButton");
-        button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
+        button.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
         button.setPadding(new Insets(10, 20, 10, 20));

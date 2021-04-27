@@ -27,9 +27,9 @@ public class AppStyle {
      * @return the font with the specified style and size
      */
     public static Font getFont(FontType fontType, int size){
-        return new Font(size);
+        //return new Font(size);
         //TODO Add fonts back!
-        //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
 
 
@@ -71,7 +71,7 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }
