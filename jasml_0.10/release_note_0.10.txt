@@ -1,0 +1,4 @@
+release note 0.10.
+This realease contains all basic functions required to edit and view java classes through java Macro Instructions.
+Only that the LineNumberTable Attribute is not well processed. Will at this feature in the next release.
+Besides, the error reporting system still have to be perfected.

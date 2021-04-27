@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><!-- InstanceBegin template="/Templates/jasml_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="keywords" content="java assemble assembling compiler decompiler jasmin byte code macro instrcution java virtual machine instruction">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Jasml - Syntax</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link href="style.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.STYLE3 {font-size: small}
+-->
+</style>
+</head>
+
+<body>
+<h1 align="center" ><strong><a href="index.html" class="NOUnderLine">Jasml</a> </strong></h1>
+<h1 align="center" ><strong>The Java Assembling Language </strong></h1>
+<hr>
+<table width="100%" border="0" cellspacing="2" cellpadding="6">
+  <tr valign="top">
+    <td width="230" nowrap="nowrap" class="TableRightBorder"> <p><a href="index.html"><strong>Jasml Home</strong></a></p>
+      <p> 
+             <a href="userguide.html"><strong>User Guide </strong></a>          </p>
+      <ul>
+          <li><a href="userguide.html#gui_ins" class="NOUnderLine">Installation</a></li>
+      </ul>
+      
+      
+        <ul>
+          <li><a href="userguide.html#gui_com" class="NOUnderLine">Command Line Parameters </a></li>
+        </ul>
+      
+      
+        <p><a href="example.html"><strong>A Simple Example</strong></a></p>
+        <a href="syntax.html"><strong>Jasml Syntax </strong></a>
+      
+      
+        <ul>
+          <li><a href="syntax.html#min" class="NOUnderLine">Minor and Major versions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla" class="NOUnderLine">Class or Interface Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#fie" class="NOUnderLine">Field Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#met" class="NOUnderLine">Methods Declarations </a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla_att" class="NOUnderLine">Class Attribute Declarations</a></li>    
+        </ul>
+               <ul>
+          <li><a href="syntax.html#num" class="NOUnderLine">Numbers Strings and Chars</a></li>
+        </ul>   <ul>
+          <li><a href="syntax.html#com" class="NOUnderLine">Comments</a></li>
+        </ul>
+        <p><a href="syntax_attr.html"><strong>Attributes </strong></a></p>
+        <p><a href="syntax_instr.html"  ><strong>Java Macro Instructions</strong></a></p>
+        <p><a href="instructionindex.html"><strong>Java Macro Instruction Index </strong></a> </p>
+		<p><a href="javadoc/index.html"><strong>Javadoc</strong></a> </p>
+		<p><a href="download.html"><strong>Download</strong></a> </p>
+		<p>&nbsp;</p>
+		<p><a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=168010&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+	<p>&nbsp;</p></td>
+    <td><!-- InstanceBeginEditable name="content" -->
+      <p class="PageTitle">Jasm Syntax </p>
+      <p>JASML is very easy to use, it uses java like syntax. Indeed, if one has experiences working with java macro instructins, one would know that fields, methods and classes are stored quite differently inside the .class files. For example, java.lang.String is internally stored as java/lang/String, and int[][] as [[I. JASML deliberately avoids these.</p>
+      <p>Each .jasm files may have the follwing structures:      
+      <p><br>
+      <div align="center">
+Minor and Major Version<br>
+Class or interface Declarations<br>
+Field Declarations<br>
+Method Declarations<br>
+Class Attribute Declarations <br>
+Comments</p>
+</div>
+      <p><br>
+      <span class="ContentTitle"><a name="min">1. Minor and Major versions</a></span></p>
+      <p>Minor and Major versions must be defined in the beginning of jasm file, exactly like</p>
+      <p><span class="CodeSample">[Major : minor_number]<br>
+        [Minor : major_number]</span></p>
+      <p>The two words &quot;Major&quot; and &quot;Minor&quot; are case sensitive and must be followed by &quot;:&quot;. <br>
+        Minor and Major version definitions are optional. If omitted, Minor version will be defaulted to 0, Major version 46.      </p>
+      <p><span class="ContentTitle"><a name="cla">2. Class or Interface Declarations</a></span></p>
+      <p>Classes and interfaces are declared like what is done in .java files, except:</p>
+      <ul>
+        <li>The name of classes and interfaces are fully qualified names with the package name.<br><br>
+        </li>
+        <li> For each classes other than the java.lang.Object, there must be a super class. <br>
+          So, the definition of public abstract class SimpleClass in package testpackage should be like:</li>
+     
+      <p><span class="CodeSample">public abstract class testpackage.SimpleClass extends java.lang.Object<br>
+      </span></p>
+      
+        <li> Each interface must extend the java.lang.Object, and be marked as abstract.<br>
+          So, the defintion of public interface AnInterface in testpackage should be like :<br>
+          public abstract interface testpackage.AnInterface extends java.lang.Object <br>
+          And the defintion of public interface AnInterface extends java.io.Serializable in testpackage should be like :<br>
+          public abstract interface testpackage.SimpleClass extends java.lang.Object implements java.io.Serializable<br>
+          Note: It is &quot;extends java.lang.Object&quot; and &quot;implements java.io.Serializable&quot;, while in .java files it is &quot;extends java.io.Serializable&quot;.</li><br>
+		  
+         
+          <li> The class definition must be in the same line. For example, this is not allowed:<br>
+          public abstract interface testpackage.AnInterface <br>
+          extends java.lang.Serializable </li>
+      </ul>
+      <p>        <span class="ContentTitle"><a name="fie">3. Field Declarations</a></span></p>
+      <p>Fields are defined as what is done in .java files, with the following exceptions:</p>
+      <ul>
+        <li> Only final field of primitive types(int, long, double, etc.) or java.lang.String can have an value definition.<br>
+          For example, this is allowed:<br>
+          public final int aFinalField = 5 <br>
+          while this will generate compilation errors:<br>
+          public final java.lang.Integer anIntegerField = new java.lang.Integer(5)<br>
+          Indeed, code like this must be put into class constructors.</li><br>
+		  
+          <li> If the field has attributes like Synthetic or Deprecated, they must be put after, and in the same line with, the field definitions, like:<br>
+            <span class="CodeSample">public final int aFinalField = 5    [Deprecated] </span><br>		  		  
+           And this is not valid:  <br>
+		   <span class="CodeSample">public final int aFinalField = 5    <br>
+		   [Deprecated]</span> <br> The [Deprecated] should be put in the same line with the field declaration.</li><br>
+          <li> Field declarations, including its attribute defintion, must be in a single line.</li><br>
+		  
+          <li> Field declarations must follow directly after class declarations and precede method declarations.</li>
+      </ul>
+      <p><span class="ContentTitle"><a name="met">4. Methods Declarations </a></span></p>
+      <p>Methods declarations are of the following structure:</p>
+      <p><br>
+        <span class="CodeSample">Method Descriptor and Signatures and throws Clause{<br>
+        Insctructions<br>
+        Method/Code Attributes and Structures<br>
+        }<br>
+        </span>        </p>
+      <ul>
+        <li> For each method, there must be a method body. This means for the abstract or interface method which has no instructions, there must be a method body enclosed with &quot;{&quot; and &quot;}&quot;. <br>
+          So, to define an public void AMethodOfInterface() in a certain interface:<br>
+          public abstract void AMethodOfInterface (){<br>
+          }</li>
+        <li> 
+          Unlike what is done in .java files, method parameter lists are composed types only, without any name definitions. To find which parameter maps to which name, one have to refer to the local variable table.<br>
+          So, to define an public void AMethodOfInterface(int a, String b) in a certain interface:<br>
+          public abstract void AMethodOfInterface (int, java.lang.String){<br>
+          }</li><li>
+          Method Attributes(including Synthetic, Deprecated), attributes of the Code attribute(including  LineNumberTable, LocalVariableTable) and exception_table, max_stack, max_locals of the Code attribute must be defined at the bottom of the method body. And there is no special order of how they should be defined.<br>
+          Method may also contain Exceptions attribute, which is mapped to the throws clause.<br>
+          </li>
+        <li>Method declarations must follow directly after field declarations and precede class attribute declarations.<br>
+          </li>
+      </ul>
+      <p><span class="ContentTitle"><a name="cla_att">5. Class Attributes Declaration</a></span></p>
+      <p>Class attributes can be SourceFile, Deprecated and InnerClasses.<br>
+        They must follow directly after method declarations and precede the closing &quot;}&quot; of class definitions. And there is no special order of how they should be defined.</p>
+      <p><span class="ContentTitle"><a name="num">6. Numbers and Strings and Chars</a></span></p>
+      <ul>
+        <li>Strings and Chars<br>
+          Strings and Chars are defined the same as in .java files. And all the escaping chars and sequences are supported. Special unicode are displayed like /u****. For example, the chinese character &quot;我&quot; will be displayed as &quot;\u6211&quot;.</li> <br>
+          <li>Numbers<br>
+          1. int numbers are defined the same as they are in .java files. Hex numbers starting with &quot;0x&quot; or &quot;0X&quot; is supported.<br><br>
+          2. long numbers must be followed by 'l' or &quot;L&quot;, or they will be treated as int. <br>
+          For example, when defining a long field, <br>
+          public static final long fieldLong = 5 is not a legal definitions. It should be like:<br>
+          public static final long fieldLong = 5L <br><br>
+          3. float numbers are followed by 'f' or &quot;F&quot;. If an number has decimal point in it, but not followed with 'f' or 'd', it will be treated as float.<br><br>
+          4. double numbers are followed by 'd' or &quot;D&quot;.<br>
+          6. boolean, byte types are represented using int. 0 represents boolean value &quot;false&quot;, while 1 represents &quot;true&quot;.<br><br>
+          7. scientific numbers are supported, but must be followed with the type char, 'f', 'd' etc. For example, 4.9e-324D or 1.7976931348623157e+10F are valid numbers.<br><br>
+          8. For float and double numbers there are three special types, postive infinity(1.0/0.0), negative infinity(-1.0/0.0) and NaN(not a number, 0.0/0.0). For float and double types these are represented as Infinityf, -Infinityf, NaNf, Infinityd, -Infinityd, NaNd.</li>
+      </ul>
+      <p> 
+      <span class="ContentTitle"><a name="com">7. Comments</a></span></p>
+      <p>Comments are defined the same way as they are in the .java files.</p>
+      <p>&quot;//&quot; starts a single line comment.</p>
+      <p>&quot;/*&quot; and &quot;*/&quot; enclose multi line comment.</p>
+      <p><br>
+        <br>
+      </p>
+    <!-- InstanceEndEditable --></td>
+  </tr>
+  <tr>
+  <td colspan="2" align="center">
+  <hr>
+    <span class="STYLE3">Copyright 2006 - <a href="mailto:yang.jiang.z@gmail.com">Jiang Yang</a> , All Rights Reserved    </span></td>
+  </tr>
+</table>
+</body>
+<!-- InstanceEnd --></html>

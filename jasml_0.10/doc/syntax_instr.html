@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><!-- InstanceBegin template="/Templates/jasml_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="keywords" content="java assemble assembling compiler decompiler jasmin byte code macro instrcution java virtual machine instruction">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Jasml - Java Macro Instructions</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link href="style.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.STYLE3 {font-size: small}
+-->
+</style>
+</head>
+
+<body>
+<h1 align="center" ><strong><a href="index.html" class="NOUnderLine">Jasml</a> </strong></h1>
+<h1 align="center" ><strong>The Java Assembling Language </strong></h1>
+<hr>
+<table width="100%" border="0" cellspacing="2" cellpadding="6">
+  <tr valign="top">
+    <td width="230" nowrap="nowrap" class="TableRightBorder"> <p><a href="index.html"><strong>Jasml Home</strong></a></p>
+      <p> 
+             <a href="userguide.html"><strong>User Guide </strong></a>          </p>
+      <ul>
+          <li><a href="userguide.html#gui_ins" class="NOUnderLine">Installation</a></li>
+      </ul>
+      
+      
+        <ul>
+          <li><a href="userguide.html#gui_com" class="NOUnderLine">Command Line Parameters </a></li>
+        </ul>
+      
+      
+        <p><a href="example.html"><strong>A Simple Example</strong></a></p>
+        <a href="syntax.html"><strong>Jasml Syntax </strong></a>
+      
+      
+        <ul>
+          <li><a href="syntax.html#min" class="NOUnderLine">Minor and Major versions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla" class="NOUnderLine">Class or Interface Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#fie" class="NOUnderLine">Field Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#met" class="NOUnderLine">Methods Declarations </a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla_att" class="NOUnderLine">Class Attribute Declarations</a></li>    
+        </ul>
+               <ul>
+          <li><a href="syntax.html#num" class="NOUnderLine">Numbers Strings and Chars</a></li>
+        </ul>   <ul>
+          <li><a href="syntax.html#com" class="NOUnderLine">Comments</a></li>
+        </ul>
+        <p><a href="syntax_attr.html"><strong>Attributes </strong></a></p>
+        <p><a href="syntax_instr.html"  ><strong>Java Macro Instructions</strong></a></p>
+        <p><a href="instructionindex.html"><strong>Java Macro Instruction Index </strong></a> </p>
+		<p><a href="javadoc/index.html"><strong>Javadoc</strong></a> </p>
+		<p><a href="download.html"><strong>Download</strong></a> </p>
+		<p>&nbsp;</p>
+		<p><a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=168010&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+	<p>&nbsp;</p></td>
+    <td><!-- InstanceBeginEditable name="content" -->      
+        <p class="PageTitle">Java Macro Instructions</p>
+      <p><br>
+        <span class="ContentTitle">1. Local Variable Instruction</span></p>
+      <p>Local variable instructions will operate  on local variables, by refering local variable index in the local variable table.</p>
+      <p>The following instructions use local variables:</p>
+      <p class="CodeSample">ret  aload  astore  dload  dstore fload  fstore  iload  istore  lload  lstore </p>
+      <p>They should be in such a format:</p>
+      <p><span class="CodeSample" style="width:100%">local_variable_instruction local_variable_name(local_variable_index)</span><br>
+        <br>
+        For example:<br>
+        Consider the following LocalVariableTable:</p>
+      <p>[LocalVariables:<br>TestClass this  start=line48, end=line75, index=5<br>
+        java.lang.String s1  start=line0, end=line75, index=0<br>
+        java.lang.String s2  start=line0, end=line75, index=1]<br>
+        <br>
+        aload s1(0) or aload 0 , load the localvariable s1 onto the stack.</p>
+      <p>Sometimes, there is no LocalVariableTable defintions in the class file, in the generated .jasm files, the instructions will be like:</p>
+      <p><span class="CodeSample">aload unknown-local-variable(local_variable_index)</span></p>
+      <p> Indeed, it's only the index in the &quot;(&quot; and &quot;)&quot; that matters, whatever the name of the local variable will not effect the JVM.<br>
+        <br>
+        Besides, there is another instruction which also operates on local variable, but taking two parameters: innc.</p>
+      <p>For example:</p>
+      <p>innc anIntNumber(1) 1 , add local variable at index 1 by 1<br>
+        innc anIntNumber(1) -1 , substract local variable at index 1 by -1.<br>
+        <br>
+        <span class="ContentTitle">2. Branch instructions</span></p>
+      <p>Branch instructions are used to branch the execution of JVM to another place. They take label names as parameter.</p>
+      <p>The following instructions are branch instructions:</p>
+      <p class="CodeSample">goto goto_w if_acmpeq if_acmpne if_icmpeq if_icmpge <br>
+        if_icmpgt if_icmple if_icmplt if_icmpne ifeq ifge<br>
+        ifgt ifle iflt ifne	ifnonnull ifnull jsr jsr_w </p>
+      <p>For example, </p>
+      <p><span class="CodeSample">goto line10</span></p>
+      <p>cause the JVM to continue its execution on line10.</p>
+      <p><span class="ContentTitle">3. Method invocation instructions</span></p>
+      <p>Method invocation instructions are used to invoke the execution of specific method. They take method names as parameter.</p>
+      <p>The following instructions are method invocation instructions:</p>
+      <p><span class="CodeSample">invokespecial invokestatic invokevirtual</span></p>
+      <p>The method name must include it's return type, the class it belongs to, its parameters.</p>
+      <p>For example:</p>
+      <p><span class="CodeSample">invokevirtual  java.lang.StringBuffer java.lang.StringBuffer.append(java.lang.String)</span></p>
+      <p>invoke the StringBuffer.append(String s) method</p>
+      <p><span class="ContentTitle">4. Interface method invocation instruction</span></p>
+      <p>Interface method invocation instruction is used to invoke interface method. There is only one such instruction: invokeinterface.</p>
+      <p>It's the same as the method invocation instructions, only that there's an extra count value. As to how this count value is calculated, please refer to the Java Virtural Machine Specification.</p>
+      <p>For example:</p>
+      <p><span class="CodeSample">invokeinterface  void java.lang.Runnable.run() 1 </span></p>
+      <p>invoke the run method of Runnable on the implementing class.</p>
+      <p><span class="ContentTitle">5. Field access instructions</span></p>
+      <p>Field access instructions are used to access instance or static fields of specific class. They take the field name as parameter.</p>
+      <p>The following instructions are field access instructions:</p>
+      <p><span class="CodeSample">getfield   getstatic   putfield    putstatic </span></p>
+      <p>The  filed name must inlcude its type, the class it belongs to, and its name.</p>
+      <p>For example,<br>
+        </p>
+      <p><span class="CodeSample">getstatic java.io.PrintStream java.lang.System.out</span> </p>
+      <p> accesses the java.lang.System.out field.<br>
+        <br>
+        <span class="ContentTitle">6. Instructions Operating on Class</span></p>
+      <p>These instructions will perform some operation on specific class. They take class names as parameter, including:</p>
+      <p><span class="CodeSample">anewarray checkcast instanceof new</span></p>
+      <p>For example,</p>
+      <p><span class="CodeSample">new java.lang.String</span></p>
+      <p> create a new instance of java.lang.String.</p>
+      <p><span class="ContentTitle">7. Instructions Operating on Array</span></p>
+      <p>These instructions are used to create arrays. There are two type of array operations: </p>
+      <p>The first is newarray, used to create a single dimension array.</p>
+      <p>For example :</p>
+      <p class="CodeSample"> newarray int </p>
+      <p>will create an array of int.</p>
+      <p class="CodeSample">newarray java.lang.String </p>
+      <p>will create an array of java.lang.String.</p>
+      <p>The second is multianewarray, used to create multi-dimension array. </p>
+      <p>For example :</p>
+      <p class="CodeSample"> multianewarray java.lang.String[&nbsp;][&nbsp;] 2 </p>
+      <p>the same as defining a String array with String[&nbsp;][&nbsp;] s = new String[10][11] </p>
+      <p class="CodeSample">multianewarray java.lang.String[&nbsp;][&nbsp;] 1 </p>
+      <p> the same as defining a String array with String[&nbsp;][&nbsp;] s = new String[10][&nbsp;]</p>
+      <p><span class="ContentTitle">8. Instructions Operating on Numbers and Strings</span></p>
+      <p>These instructions is used to push a number or String onto the stack, they take a number or string as parameter. </p>
+      <p>These instructions including:</p>
+      <p><span class="CodeSample">bipush sipush ldc ldc_w  ldc2_w</span><br>
+        <br>
+      For example :</p>
+      <p><span class="CodeSample">bipush 3 </span></p>
+      <p> push int number 2 onto stack</p>
+      <p class="CodeSample">ldc 4.5f </p>
+      <p> push float number 4.5 onto stack</p>
+      <p class="CodeSample">ldc &quot;abc&quot; </p>
+      <p> load string &quot;abc&quot; from constant pool and push it onto stack<br>
+        </p>
+      <p class="CodeSample">ldc2_w 3L</p>
+      <p> load long number 3 from constant pool and push it onto stack</p>
+      <p><span class="ContentTitle">9. tableswitch Instruction</span></p>
+      <p>tableswitch instruction is used when comiling the switch clause in .java files. It has the format like:</p>
+      <p><span class="CodeSample">tableswitch  default=default_label, low=low_match, high=high_match, jump_table:match_label_0, match_label_1, match_label_2,match_label_3......match_lable_n</span></p>
+      <p>defualt_label is the instruction jvm will branch to if no match is found between the high_match and low_match.</p>
+      <p>for low_match, jvm will branch to match_label_0,<br>
+        low_match+1, to match_label_1,<br>
+        low_match+2, to match_label_2,<br>
+        .....<br>
+        high_match, to match_label_n.</p>
+      <p>The label number in jump_table must equals (high_match-low_match).</p>
+      <p>For example :</p>
+      <p><br>
+        <span class="CodeSample">tableswitch  default=line49, low=1, high=5, jump_table:line40,line43,line49,line49,line46</span></p>
+      <p>for -10, will brach to line49,<br>
+        1 , to line40,<br>
+        2 , to line43,<br>
+        5 , to line46 </p>
+      <p><span class="ContentTitle">10. lookupswitch Instruction</span></p>
+      <p>lookupswitch is also used when the switch clause in .java files, and is somewhat like tableswitch.</p>
+      <p>It has the format like:</p>
+      <p> <span class="CodeSample">lookupswitch  default=defualt_label, npairs=number_of_cases, jump_table:index1-&gt;match_label1,index2-&gt;match_label2,....., indexn-&gt;match_labeln</span></p>
+      <p>default_label will be branched to if there is no match found in the index of jump_table. nparis is the case numbers in the swich clause. Each index-&gt;match_label entry specifies that if the index matches the number passed from the switch, the instruction at match_label will executed.</p>
+      <p>For example:</p>
+      <p><span class="CodeSample">lookupswitch  default=line97, npairs=3, jump_table:1-&gt;line88,45-&gt;line91,109-&gt;line94</span></p>
+      <p>for -10, will brach to line97,<br>
+        1, to line88,<br>
+        45, to line91,<br>
+        109, to line94      </p>
+      <p><span class="ContentTitle">11. Instructions take No Parameter</span></p>
+      <p>The following instructions take no parameters:</p>
+      <p class="CodeSample">aaload aastore aconst_null aload_0 aload_1 aload_2 aload_3 areturn arraylength astore_0 astore_1 astore_2 astore_3 athrow baload bastore breakpoint caload castore d2f d2i d2l dadd daload dastore dcmpg dcmpl dconst_0 dconst_1 ddiv dload_0 dload_1 dload_2 dload_3 dmul dneg drem dreturn dstore_0 dstore_1 dstore_2 dstore_3 dsub dup dup2 dup2_x1 dup2_x2 dup_x1 dup_x2 f2d f2i f2l fadd faload fastore fcmpg fcmpl fconst_0 fconst_1 fconst_2 fdiv fload_0 fload_1 fload_2 fload_3 fmul fneg frem freturn fstore_0 fstore_1 fstore_2 fstore_3 fsub i2d i2f i2l iadd iaload iand iastore iconst_0 iconst_1 iconst_2 iconst_3 iconst_4 iconst_5 iconst_m1 idiv iload_0 iload_1 iload_2 iload_3 imul ineg int2byte int2char int2short ior irem ireturn ishl ishr istore_0 istore_1 istore_2 istore_3 isub iushr ixor l2d l2f l2i ladd laload land lastore lcmp lconst_0 lconst_1 ldiv lload_0 lload_1 lload_2 lload_3 lmul lneg lor lrem lreturn lshl lshr lstore_0 lstore_1 lstore_2 lstore_3 lsub lushr lxor monitorenter monitorexit nop pop pop2 return saload sastore swap</p>
+    <!-- InstanceEndEditable --></td>
+  </tr>
+  <tr>
+  <td colspan="2" align="center">
+  <hr>
+    <span class="STYLE3">Copyright 2006 - <a href="mailto:yang.jiang.z@gmail.com">Jiang Yang</a> , All Rights Reserved    </span></td>
+  </tr>
+</table>
+</body>
+<!-- InstanceEnd --></html>

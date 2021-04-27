@@ -20,6 +20,11 @@ public class CodeSmellDetector {
         for(CodeSmell codeSmell : codeSmells) {
             results.put(codeSmell.getName(), new ArrayList<>());
         }
+        results.put("NoCodeSmellDetected", new ArrayList<>());
+    }
+
+    public HashMap<String, ArrayList<String>> getResults() {
+        return results;
     }
 
     public void runDetection() throws InterruptedException {
@@ -34,8 +39,9 @@ public class CodeSmellDetector {
         threadPool.awaitTermination(60, TimeUnit.SECONDS);
         for(DetectionWorker worker : workers) {
             results.get(worker.getCodeSmell().getName()).addAll(worker.getResults());
+            results.get("NoCodeSmellDetected").addAll(worker.getUndetectedSmells());
         }
-        printResults();
+        //printResults();
     }
 
     private void printResults() {

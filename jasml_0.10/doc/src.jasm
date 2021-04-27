@@ -1,0 +1,61 @@
+[Major : 46]
+[Minor : 0]
+public class testpackage.SimpleClass extends java.lang.Object implements java.io.Serializable{
+public static java.lang.String aStaticField
+public final int aFinalField = 5	[Deprecated]
+public static final int aFinalStaticField = 0
+public void <init> () throws java.io.IOException,java.lang.Exception{
+line0    : aload_0     //Load reference from local variable
+           invokespecial  void java.lang.Object.<init>()   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations
+           aload_0     //Load reference from local variable
+           iconst_5     //Push int constant 5
+           putfield  int testpackage.SimpleClass.aFinalField   //Set field in object
+           getstatic  java.io.PrintStream java.lang.System.out   //Get static field from class
+           ldc  "Hellow World!"   //Push item from runtime constant pool
+           invokevirtual  void java.io.PrintStream.println(java.lang.String)   //Invoke instance method; dispatch based on class
+           iconst_0     //Push int constant 0
+           istore_1     //Store int into local variable
+line19   : new  testpackage.SimpleClass$1   //Create new object
+           dup     //Duplicate the top operand stack value
+           aload_0     //Load reference from local variable
+           invokespecial  void testpackage.SimpleClass$1.<init>(testpackage.SimpleClass)   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations
+           astore_2     //Store reference into local variable
+line28   : aload_2     //Load reference from local variable
+           invokeinterface  void java.lang.Runnable.run() 1   //Invoke interface method
+line34   : goto  line43   //Branch always
+line37   : astore_3     //Store reference into local variable
+line38   : iload_1     //Load int from local variable
+           iinc  a(1) 1   //Increment local variable by constant
+line42   : istore_1     //Store int into local variable
+line43   : return     //Return void from method
+
+[LocalVariables :
+java.lang.Exception e  start=line38, end=line42, index=3
+testpackage.SimpleClass this  start=line0, end=line43, index=0
+int a  start=line19, end=line43, index=1
+java.lang.Runnable r  start=line28, end=line43, index=2]
+
+[Exceptions:
+start=line28 , end=line34 , handler=line37 , catch_type=java.lang.Exception]
+
+[MaxStack : 3]
+[MaxLocal : 4]
+}
+public static void main (java.lang.String[]) throws java.lang.Exception{
+line0    : new  testpackage.SimpleClass   //Create new object
+           dup     //Duplicate the top operand stack value
+           invokespecial  void testpackage.SimpleClass.<init>()   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations
+           pop     //Pop the top operand stack value
+line8    : return     //Return void from method
+
+[LocalVariables :
+java.lang.String[] args  start=line0, end=line8, index=0]
+
+[MaxStack : 2]
+[MaxLocal : 1]
+}
+
+[InnerClasses :
+access = abstract interface , name = AnInnnerClass , fullname = testpackage.SimpleClass$AnInnnerClass , outername = testpackage.SimpleClass
+access = class , name = 0 , fullname = testpackage.SimpleClass$1 , outername = 0]
+}

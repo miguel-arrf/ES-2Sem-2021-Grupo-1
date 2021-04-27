@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><!-- InstanceBegin template="/Templates/jasml_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="keywords" content="java assemble assembling compiler decompiler jasmin byte code macro instrcution java virtual machine instruction">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Jasml - Attributes</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link href="style.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.STYLE3 {font-size: small}
+-->
+</style>
+</head>
+
+<body>
+<h1 align="center" ><strong><a href="index.html" class="NOUnderLine">Jasml</a> </strong></h1>
+<h1 align="center" ><strong>The Java Assembling Language </strong></h1>
+<hr>
+<table width="100%" border="0" cellspacing="2" cellpadding="6">
+  <tr valign="top">
+    <td width="230" nowrap="nowrap" class="TableRightBorder"> <p><a href="index.html"><strong>Jasml Home</strong></a></p>
+      <p> 
+             <a href="userguide.html"><strong>User Guide </strong></a>          </p>
+      <ul>
+          <li><a href="userguide.html#gui_ins" class="NOUnderLine">Installation</a></li>
+      </ul>
+      
+      
+        <ul>
+          <li><a href="userguide.html#gui_com" class="NOUnderLine">Command Line Parameters </a></li>
+        </ul>
+      
+      
+        <p><a href="example.html"><strong>A Simple Example</strong></a></p>
+        <a href="syntax.html"><strong>Jasml Syntax </strong></a>
+      
+      
+        <ul>
+          <li><a href="syntax.html#min" class="NOUnderLine">Minor and Major versions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla" class="NOUnderLine">Class or Interface Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#fie" class="NOUnderLine">Field Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#met" class="NOUnderLine">Methods Declarations </a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla_att" class="NOUnderLine">Class Attribute Declarations</a></li>    
+        </ul>
+               <ul>
+          <li><a href="syntax.html#num" class="NOUnderLine">Numbers Strings and Chars</a></li>
+        </ul>   <ul>
+          <li><a href="syntax.html#com" class="NOUnderLine">Comments</a></li>
+        </ul>
+        <p><a href="syntax_attr.html"><strong>Attributes </strong></a></p>
+        <p><a href="syntax_instr.html"  ><strong>Java Macro Instructions</strong></a></p>
+        <p><a href="instructionindex.html"><strong>Java Macro Instruction Index </strong></a> </p>
+		<p><a href="javadoc/index.html"><strong>Javadoc</strong></a> </p>
+		<p><a href="download.html"><strong>Download</strong></a> </p>
+		<p>&nbsp;</p>
+		<p><a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=168010&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+	<p>&nbsp;</p></td>
+    <td><!-- InstanceBeginEditable name="content" -->
+      <p class="PageTitle">Attributes</p>
+      <p>In JASML, attributes are enclosed between '[' and ']', the following attributes are supported:<br>
+        Synthetic ,Deprecated ,SourceFile, Code, InnerClasses, LineNumberTable, LocalVariableTable.</p>
+      <p>Besides, the Exceptions attribute are not enclosed with &quot;[&quot; and &quot;]&quot;, but are defined in throws clause of the method declaration. And the ConstantValue attribute are part of the field declaration.</p>
+      <p>Besides, the exception_table,max_stack,max_locals structure of Code attribute are also enclosed between '[' and ']'.</p>
+      <p><br>
+      <span class="ContentTitle"><a name="syn">1.Synthetic and Deprecated     </a></span></p>
+      <p>These two attributes are simply :</p>
+      <span class="CodeSample">[Synthetic] <br> [Deprecated]</span>
+      <p><span class="ContentTitle"><a name="sou">2.SourceFile</a></span></p>
+      <p>SourceFile attribute should be in the format of &quot;[SourceFile : filename]&quot;. Generally, the filename is only the name without the parth, but a filename with path in it is also supported.<br>
+        <br>
+        <span class="ContentTitle"><a name="cod">3.Code</a></span></p>
+      <p>Code attribute is composed of labels and macro instructions. Label names must be valid java names, and can not be the same with any of the macro instruction names. </p>
+      <p>When generating .jasm files, for each instruction which is referred elsewhere in the method(the brach instructions, LocalVariableTable etc.), a label is inserted before the instruction. The label is named as lable[line number]. When naming your own labels,  you dose not need to follow this rule, only remember that the label name must be unique in the the method. </p>
+      <p>The Code attribute also has exception_table,max_stack,max_locals structure and it's own attributes, these should be defined as different attributes in the same method where this code attribute is located.</p>
+      <p><span class="ContentTitle"><a name="max">4.max_stack and max_locals of Code attribute</a></span></p>
+      <p>max_stack and max_locals are part of Code attribute, but they should be defined separately as attribute in the same method where the Code attribute is located, such that:<br>
+        <span class="CodeSample">[MaxStack : max_stack_num]  <br>
+        [MaxLocal : max_local_num] </span></p>
+      <p><span class="ContentTitle"><a name="exc">5.exception_table of Code attribute</a></span></p>
+      <p>exception_table is part of the code attribute, but should be defined separately as attribute  in the same method where the code attribute is located.</p>
+      <p>exception_table attribute must start with &quot;[Exceptions:&quot;, and followed by exception_table entries, then end with &quot;]&quot;.</p>
+      <p> Each exception_table entry in the .class file has the structure like :</p>
+      <p> <br>
+        exception_table<br>
+        {  <br>  	
+		u2 start_pc;<br>
+        u2 end_pc;<br>
+        u2  handler_pc;<br>
+        u2  catch_type;<br>
+        }</p>
+      <p>Each entry maps to a line in exception_table attribute, such that: </p>
+      <p class="CodeSample">start=start_label , end=end_label , handler=handler_label , catch_type=exception_type</p>
+      <p>These label must have aready been defined in the insctructions, and each entry can only, and must, occupy one line.<br>
+        Note: the catch_type sometimes can be '0', means this is a finally clause.      </p>
+      <p><span class="ContentTitle"><a name="inn">6.InnerClasses </a></span></p>
+      <p>InnerClass attribute must start with &quot;[InnerClasses:&quot;, followed by innter class entries, then end with &quot;]&quot;.</p>
+      <p>Each inner class are defined such that: </p>
+      <p class="CodeSample">access = inner class access flags , name = inner class name(without the package name) , fullname = fully qualfied inner class name(outername+&quot;$&quot;+name) , outername = fully qualified outer class name with the package name</p>
+      <p>Each Inner class entry can only, and must, occupy one line. <br>
+        Note: the name and outername  sometimes can be '0', means this is an anonymous inner class.</p>
+      <p> <span class="ContentTitle"><a name="lin">7.LineNumberTable</a></span></p>
+      <p>When generating .jasm files, with the &quot;-l&quot; option, line number will be outputed.</p>
+      <p>LineNumberTable attribute must start with &quot;[LineNumber:&quot;, followed by line number mappings, then end with &quot;]&quot;.<br>
+      Each line number mappings is defined such that:</p>
+      <p class="CodeSample">labelname -&gt; lineNumber</p>
+      <p>This lineNumber is the line number of the source .java files, when compiling from .jasm to .class, lineNumbers will be ignored.<br>
+        <br>
+        <span class="ContentTitle"><a name="loc">8.LocalVariableTable</a></span><br>
+      LocalVariableTable attribute must start with &quot;[LocalVariables:&quot;, followed by local variable entries, then end with &quot;]&quot;.</p>
+      <p>Each local variable entry in the .class file are of such a structure:</p>
+      <p>localvariable<br>
+        { <br>
+        u2 start_pc;<br>
+        u2 length;<br>
+        u2 name_index;<br>
+        u2 descriptor_index;<br>
+        u2 index;<br>
+        }</p>
+      <p>Each entry maps to a line in LocalVariableTable attribute, such that: </p>
+      <p class="CodeSample">localvariable-type localvariable-name  start=start_label, end=end_label, index=index_number</p>
+      <p>For example, an int local variable may be defined as</p>
+      <p><span class="CodeSample">int c  start=line0, end=line3, index=1 </span></p>
+      <p>And for each instance method, there must be an local variable named &quot;this&quot;, of the same type to which this method is belongs, and of index 0.</p>
+      <p>For example, for each instance method in testpackage.SimpleClass, there must be such an local variable entry defined:</p>
+      <p class="CodeSample">testpackage.SimpleClass this  start=line_start, end=line_end, index=0 </p>
+      <p>The labels referred here must have aready been defined in the insctructions, and each entry can only, and must, occupy one line. </p>
+      <p>Note: LocalVariableTable is not a necessary attribute. Some compilers even do not generate a LocalVariableTable in .class files, e.g. the jdk 1.4.2_11.</p>
+      <p>Also, remember if a local variable is of type double or long, it must occupy two index. Although this is out of the scope of this document, but most people often forget this.</p>
+      <p><br>
+      </p>
+    <!-- InstanceEndEditable --></td>
+  </tr>
+  <tr>
+  <td colspan="2" align="center">
+  <hr>
+    <span class="STYLE3">Copyright 2006 - <a href="mailto:yang.jiang.z@gmail.com">Jiang Yang</a> , All Rights Reserved    </span></td>
+  </tr>
+</table>
+</body>
+<!-- InstanceEnd --></html>

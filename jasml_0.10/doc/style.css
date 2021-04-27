@@ -1,0 +1,19 @@
+/* CSS Document */
+body, td, th {
+    font-size: 100%;
+    font-family: Arial, Geneva, Helvetica, sans-serif;
+    color: black;
+    background-color: white;
+}
+
+.NOUnderLine {text-decoration:none}
+.TableRightBorder {
+		padding-right: 	5px;
+	    border: 1px solid #cccccc;
+ 		border-width: 0px 1px 0px 0px;
+}
+.ContentTitle {font-weight:bold}
+.PageTitle {font-weight:bold; font-size:200%;text-align:center}
+.Code {font-family:Arial, Helvetica, sans-serif;}
+.CodeSample {position:relative;left:25px;font-family:Arial, Helvetica, sans-serif; font-weight:700;}
+.InstructionTitle{font-weight:bold}

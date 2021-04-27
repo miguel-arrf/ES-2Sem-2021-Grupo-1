@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><!-- InstanceBegin template="/Templates/jasml_template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<meta name="keywords" content="java assemble assembling compiler decompiler jasmin byte code macro instrcution java virtual machine instruction">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Jasml - A Simple Example</title>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link href="style.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+.STYLE3 {font-size: small}
+-->
+</style>
+</head>
+
+<body>
+<h1 align="center" ><strong><a href="index.html" class="NOUnderLine">Jasml</a> </strong></h1>
+<h1 align="center" ><strong>The Java Assembling Language </strong></h1>
+<hr>
+<table width="100%" border="0" cellspacing="2" cellpadding="6">
+  <tr valign="top">
+    <td width="230" nowrap="nowrap" class="TableRightBorder"> <p><a href="index.html"><strong>Jasml Home</strong></a></p>
+      <p> 
+             <a href="userguide.html"><strong>User Guide </strong></a>          </p>
+      <ul>
+          <li><a href="userguide.html#gui_ins" class="NOUnderLine">Installation</a></li>
+      </ul>
+      
+      
+        <ul>
+          <li><a href="userguide.html#gui_com" class="NOUnderLine">Command Line Parameters </a></li>
+        </ul>
+      
+      
+        <p><a href="example.html"><strong>A Simple Example</strong></a></p>
+        <a href="syntax.html"><strong>Jasml Syntax </strong></a>
+      
+      
+        <ul>
+          <li><a href="syntax.html#min" class="NOUnderLine">Minor and Major versions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla" class="NOUnderLine">Class or Interface Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#fie" class="NOUnderLine">Field Definitions</a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#met" class="NOUnderLine">Methods Declarations </a></li>
+        </ul>
+      
+      
+        <ul>
+          <li><a href="syntax.html#cla_att" class="NOUnderLine">Class Attribute Declarations</a></li>    
+        </ul>
+               <ul>
+          <li><a href="syntax.html#num" class="NOUnderLine">Numbers Strings and Chars</a></li>
+        </ul>   <ul>
+          <li><a href="syntax.html#com" class="NOUnderLine">Comments</a></li>
+        </ul>
+        <p><a href="syntax_attr.html"><strong>Attributes </strong></a></p>
+        <p><a href="syntax_instr.html"  ><strong>Java Macro Instructions</strong></a></p>
+        <p><a href="instructionindex.html"><strong>Java Macro Instruction Index </strong></a> </p>
+		<p><a href="javadoc/index.html"><strong>Javadoc</strong></a> </p>
+		<p><a href="download.html"><strong>Download</strong></a> </p>
+		<p>&nbsp;</p>
+		<p><a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=168010&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+	<p>&nbsp;</p></td>
+    <td><!-- InstanceBeginEditable name="content" --><p class="PageTitle">A Simple Example</p>
+      <p>The example bellow will first create a simple java class with almost all of the supported attributes in it and printing &quot;Hello World!&quot;, then decompile it into jasm source file and modify it to print &quot;Halo world!&quot;. </p>
+      <p>1. Download Jasml package at <a href="download.html">here</a>, unpackage it to c:\jasml. Then create a file named c:\testpackage\<a href="SimpleClass.java">SimpleClass.java</a>, and copy the content bellow into the file.</p>
+      <p><br>
+        ----------------------------- SimpleClass.java --------------------------------<br>
+        <span class="Code">package testpackage;<br>
+        import java.io.IOException;<br>
+        import java.io.Serializable;<br>
+        public class SimpleClass extends Object implements Serializable {<br>
+        public static String aStaticField;<br>
+        /**<br>
+        *@deprecated<br>
+        */<br>
+        public final int aFinalField = 5;<br>
+        public final static int aFinalStaticField = 0;<br>
+        public SimpleClass() throws IOException, Exception {<br>
+        System.out.println(&quot;Hello World!&quot;);<br>
+        int a = 0;<br>
+        Runnable r = new Runnable() {<br>
+        public void run() { <br>
+        }<br>
+        };<br>
+        try {<br>
+        r.run();<br>
+        } catch (Exception e) {<br>
+        a = a++;<br>
+        }<br>
+        }<br>
+        interface AnInnnerClass {<br>
+        }<br>
+        public static void main(String[] args) throws Exception{<br>
+        new SimpleClass();<br>
+        }<br>
+        }</span><br>
+        ------------------------------end SimpleClass.java -------------------------------</p>
+      <p>2. Setting up the class path:</p>
+      <p class="CodeSample">set classpath=c:\jasml\jasml.jar;c:\ </p>
+      <p>3. Compile c:\testpackage\SimpleClass.java:</p>
+      <p class="CodeSample"> javac  c:\testpackage\SimpleClass.java</p>
+      <p>Note, in some compilers, the LineNumberTable and LocalVariableTable and SourceFile attribute is not generated by default, such as the jdk 1.4.2_11. Look at the help doc of that compilers of how to generate these attributes. In jdk 1.4.2_11, to generate these attributes, you can use:</p>
+      <p class="CodeSample"> javac -g:{line,vars,source} c:\testpackage\SimpleClass.java</p>
+      <p>4. Decompile c:\testpackage\SimpleClass.class with jasm:</p>
+      <p>&nbsp;&nbsp;<span class="CodeSample">java jasml -d -h -l -n c:\src.jasm c:\testpackage\SimpleClass.class</span></p>
+      <p>There will be a new generated c:\<a href="src.jasm">src.jasm</a>, with the content like:</p>
+      <p>------------------------------src.jasm---------------------------------------------<span class="Code"><br>
+        [Major : 46]<br>
+        [Minor : 0]<br>
+        public class testpackage.SimpleClass extends java.lang.Object implements java.io.Serializable{<br>
+        public static java.lang.String aStaticField<br>
+        public final int aFinalField = 5	[Deprecated]<br>
+        public static final int aFinalStaticField = 0<br>
+        public void &lt;init&gt; () throws java.io.IOException,java.lang.Exception{<br>
+        line0    : aload_0     //Load reference from local variable<br>
+        invokespecial  void java.lang.Object.&lt;init&gt;()   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations<br>
+aload_0     //Load reference from local variable<br>
+iconst_5     //Push int constant 5<br>
+putfield  int testpackage.SimpleClass.aFinalField   //Set field in object<br>
+getstatic  java.io.PrintStream java.lang.System.out   //Get static field from class<br>
+ldc  &quot;Hello World!&quot;   //Push item from runtime constant pool<br>
+invokevirtual  void java.io.PrintStream.println(java.lang.String)   //Invoke instance method; dispatch based on class<br>
+iconst_0     //Push int constant 0<br>
+istore_1     //Store int into local variable<br>
+line19   : new  testpackage.SimpleClass$1   //Create new object<br>
+dup     //Duplicate the top operand stack value<br>
+aload_0     //Load reference from local variable<br>
+invokespecial  void testpackage.SimpleClass$1.&lt;init&gt;(testpackage.SimpleClass)   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations<br>
+astore_2     //Store reference into local variable<br>
+line28   : aload_2     //Load reference from local variable<br>
+invokeinterface  void java.lang.Runnable.run() 1   //Invoke interface method<br>
+line34   : goto  line43   //Branch always<br>
+line37   : astore_3     //Store reference into local variable<br>
+line38   : iload_1     //Load int from local variable<br>
+iinc  a(1) 1   //Increment local variable by constant<br>
+line42   : istore_1     //Store int into local variable<br>
+line43   : return     //Return void from method</span></p>
+      <p class="Code">[LocalVariables :<br>
+        java.lang.Exception e  start=line38, end=line42, index=3<br>
+        testpackage.SimpleClass this  start=line0, end=line43, index=0<br>
+        int a  start=line19, end=line43, index=1<br>
+        java.lang.Runnable r  start=line28, end=line43, index=2]</p>
+      <p class="Code">[Exceptions:<br>
+        start=line28 , end=line34 , handler=line37 , catch_type=java.lang.Exception]</p>
+      <p class="Code">[MaxStack : 3]<br>
+        [MaxLocal : 4]<br>
+        }<br>
+        public static void main (java.lang.String[]) throws java.lang.Exception{<br>
+        line0    : new  testpackage.SimpleClass   //Create new object<br>
+        dup     //Duplicate the top operand stack value<br>
+        invokespecial  void testpackage.SimpleClass.&lt;init&gt;()   //Invoke instance method; special handling for superclass, private, and instance initialization method invocations<br>
+        pop     //Pop the top operand stack value<br>
+        line8    : return     //Return void from method</p>
+      <p class="Code">[LocalVariables :<br>
+        java.lang.String[] args  start=line0, end=line8, index=0]</p>
+      <p class="Code">[MaxStack : 2]<br>
+        [MaxLocal : 1]<br>
+        }</p>
+      <p class="Code">[InnerClasses :<br>
+        access = abstract interface , name = AnInnnerClass , fullname = testpackage.SimpleClass$AnInnnerClass , outername = testpackage.SimpleClass<br>
+        access = class , name = 0 , fullname = testpackage.SimpleClass$1 , outername = 0]<br>
+        }</p>
+      <p class="Code">------------------------------end src.jasm-----------------------------------------</p>
+      <p>NOTE: some compilers may not generate the LineNumberTable and LocalVariableTable, so the file may look different. </p>
+      <p><br>
+        5. Run the original SimpleClass, and see the out put:</p>
+      <p><span class="CodeSample">java  testpackage.SimpleClass </span></p>
+      <p>On the screen, &quot;Hello World!&quot; will be printed out.</p>
+      <p>6. Now let's try to modify the SimpleClass to print &quot;Halo World!&quot;.</p>
+      <p>First, go to C:\testpackage and rename SimpleClass.class to SimpleClass.class1. (Do not change other .class files there, they are inner class definitions which is necessary to run the test.)</p>
+      <p>Then open c:\src.jasm, and search for &quot;Hello World!&quot;, it's should be like : </p>
+      <p class="Code">ldc  &quot;Hello World!&quot;   //Push item from runtime constant pool</p>
+      <p>Change &quot;Hello World!&quot; to &quot;Halo World!&quot;, save the file and leave everything else untoutched.</p>
+      <p><br>
+        7. Compile jasm file into class file with </p>
+      <p><span class="CodeSample">java jasml -c -n c:\testpackage\SimpleClass.class c:\src.jasm</span></p>
+      <p>There will be a new c:\testpackage\SimpleClass.class created.</p>
+      <p>8. Now run the SimpleClass again and see what's the output:</p>
+      <p><span class="CodeSample">java  testpackage.SimpleClass </span></p>
+      <p></p>
+    <!-- InstanceEndEditable --></td>
+  </tr>
+  <tr>
+  <td colspan="2" align="center">
+  <hr>
+    <span class="STYLE3">Copyright 2006 - <a href="mailto:yang.jiang.z@gmail.com">Jiang Yang</a> , All Rights Reserved    </span></td>
+  </tr>
+</table>
+</body>
+<!-- InstanceEnd --></html>
