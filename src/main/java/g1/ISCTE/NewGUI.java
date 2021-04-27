@@ -378,7 +378,7 @@ public class NewGUI extends Application {
 
     private void configureTableData() throws IOException  {
 
-        File file = new File("C:\\Users\\mferr\\Downloads\\teste\\Code_Smells (1).xlsx");
+        File file = new File("C:\\Users\\mferr\\Downloads\\addCustomNodeOnDrag\\Code_Smells (1).xlsx");
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);

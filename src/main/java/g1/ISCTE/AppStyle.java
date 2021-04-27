@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -90,6 +91,10 @@ public class AppStyle {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setResizable(resizable);
 
+        popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
+
+
+
         return popupStage;
     }
 
@@ -100,13 +105,37 @@ public class AppStyle {
      * @param iconPlace path for popup icon
      * @param content content to be displayed in the popup
      * @param styleSheet pop stylesheet name
-     * @return popup stage
+     * @return
      */
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
 
         setUpPoupScene(content, popupStage, styleSheet);
 
+        popupStage.show();
+
+        return popupStage;
+    }
+
+
+    /**
+     * Creates popup with given title, icon, content and style.
+     *
+     * @param popupTitle Popup title
+     * @param iconPlace path for popup icon
+     * @param content content to be displayed in the popup
+     * @param styleSheet pop stylesheet name
+     * @param x Coordinate representing where the popup stage should be open in the horizontal axis
+     * @param y Coordinate representing where the popup stage should be open in the vertical axis
+     * @return
+     */
+    public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet, double x, double y){
+        Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
+
+        setUpPoupScene(content, popupStage, styleSheet);
+
+        popupStage.setX(x);
+        popupStage.setY(y);
         popupStage.show();
 
         return popupStage;
@@ -119,7 +148,7 @@ public class AppStyle {
      * @param popupStage popup stage
      * @param styleSheet pop stylesheet name
      */
-    private static void setUpPoupScene(HBox content, Stage popupStage, String styleSheet) {
+    private static void setUpPoupScene(Pane content, Stage popupStage, String styleSheet) {
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));

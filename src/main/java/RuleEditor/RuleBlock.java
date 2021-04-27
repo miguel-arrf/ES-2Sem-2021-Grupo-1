@@ -12,15 +12,8 @@ public class RuleBlock implements CustomNode {
 
     private final Node hBox;
 
-    private final boolean isNumeric;
-
-    public boolean getIsNumeric(){
-        return isNumeric;
-    }
-
-    public RuleBlock(String ruleMessage, boolean isNumeric ){
+    public RuleBlock(String ruleMessage ){
         this.ruleMessage = ruleMessage;
-        this.isNumeric = isNumeric;
 
         hBox = getHBox();
     }
@@ -55,9 +48,9 @@ public class RuleBlock implements CustomNode {
     }
 
     @Override
-    public HBox getRuleMakerBox() {
+    public Node getWidgetGraphicalRepresentation() {
 
-        String color = isNumeric ? "lightpink" : "lightgreen";
+        String color = "lightpink";
 
         HBox ruleMakerBox = new HBox(new Label(ruleMessage));
         ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +

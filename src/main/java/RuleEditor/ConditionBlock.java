@@ -19,26 +19,26 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.json.simple.JSONObject;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 
-public class ConditionBlock implements CustomNode {
+public class ConditionBlock implements CustomNode , Serializable {
 
     private RuleOperator operator;
 
-    private Node hBox;
-
-    private String rule;
-    private String value;
+    private Node graphicalRepresentationNode;
 
     public String getRule() {
-        return rule;
+        return ruleLabel.getText();
     }
 
-    private Label ruleLabel;
-    private Label valueLabel;
+    private final Label ruleLabel;
+    private final Label valueLabel;
     private Label operatorLabel;
+
 
     private Stage popupStage;
 
@@ -48,10 +48,6 @@ public class ConditionBlock implements CustomNode {
 
     private final DraggingObject oQueEstaASerDragged;
 
-    public DraggingObject getoQueEstaASerDragged() {
-        return oQueEstaASerDragged;
-    }
-
     public RuleBlock getRuleBlock() {
         return ruleBlock;
     }
@@ -60,57 +56,56 @@ public class ConditionBlock implements CustomNode {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
         this.operator = operator;
-        this.value = value;
+
+        valueLabel = new Label(value);
+
         this.ruleBlock = ruleBlock;
+
+        ruleLabel = new Label();
         if(ruleBlock == null){
-            this.rule = "Rule";
+            ruleLabel.setText("No Rule Block");
         }else{
-            this.rule = ruleBlock.getRuleMessage();
+            ruleLabel.setText(ruleBlock.getRuleMessage());
         }
 
 
-        hBox = getHBox();
+        graphicalRepresentationNode = getHBox();
     }
 
     public ConditionBlock(RuleOperator operator, String value, DraggingObject oQueEstaASerDragged){
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
         this.operator = operator;
-        this.value = value;
-        this.ruleBlock = null;
-        this.rule = "Rule";
+        valueLabel = new Label(value);
 
-        hBox = getHBox();
+        this.ruleBlock = null;
+
+        ruleLabel = new Label();
+        ruleLabel.setText("No Rule Block");
+
+        graphicalRepresentationNode = getHBox();
     }
 
     public ConditionBlock(RuleOperator operator, RuleBlock ruleBlock, String value){
 
         this.oQueEstaASerDragged = null;
         this.operator = operator;
-        this.value = value;
+        valueLabel = new Label(value);
         this.ruleBlock = ruleBlock;
+
+        ruleLabel = new Label();
         if(ruleBlock == null){
-            this.rule = "Rule";
+            ruleLabel.setText("No Rule Block");
         }else{
-            this.rule = ruleBlock.getRuleMessage();
+            ruleLabel.setText(ruleBlock.getRuleMessage());
         }
 
+
     }
 
-    public HBox getRuleMakerBox(){
-        HBox ruleMakerBox = new HBox(new Label("CONDITION"));
-        ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: lightblue;");
-
-        ruleMakerBox.setMinWidth(150);
-        ruleMakerBox.setMinHeight(50);
-
-        ruleMakerBox.setAlignment(Pos.CENTER);
-
-        return ruleMakerBox;
+    public Node getWidgetGraphicalRepresentation(){
+        return CustomNode.getDefaultWidgetGraphicalRepresentation("CONDITION", "lightblue");
     }
-
 
 
     private void setDrag(VBox vBox){
@@ -129,20 +124,18 @@ public class ConditionBlock implements CustomNode {
             if(db.hasContent(FinalMain.customFormat)){
                 success = true;
 
-                System.out.println("conditionblock: " + oQueEstaASerDragged);
+                //System.out.println("conditionblock: " + oQueEstaASerDragged);
                 if(oQueEstaASerDragged.getNodes().getType() == Types.RuleBlock){
                     RuleBlock c1 = (RuleBlock) oQueEstaASerDragged.getNodes();
 
                     ruleBlock = c1;
 
                     ruleLabel.setText(c1.getRuleMessage());
-                    this.rule = c1.getRuleMessage();
 
-                    value = "Value";
                     operator = RuleOperator.DEFAULT;
 
                     operatorLabel.setText(operator.label);
-                    valueLabel.setText(value);
+                    valueLabel.setText("Value");
                 }
 
 
@@ -155,28 +148,23 @@ public class ConditionBlock implements CustomNode {
     }
 
     private Button getStyledButton(RuleOperator label){
-
-        return getStyledButton(label, null, true);
+        return getStyledButton(label, null);
     }
 
-
-
-    private Button getStyledButton(RuleOperator operatorToPut, String customColor, boolean isOperator){
+    private Button getStyledButton(RuleOperator operatorToPut, String customColor){
         Button button = new Button(operatorToPut.label);
-        button.getStyleClass().add(ruleBlock.getIsNumeric() ? "roundedAddButton" : "textualRuleButton");
+        button.getStyleClass().add("roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
         button.setPadding(new Insets(10, 20, 10, 20));
 
-        if(isOperator){
-            button.setOnMouseClicked(mouseEvent -> {
-                operator = operatorToPut;
-                operatorLabel.setText(operator.label);
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+        button.setOnMouseClicked(mouseEvent -> {
+            operator = operatorToPut;
+            operatorLabel.setText(operator.label);
+            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
 
-            });
-        }
+        });
 
         if(customColor!=null){
             button.setStyle("-fx-background-color: " + customColor);
@@ -187,7 +175,7 @@ public class ConditionBlock implements CustomNode {
 
     private Button getStyledButton(String operatorToPut, String customColor){
         Button button = new Button(operatorToPut);
-        button.getStyleClass().add(ruleBlock.getIsNumeric() ? "roundedAddButton" : "textualRuleButton");
+        button.getStyleClass().add( "roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
@@ -201,9 +189,9 @@ public class ConditionBlock implements CustomNode {
         return button;
     }
 
-
     private HBox optionsHBox(){
-        if(ruleBlock.getIsNumeric()){
+        HBox hBox = new HBox();
+
             Button lessButton = getStyledButton(RuleOperator.LESSER);
             Button lessOrEqualButton = getStyledButton(RuleOperator.LESSER_EQUAL);
             Button greaterButton = getStyledButton(RuleOperator.GREATER);
@@ -211,37 +199,21 @@ public class ConditionBlock implements CustomNode {
             Button equalButton = getStyledButton(RuleOperator.EQUAL);
             Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
 
-            HBox hBox = new HBox(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
-            hBox.getStyleClass().add("ruleBuilderMenu");
+            hBox.getChildren().addAll(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
 
-            hBox.setPadding(new Insets(10));
-            hBox.setSpacing(10);
 
-            hBox.setMaxHeight(100);
-            hBox.setMaxWidth(400);
-            hBox.setEffect(AppStyle.getDropShadow());
+        hBox.getStyleClass().add("ruleBuilderMenu");
 
-            hBox.setAlignment(Pos.CENTER);
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
 
-            return hBox;
-        }else{
-            Button equalButton = getStyledButton(RuleOperator.EQUAL);
-            Button differentButton = getStyledButton(RuleOperator.DIFFERENT);
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(400);
+        hBox.setEffect(AppStyle.getDropShadow());
 
-            HBox hBox = new HBox(equalButton,differentButton);
-            hBox.getStyleClass().add("ruleBuilderMenu");
+        hBox.setAlignment(Pos.CENTER);
 
-            hBox.setPadding(new Insets(10));
-            hBox.setSpacing(10);
-
-            hBox.setMaxHeight(100);
-            hBox.setMaxWidth(400);
-            hBox.setEffect(AppStyle.getDropShadow());
-
-            hBox.setAlignment(Pos.CENTER);
-
-            return hBox;
-        }
+        return hBox;
 
     }
 
@@ -254,17 +226,15 @@ public class ConditionBlock implements CustomNode {
 
         HBox hBox = new HBox();
 
-        if(ruleBlock.getIsNumeric()){
             TextField textField = new TextField("0.0");
 
             updateButton.setOnAction(actionEvent -> {
-                value = textField.getText();
-                valueLabel.setText(value);
+                valueLabel.setText(textField.getText());
 
                 Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
             });
 
-            DecimalFormat format = new DecimalFormat( "#.0" );
+            DecimalFormat format = new DecimalFormat( "-#.0;#.0" );
 
             textField.setTextFormatter( new TextFormatter<>(c ->
             {
@@ -289,28 +259,6 @@ public class ConditionBlock implements CustomNode {
 
             hBox.getChildren().addAll( textField,updateButton, cancelButton);
 
-        }else{
-            Button trueButton = getStyledButton("TRUE", "#a3ddcb");
-            Button falseButton = getStyledButton("FALSE", "#d8345f");
-
-            trueButton.setOnMouseClicked(mouseEvent -> {
-                valueLabel.setText("TRUE");
-                value = "TRUE";
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-            });
-
-            falseButton.setOnMouseClicked(mouseEvent -> {
-                value = "FALSE";
-                valueLabel.setText("FALSE");
-                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
-            });
-
-            hBox.getChildren().addAll(trueButton, falseButton);
-        }
-
-
-
-
 
         hBox.getStyleClass().add("ruleBuilderMenu");
 
@@ -328,11 +276,8 @@ public class ConditionBlock implements CustomNode {
     }
 
     private void setHBoxDelete(Node box){
-        System.out.println("here we are monkies");
         ContextMenu menu = new ContextMenu();
-        box.setOnContextMenuRequested(contextMenuEvent -> {
-            menu.show(box.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-        });
+        box.setOnContextMenuRequested(contextMenuEvent -> menu.show(box.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
         MenuItem deleteMenu = new MenuItem("delete");
         menu.getItems().add(deleteMenu);
@@ -340,6 +285,7 @@ public class ConditionBlock implements CustomNode {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) box.getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
+            FinalMain.ruleNodes.remove(this);
         });
 
     }
@@ -348,8 +294,6 @@ public class ConditionBlock implements CustomNode {
         HBox box = new HBox();
 
 
-        ruleLabel = new Label(rule);
-        valueLabel = new Label(value);
         operatorLabel = new Label(operator.label);
 
         VBox ruleLabelVbox = new VBox(ruleLabel);
@@ -363,14 +307,14 @@ public class ConditionBlock implements CustomNode {
                 if(ruleBlock != null){
                     optionsHBox = optionsHBox();
 
-                    Stage newStage = AppStyle.setUpPopup("Operator", "oi", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                    Stage newStage = AppStyle.setUpPopup("Operator", "/PreferencesPanelIcon.gif", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     popupStage = newStage;
 
                     //newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, FinalMain.splitPane));
-                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, hBox.getScene().getRoot()));
+                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
 
-                    hBox.getScene().setFill(Color.web("#3d3c40"));
-                    NewGUI.blurBackground(0, 30, 500, hBox.getScene().getRoot());
+                    graphicalRepresentationNode.getScene().setFill(Color.web("#3d3c40"));
+                    NewGUI.blurBackground(0, 30, 500, graphicalRepresentationNode.getScene().getRoot());
                 }
 
             }
@@ -386,13 +330,13 @@ public class ConditionBlock implements CustomNode {
                 if(ruleBlock != null){
                     optionsHBox = valueHBox();
 
-                    Stage newStage = AppStyle.setUpPopup("Value", "noIcon", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm());
+                    Stage newStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox,getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
                     popupStage = newStage;
 
-                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, hBox.getScene().getRoot()));
+                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
 
-                    hBox.getScene().setFill(Color.web("#3d3c40"));
-                    NewGUI.blurBackground(0, 30, 500, hBox.getScene().getRoot());
+                    graphicalRepresentationNode.getScene().setFill(Color.web("#3d3c40"));
+                    NewGUI.blurBackground(0, 30, 500, graphicalRepresentationNode.getScene().getRoot());
                 }
 
             }
@@ -422,28 +366,10 @@ public class ConditionBlock implements CustomNode {
         return box;
     }
 
-    public void setContextMenuDeletion(){
-
-        //DELETE
-        MenuItem deleteMenu = new MenuItem("delete");
-        ContextMenu menu = new ContextMenu(deleteMenu);
-
-        deleteMenu.setOnAction(actionEvent -> {
-            Pane parent = (Pane) hBox.getParent();
-            parent.getChildren().remove(hBox);
-            //hBox.getParent().getChi.remove(hBox);
-            //vBox.getChildren().remove(andBlock.gethBox());
-            FinalMain.ruleNodes.remove(this);
-        });
-
-        hBox.setOnContextMenuRequested(contextMenuEvent -> menu.show(hBox.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
-        //END DELETE
-    }
-
     @Override
     public Node getGraphicalRepresentation() {
-        setHBoxDelete(hBox);
-        return hBox;
+        setHBoxDelete(graphicalRepresentationNode);
+        return graphicalRepresentationNode;
     }
 
     public RuleOperator getOperator() {
@@ -451,14 +377,13 @@ public class ConditionBlock implements CustomNode {
     }
 
     public String getValue() {
-        return value;
+        return valueLabel.getText();
     }
 
     @Override
     public Types getType() {
         return Types.ConditionBlock;
     }
-
 
     public boolean evaluate(int value) {
         switch (operator) {
@@ -475,6 +400,22 @@ public class ConditionBlock implements CustomNode {
     public ConditionBlock getCopy(){
         return new ConditionBlock(getOperator(), getRuleBlock(), getValue(), oQueEstaASerDragged);
     }
+
+    @Override
+    public String toString() {
+        JSONObject object = new JSONObject();
+        object.put("operator", getOperator().label);
+        object.put("ruleLabel", ruleLabel.getText());
+        object.put("valueLabel", valueLabel.getText());
+        return object.toJSONString();
+//        return "ConditionBlock [ " +
+//                "operator: " + operator.label +
+//                "; ruleLabel: " + ruleLabel.getText() +
+//                "; valueLabel: " + valueLabel.getText() +
+//                " ]";
+
+    }
+
 
 }
 
