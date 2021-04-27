@@ -282,7 +282,6 @@ public class LogicBlock implements CustomNode  {
         object.put("operator", getOperator().label);
         return object.toJSONString();
         //return "LogicBlock [ operator: " + getOperator().label + " ]";
-
     }
 
 

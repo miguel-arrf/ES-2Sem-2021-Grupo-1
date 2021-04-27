@@ -23,7 +23,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -54,9 +53,12 @@ public class FinalMain extends Application {
         JSONParser parser = new JSONParser();
         JSONObject json = null;
         try {
+            if(rule == null){
+                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+            }
             json = (JSONObject) parser.parse(rule.toJSONString());
         } catch (ParseException e) {
-            e.printStackTrace();
+            return null;
         }
         return json;
     }
@@ -94,11 +96,11 @@ public class FinalMain extends Application {
         mainPane.getChildren().clear();
         //CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
         //System.out.println("aqui dentro: "  + jsonObject.toJSONString());
-        System.out.println("o que vai para o rule complete: " + ((JSONObject) jsonObject.get("id")).toJSONString());
-        CustomNode firstCustomNode = ruleComplete.jsonObjectToCustomNode((JSONObject) jsonObject.get("id"), inDragObject);
-        addCustomNode(firstCustomNode);
+        CustomNode firstCustomNode = ruleComplete.teste(jsonObject, inDragObject);
+        addCustomNodeWithouClear(firstCustomNode);
 
-        rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+
+        //rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
 
         return splitPane;
     }
@@ -311,6 +313,9 @@ public class FinalMain extends Application {
         popupStage.setOnCloseRequest(windowEvent -> {
             ruleName = textField.getText();
             stage.setTitle(ruleName);
+
+
+
             rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
             System.out.println("rule: " + rule.toJSONString());
 
@@ -342,33 +347,33 @@ public class FinalMain extends Application {
         return saveButton;
     }
 
-    private Button getLoadButton() {
-
-        Button saveButton = new Button("Load me papi :c");
-        saveButton.setOnAction(actionEvent -> {
-
-            try {
-                mainPane.getChildren().clear();
-                CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
-                addCustomNode(firstCustomNode);
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
-            }
-        });
-
-
-        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: #d5ecc2");
-        saveButton.setMinWidth(150);
-        saveButton.setMinHeight(50);
-        saveButton.setAlignment(Pos.CENTER);
-
-        saveButton.setMaxWidth(Double.MAX_VALUE);
-
-
-        return saveButton;
-    }
+//    private Button getLoadButton() {
+//
+//        Button saveButton = new Button("Load me papi :c");
+//        saveButton.setOnAction(actionEvent -> {
+//
+//            try {
+//                mainPane.getChildren().clear();
+//                CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
+//                addCustomNode(firstCustomNode);
+//            } catch (IOException | ParseException e) {
+//                e.printStackTrace();
+//            }
+//        });
+//
+//
+//        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+//                "    -fx-border-radius: 7 7 7 7;\n" +
+//                "    -fx-background-color: #d5ecc2");
+//        saveButton.setMinWidth(150);
+//        saveButton.setMinHeight(50);
+//        saveButton.setAlignment(Pos.CENTER);
+//
+//        saveButton.setMaxWidth(Double.MAX_VALUE);
+//
+//
+//        return saveButton;
+//    }
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
@@ -468,7 +473,13 @@ public class FinalMain extends Application {
 
         ruleNodes.clear();
         ruleNodes.add(customNode);
+    }
 
+    private void addCustomNodeWithouClear(CustomNode customNode){
+        VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
+        mainPane.getChildren().add(customNode.getGraphicalRepresentation());
+
+        ruleNodes.add(0,customNode);
     }
 
 

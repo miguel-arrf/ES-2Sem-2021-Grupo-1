@@ -280,7 +280,12 @@ public class ConditionBlock implements CustomNode, Serializable {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) box.getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
+            System.out.println(" ------- delete pressed");
+            System.out.println(" ----- contains: "  + FinalMain.ruleNodes.contains(this));
+            System.out.println(" --------- size here: " + FinalMain.ruleNodes.size());
             FinalMain.ruleNodes.remove(this);
+            System.out.println(" --------- size now: " + FinalMain.ruleNodes.size());
+
         });
 
     }

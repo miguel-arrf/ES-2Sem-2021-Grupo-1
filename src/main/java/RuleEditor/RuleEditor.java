@@ -22,7 +22,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
@@ -140,9 +139,7 @@ public class RuleEditor extends Application {
             label.setText(textField.getText());
             System.out.println("here: " + jsonObject.toJSONString());
 
-            JSONObject id = (JSONObject) jsonObject.get("id");
-            id.replace("name", textField.getText());
-            jsonObject.replace("id", id);
+            jsonObject.replace("name", textField.getText());
 
             ruleComplete.arrayListToJSON(rules);
             Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
@@ -174,8 +171,7 @@ public class RuleEditor extends Application {
         HBox pane = new HBox();
         pane.setSpacing(20);
 
-        JSONObject jsonObject = (JSONObject) nodeJSON.get("id");
-        Label label = new Label((String) jsonObject.get("name"));
+        Label label = new Label((String) nodeJSON.get("name"));
 
         label.setMinWidth(Region.USE_PREF_SIZE);
         label.setTextFill(Color.WHITE);
@@ -200,8 +196,8 @@ public class RuleEditor extends Application {
             Stage popupStage = AppStyle.setUpPopupStage("Edit Rule", "/RuleBuilderIcon.gif", true);
 
             FinalMain finalMain = new FinalMain();
-            String ruleName = (String) ((JSONObject) nodeJSON.get("id")).get("name");
-            System.out.println("cagalhao: "  + ruleName);
+            String ruleName = (String) nodeJSON.get("name");
+            System.out.println("nome regra: "  + ruleName);
             System.out.println("o que entrou: "  + nodeJSON);
 
             SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleComplete, nodeJSON, ruleName);

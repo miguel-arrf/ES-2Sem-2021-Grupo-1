@@ -9,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,23 +55,28 @@ public class RuleComplete implements Serializable {
 
 
     public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+
+
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
+        System.out.println("firstCustomNode here: " + firstCustomNode + " <-> " + customNodeArrayList.size());
 
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
-
+        System.out.println("rule: "  + rule);
 
         StringBuilder stringBuilder = new StringBuilder("");
         print(rule, "", stringBuilder);
         System.out.println(stringBuilder);
 
+
         JSONObject jsonObject = toJSON(firstCustomNode, customNodeArrayList);
 
-        CustomNode id = (CustomNode) jsonObject.get("id");
-        JSONObject newID = new JSONObject();
-        newID.put("id", id);
-        newID.put("name", name);
-        jsonObject.replace("id", newID);
+//        CustomNode id = (CustomNode) jsonObject.get("id");
+//        JSONObject newID = new JSONObject();
+//        newID.put("id", id);
+//        newID.put("name", name);
+//        jsonObject.replace("id", newID);
+        jsonObject.put("name", name);
 
 
 
@@ -132,15 +138,12 @@ public class RuleComplete implements Serializable {
         return customNodes;
     }
 
-    public  CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader(file);
+    public  CustomNode teste(JSONObject jsonObject, DraggingObject draggingObject) {
 
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
-        System.out.println("firstCustomNode :" + firstCustomNode);
+        //System.out.println("firstCustomNode :" + firstCustomNode);
         if(firstCustomNode.getType() ==  Types.LogicBlock){
             toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
 
@@ -151,26 +154,46 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public  CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader(file);
 
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-        JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
-        jsonObject.replace("id", idWithoutName.get("id"));
+//    public  CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
+//        JSONParser jsonParser = new JSONParser();
+//        Reader reader = new FileReader(file);
+//
+//        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+//
+//        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
+//
+//        System.out.println("firstCustomNode :" + firstCustomNode);
+//        if(firstCustomNode.getType() ==  Types.LogicBlock){
+//            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
+//
+//            return firstCustomNode;
+//        }
+//
+//        return firstCustomNode;
+//
+//    }
 
-        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-
-        System.out.println("firstCustomNode :" + firstCustomNode);
-        if(firstCustomNode.getType() ==  Types.LogicBlock){
-            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
-
-            return firstCustomNode;
-        }
-
-        return firstCustomNode;
-
-    }
+//    public  CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
+//        JSONParser jsonParser = new JSONParser();
+//        Reader reader = new FileReader(file);
+//
+//        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+//        JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
+//        jsonObject.replace("id", idWithoutName.get("id"));
+//
+//        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
+//
+//        System.out.println("firstCustomNode :" + firstCustomNode);
+//        if(firstCustomNode.getType() ==  Types.LogicBlock){
+//            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
+//
+//            return firstCustomNode;
+//        }
+//
+//        return firstCustomNode;
+//
+//    }
 
     public  void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
@@ -195,7 +218,7 @@ public class RuleComplete implements Serializable {
             parent.addToLeft(nodeToAddLeft);
 
             if(nodeToAddLeft.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(0), draggingObject );
+                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(1), draggingObject );
             }
 
         }
@@ -203,7 +226,7 @@ public class RuleComplete implements Serializable {
     }
 
     public  CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject){
-        System.out.println("jsonObjectToCustomNode: " + jsonObject.toJSONString());
+        //System.out.println("jsonObjectToCustomNode: " + jsonObject.toJSONString());
         String firstCustomNodeString = ((JSONObject) jsonObject.get("id")).get("operator").toString();
 
         CustomNode firstCustomNode = null;
@@ -266,6 +289,7 @@ public class RuleComplete implements Serializable {
         }else{
             //significa que é um ANd ou um OR block
             ArrayList<CustomNode> children = getChild(customNode, customNodeArrayList);
+            System.out.println("children size: "  + children.size());
 
             if(children.size() == 0)
                 return null;
