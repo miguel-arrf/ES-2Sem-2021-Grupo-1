@@ -1,7 +1,9 @@
 package RuleEditor;
 
 import g1.ISCTE.AppStyle;
+import g1.ISCTE.NewGUI;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -9,19 +11,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 
 public class RuleEditor extends Application {
@@ -29,6 +32,10 @@ public class RuleEditor extends Application {
     private final VBox mainPane = new VBox();
     private final VBox rulesPanel = new VBox();
     private final Label numberOfRules = new Label("No Rules");
+
+    private Button setRulesDirectoryButton;
+    private Button loadRulesButton;
+    private Button addNewRuleButton;
 
     private final RuleComplete ruleComplete = new RuleComplete();
     private File rulesFile = null;
@@ -65,6 +72,7 @@ public class RuleEditor extends Application {
                         }
 
                         updateRulesEditorPanel();
+                        addNewRuleButton.setDisable(false);
 
                     } catch (ParseException | IOException e) {
                         e.printStackTrace();
@@ -73,6 +81,8 @@ public class RuleEditor extends Application {
                 }
             }
         });
+
+        HBox.setHgrow(setDirectoryButton, Priority.ALWAYS);
 
         return setDirectoryButton;
     }
@@ -84,7 +94,7 @@ public class RuleEditor extends Application {
         fileChooser.setInitialFileName("*.txt");
         fileChooser.setTitle("Save Rules File");
 
-        Button setDirectoryButton = styledButton("Set Rules Directory", "#d5ecc2");
+        Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
         setDirectoryButton.setOnAction(actionEvent -> {
             File tempFile;
             tempFile = fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
@@ -96,20 +106,117 @@ public class RuleEditor extends Application {
                     ruleComplete.setFile(rulesFile);
 
                     rules.clear();
+
+                    addNewRuleButton.setDisable(false);
                 }
             }
         });
+
+        HBox.setHgrow(setDirectoryButton, Priority.ALWAYS);
 
 
         return setDirectoryButton;
     }
 
+    private HBox getRenameTextField(Label label, JSONObject jsonObject){
+
+        Button updateButton = styledButton("Update", "#a3ddcb");
+        Button cancelButton = styledButton("Cancel", "#d8345f");
+
+        cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST))));
+
+
+        HBox hBox = new HBox();
+        hBox.setStyle("-fx-background-color: #3d3c40");
+        TextField textField = new TextField("0.0");
+        textField.setStyle("-fx-text-inner-color: white;");
+
+
+        updateButton.setOnAction(actionEvent -> {
+            label.setText(textField.getText());
+            System.out.println("here: "  + jsonObject.toJSONString());
+
+            JSONObject id = (JSONObject) jsonObject.get("id");
+            id.replace("name", textField.getText());
+            jsonObject.replace("id", id);
+
+            ruleComplete.arrayListToJSON(rules);
+            Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+        });
+
+
+        textField.setMaxWidth(150);
+
+        hBox.getChildren().addAll(textField, updateButton, cancelButton);
+
+
+        hBox.getStyleClass().add("ruleBuilderMenu");
+
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
+
+
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(500);
+        hBox.setEffect(AppStyle.getDropShadow());
+
+        hBox.setAlignment(Pos.CENTER);
+
+        return hBox;
+    }
+
     private Node getRulePane(JSONObject nodeJSON){
+
+        HBox pane = new HBox();
+        pane.setSpacing(20);
+
         JSONObject jsonObject = (JSONObject) nodeJSON.get("id");
         Label label = new Label((String) jsonObject.get("name"));
-        label.setTextFill(Color.WHITE);
 
-        return label;
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        label.setTextFill(Color.WHITE);
+        label.setPadding(new Insets(5));
+        label.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: #a3ddcb" );
+
+
+        Button delete = styledButton("Delete", "#f39189");
+        delete.setOnAction(actionEvent -> {
+            rules.remove(nodeJSON);
+            ruleComplete.arrayListToJSON(rules);
+
+            updateRulesEditorPanel();
+        });
+        delete.setMinHeight(0);
+
+        Button edit = styledButton("Edit", "#ece2e1");
+        edit.setMinHeight(0);
+
+        Button rename = styledButton("Rename", "#ded7b1");
+        rename.setOnAction(actionEvent -> {
+
+
+
+            HBox optionsHBox = getRenameTextField(label, nodeJSON);
+            Stage popupStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+            popupStage.getScene().setFill(Color.web("#3d3c40"));
+
+            popupStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, rename.getScene().getRoot()));
+
+            rename.getScene().setFill(Color.web("#3d3c40"));
+            NewGUI.blurBackground(0, 30, 500, rename.getScene().getRoot());
+
+
+
+        });
+        rename.setMinHeight(0);
+
+
+        pane.getChildren().addAll(label, delete, edit, rename);
+
+        return pane;
     }
 
     private void updateRulesEditorPanel(){
@@ -127,7 +234,7 @@ public class RuleEditor extends Application {
 
     }
 
-    private void setUpAddNewRuleButton(){
+    private Button setUpAddNewRuleButton(){
         Button addNewRule = styledButton("Add rule", "#a29bfe");
         addNewRule.setMaxHeight(30);
 
@@ -146,15 +253,19 @@ public class RuleEditor extends Application {
 
             popupStage.setScene(scene);
 
-            popupStage.setMinHeight(700);
+            popupStage.setMinHeight(300);
             popupStage.setMinWidth(700);
 
             popupStage.setOnCloseRequest(windowEvent -> {
                 System.out.println("Closed! Rule name: " + finalMain.getRuleName());
-                rules.add(finalMain.getRule());
-                updateRulesEditorPanel();
+                JSONObject ruleToADD = finalMain.getRule();
+                if(ruleToADD !=  null){
+                    rules.add(finalMain.getRule());
+                    updateRulesEditorPanel();
 
-                ruleComplete.arrayListToJSON(rules);
+                    ruleComplete.arrayListToJSON(rules);
+                }
+
 
             });
 
@@ -162,7 +273,8 @@ public class RuleEditor extends Application {
 
         });
 
-        mainPane.getChildren().add(addNewRule);
+        return addNewRule;
+        //mainPane.getChildren().add(addNewRule);
     }
 
     private void setUpMainPane(){
@@ -183,21 +295,32 @@ public class RuleEditor extends Application {
         numberOfRules.setTextFill(Color.WHITE);
         rulesPanel.getChildren().add(numberOfRules);
 
+        rulesPanel.setSpacing(20);
         rulesPanel.setMaxWidth(Double.MAX_VALUE);
         rulesPanel.setAlignment(Pos.CENTER);
-        rulesPanel.setPadding(new Insets(20,100,20,100));
+        rulesPanel.setPadding(new Insets(20));
         rulesPanel.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
         rulesPanel.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
 
         VBox.setVgrow(rulesPanel, Priority.ALWAYS);
 
         mainPane.getChildren().add(rulesPanel);
-        setUpAddNewRuleButton();
+
+        addNewRuleButton = setUpAddNewRuleButton();
+        mainPane.getChildren().add(addNewRuleButton);
+        addNewRuleButton.setDisable(true);
 
         HBox saveAndLoadButtons = new HBox();
         saveAndLoadButtons.setSpacing(20);
-        saveAndLoadButtons.getChildren().addAll(setUpSetRulesFileButton(), setUpLoadRulesFileButton());
+
+        setRulesDirectoryButton = setUpSetRulesFileButton();
+        loadRulesButton = setUpLoadRulesFileButton();
+
+
+
+        saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
+        saveAndLoadButtons.setMaxWidth(Double.MAX_VALUE);
 
         mainPane.getChildren().add(saveAndLoadButtons);
     }
@@ -208,8 +331,9 @@ public class RuleEditor extends Application {
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: " + color );
-        button.setMinWidth(150);
         button.setMinHeight(50);
+        button.setMinWidth(Region.USE_PREF_SIZE);
+
         button.setAlignment(Pos.CENTER);
 
         button.setMaxWidth(Double.MAX_VALUE);
@@ -218,13 +342,14 @@ public class RuleEditor extends Application {
     }
 
 
+
     @Override
     public void start(Stage stage) {
 
         setUpMainPane();
 
         Scene scene = new Scene(mainPane);
-        mainPane.setPrefWidth(300);
+        mainPane.setPrefSize(500,500);
 
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
 

@@ -238,7 +238,12 @@ public class FinalMain extends Application {
         rightVBox.setStyle("-fx-background-color: #1c1c1e");
 
 
-        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), getStackPane(getOptionsVBox(stage)));
+        //We need this to disable the shrinking of the button while resizing the window... Let the upper panel (with the blocks be the one resizing)
+        StackPane saveButtonStackPane = getStackPane(getOptionsVBox(stage));
+        saveButtonStackPane.setMinHeight(Region.USE_PREF_SIZE);
+
+
+        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), saveButtonStackPane);
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));

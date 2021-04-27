@@ -157,7 +157,7 @@ public class RuleComplete implements Serializable {
 
         JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
         JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
-        jsonObject.replace("id", (JSONObject)idWithoutName.get("id"));
+        jsonObject.replace("id", idWithoutName.get("id"));
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
