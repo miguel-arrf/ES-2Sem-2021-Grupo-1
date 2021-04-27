@@ -98,7 +98,7 @@ public class RuleEditor extends Application {
         fileChooser.setTitle("Save Rules File");
 
         Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
-        setButtonIcon(setDirectoryButton, "icons8-add-file-96.png");
+        setButtonIcon(setDirectoryButton, "add-file.png");
 
         setDirectoryButton.setOnAction(actionEvent -> {
             File tempFile;
@@ -296,7 +296,7 @@ public class RuleEditor extends Application {
 
     private Button setUpAddNewRuleButton() {
         Button addNewRule = styledButton("Add rule", "#a29bfe");
-        setButtonIcon(addNewRule, "icons8-add-96.png");
+        setButtonIcon(addNewRule, "add.png");
 
         addNewRule.setMaxHeight(30);
 
@@ -347,7 +347,7 @@ public class RuleEditor extends Application {
         rules.addListener((ListChangeListener<JSONObject>) change -> {
             if (rules.size() == 0) {
                 numberOfRules.setText("No Rules");
-                numberOfRules.setGraphic(getIcon("icons8-bird-96.png"));
+                numberOfRules.setGraphic(getIcon("bird.png"));
             } else {
                 numberOfRules.setText(rules.size() + " rules");
                 numberOfRules.setGraphic(null);
@@ -356,7 +356,7 @@ public class RuleEditor extends Application {
 
         numberOfRules.setTextFill(Color.WHITE);
         numberOfRules.setFont(AppStyle.getFont(FontType.BOLD, 12));
-        numberOfRules.setGraphic(getIcon("icons8-bird-96.png"));
+        numberOfRules.setGraphic(getIcon("bird.png"));
 
         rulesPanel.getChildren().add(numberOfRules);
 
