@@ -35,6 +35,8 @@ public class FinalMain extends Application {
     private final ArrayList<CustomNode> rectanglesTypes = new ArrayList<>();
     private final DraggingObject inDragObject = new DraggingObject();
 
+    private boolean isNewRule = true;
+
     private JSONObject rule;
     private String ruleName;
     private RuleComplete ruleComplete;
@@ -72,6 +74,26 @@ public class FinalMain extends Application {
         return splitPane;
     }
 
+    public SplitPane getEditRuleEditor(Stage stage, RuleComplete ruleComplete, JSONObject jsonObject, String ruleName){
+        isNewRule = false;
+
+        //System.out.println("inside rule name: "  + ruleName);
+        this.ruleName = ruleName;
+        this.ruleComplete = ruleComplete;
+        SplitPane splitPane = new SplitPane();
+        configureSceneMainView(splitPane, stage);
+
+        mainPane.getChildren().clear();
+        //CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
+        //System.out.println("aqui dentro: "  + jsonObject.toJSONString());
+        CustomNode firstCustomNode = ruleComplete.jsonObjectToCustomNode((JSONObject) jsonObject.get("id"), inDragObject);
+        addCustomNode(firstCustomNode);
+
+        rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+
+        return splitPane;
+    }
+
     private void configureSceneMainView(SplitPane splitPane, Stage stage) {
         addDefaultBlocks();
 
@@ -89,6 +111,8 @@ public class FinalMain extends Application {
 
         configureMainPane(stage);
     }
+
+
 
     private void configureSceneAndStage(Scene scene, Stage stage) {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
@@ -289,7 +313,7 @@ public class FinalMain extends Application {
     private Button getSaveButton(Stage stage) {
 
 
-        Button saveButton = new Button("Save me :3");
+        Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
             textFieldStage(stage);
             //RuleComplete.saveToFileSerialize(ruleNodes);
@@ -448,14 +472,17 @@ class SortBlockArrayList implements Comparator<CustomNode> {
 
     @Override
     public int compare(CustomNode a, CustomNode b) {
-        if (a.getType() == Types.RuleBlock)
+        if (a.getType() == Types.RuleBlock){
             return -1;
-        if (a.getType() == b.getType())
+        }if (a.getType() == b.getType()){
             return 0;
-        if (a.getType() == Types.LogicBlock && b.getType() == Types.ConditionBlock)
+        }
+        if (a.getType() == Types.LogicBlock && b.getType() == Types.ConditionBlock){
             return 1;
-        if (b.getType() == Types.LogicBlock && a.getType() == Types.ConditionBlock)
+        }
+        if (b.getType() == Types.LogicBlock && a.getType() == Types.ConditionBlock){
             return -1;
+        }
 
         return 1;
     }

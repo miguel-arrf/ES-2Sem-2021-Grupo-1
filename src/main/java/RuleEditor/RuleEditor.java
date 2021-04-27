@@ -11,7 +11,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -23,8 +26,6 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 
 public class RuleEditor extends Application {
@@ -32,17 +33,19 @@ public class RuleEditor extends Application {
     private final VBox mainPane = new VBox();
     private final VBox rulesPanel = new VBox();
     private final Label numberOfRules = new Label("No Rules");
-
+    private final RuleComplete ruleComplete = new RuleComplete();
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
-
-    private final RuleComplete ruleComplete = new RuleComplete();
     private File rulesFile = null;
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
 
-    private Button setUpLoadRulesFileButton(){
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private Button setUpLoadRulesFileButton() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.txt)", "*.txt"));
         fileChooser.setInitialFileName("*.txt");
@@ -54,8 +57,8 @@ public class RuleEditor extends Application {
             tempFile = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
 
             System.out.println("tempFile: " + tempFile);
-            if(tempFile != null){
-                if(tempFile.getName().endsWith(".txt")){
+            if (tempFile != null) {
+                if (tempFile.getName().endsWith(".txt")) {
                     rulesFile = tempFile;
                     ruleComplete.setFile(rulesFile);
 
@@ -66,10 +69,10 @@ public class RuleEditor extends Application {
                         //If we don't do it this way, the listener for the label, wouldn't work.
                         rules.addAll(arrayList);
 
-                        System.out.println("reading: ");
-                        for(JSONObject jsonObject : rules){
-                            System.out.println(jsonObject);
-                        }
+//                        System.out.println("reading: ");
+//                        for (JSONObject jsonObject : rules) {
+//                            System.out.println(jsonObject);
+//                        }
 
                         updateRulesEditorPanel();
                         addNewRuleButton.setDisable(false);
@@ -87,7 +90,7 @@ public class RuleEditor extends Application {
         return setDirectoryButton;
     }
 
-    private Button setUpSetRulesFileButton(){
+    private Button setUpSetRulesFileButton() {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.txt)", "*.txt"));
@@ -100,8 +103,8 @@ public class RuleEditor extends Application {
             tempFile = fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
 
             System.out.println("tempFile: " + tempFile);
-            if(tempFile != null){
-                if(tempFile.getName().endsWith(".txt")){
+            if (tempFile != null) {
+                if (tempFile.getName().endsWith(".txt")) {
                     rulesFile = tempFile;
                     ruleComplete.setFile(rulesFile);
 
@@ -118,7 +121,7 @@ public class RuleEditor extends Application {
         return setDirectoryButton;
     }
 
-    private HBox getRenameTextField(Label label, JSONObject jsonObject){
+    private HBox getRenameTextField(Label label, JSONObject jsonObject) {
 
         Button updateButton = styledButton("Update", "#a3ddcb");
         Button cancelButton = styledButton("Cancel", "#d8345f");
@@ -134,7 +137,7 @@ public class RuleEditor extends Application {
 
         updateButton.setOnAction(actionEvent -> {
             label.setText(textField.getText());
-            System.out.println("here: "  + jsonObject.toJSONString());
+            System.out.println("here: " + jsonObject.toJSONString());
 
             JSONObject id = (JSONObject) jsonObject.get("id");
             id.replace("name", textField.getText());
@@ -165,7 +168,7 @@ public class RuleEditor extends Application {
         return hBox;
     }
 
-    private Node getRulePane(JSONObject nodeJSON){
+    private Node getRulePane(JSONObject nodeJSON) {
 
         HBox pane = new HBox();
         pane.setSpacing(20);
@@ -176,9 +179,9 @@ public class RuleEditor extends Application {
         label.setMinWidth(Region.USE_PREF_SIZE);
         label.setTextFill(Color.WHITE);
         label.setPadding(new Insets(5));
-        label.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: #a3ddcb" );
+        label.setStyle("-fx-background-radius: 7 7 7 7;\n"
+                + "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: #a3ddcb");
 
 
         Button delete = styledButton("Delete", "#f39189");
@@ -191,11 +194,55 @@ public class RuleEditor extends Application {
         delete.setMinHeight(0);
 
         Button edit = styledButton("Edit", "#ece2e1");
+        edit.setOnAction(actionEvent -> {
+
+            Stage popupStage = AppStyle.setUpPopupStage("Edit Rule", "/RuleBuilderIcon.gif", true);
+
+            FinalMain finalMain = new FinalMain();
+            String ruleName = (String) ((JSONObject) nodeJSON.get("id")).get("name");
+            System.out.println("cagalhao: "  + ruleName);
+            System.out.println("o que entrou: "  + nodeJSON);
+
+            SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleComplete, nodeJSON, ruleName);
+
+            VBox.setMargin(content, new Insets(20));
+            content.setPadding(new Insets(10));
+
+            Scene scene = new Scene(content, 1000, 700);
+            scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+            popupStage.setScene(scene);
+
+            popupStage.setMinHeight(300);
+            popupStage.setMinWidth(700);
+
+            popupStage.setOnCloseRequest(windowEvent -> {
+                //TODO UPDATE HERE!
+                rules.remove(nodeJSON);
+
+                JSONObject ruleToADD = finalMain.getRule();
+
+                System.out.println("o que saiu: "  + ruleToADD);
+
+                if (ruleToADD != null) {
+                    rules.add(finalMain.getRule());
+
+                    ruleComplete.arrayListToJSON(rules);
+
+                    updateRulesEditorPanel();
+
+                }
+
+
+            });
+
+            popupStage.show();
+        });
+
         edit.setMinHeight(0);
 
         Button rename = styledButton("Rename", "#ded7b1");
         rename.setOnAction(actionEvent -> {
-
 
 
             HBox optionsHBox = getRenameTextField(label, nodeJSON);
@@ -209,7 +256,6 @@ public class RuleEditor extends Application {
             NewGUI.blurBackground(0, 30, 500, rename.getScene().getRoot());
 
 
-
         });
         rename.setMinHeight(0);
 
@@ -219,10 +265,10 @@ public class RuleEditor extends Application {
         return pane;
     }
 
-    private void updateRulesEditorPanel(){
+    private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
 
-        for(JSONObject entry : rules){
+        for (JSONObject entry : rules) {
             //JSONObject jsonObject = (JSONObject) entry.get("id");
             rulesPanel.getChildren().add(getRulePane(entry));
             //Label label = new Label((String) jsonObject.get("name"));
@@ -234,7 +280,7 @@ public class RuleEditor extends Application {
 
     }
 
-    private Button setUpAddNewRuleButton(){
+    private Button setUpAddNewRuleButton() {
         Button addNewRule = styledButton("Add rule", "#a29bfe");
         addNewRule.setMaxHeight(30);
 
@@ -259,7 +305,7 @@ public class RuleEditor extends Application {
             popupStage.setOnCloseRequest(windowEvent -> {
                 System.out.println("Closed! Rule name: " + finalMain.getRuleName());
                 JSONObject ruleToADD = finalMain.getRule();
-                if(ruleToADD !=  null){
+                if (ruleToADD != null) {
                     rules.add(finalMain.getRule());
                     updateRulesEditorPanel();
 
@@ -277,7 +323,7 @@ public class RuleEditor extends Application {
         //mainPane.getChildren().add(addNewRule);
     }
 
-    private void setUpMainPane(){
+    private void setUpMainPane() {
 
         mainPane.setSpacing(20);
         mainPane.setStyle("-fx-background-color: #3d3c40 ");
@@ -285,9 +331,9 @@ public class RuleEditor extends Application {
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
-            if(rules.size() == 0){
+            if (rules.size() == 0) {
                 numberOfRules.setText("No Rules");
-            }else{
+            } else {
                 numberOfRules.setText(rules.size() + " rules");
             }
         });
@@ -317,7 +363,6 @@ public class RuleEditor extends Application {
         loadRulesButton = setUpLoadRulesFileButton();
 
 
-
         saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
         saveAndLoadButtons.setMaxWidth(Double.MAX_VALUE);
@@ -325,12 +370,12 @@ public class RuleEditor extends Application {
         mainPane.getChildren().add(saveAndLoadButtons);
     }
 
-    private Button styledButton(String text, String color){
+    private Button styledButton(String text, String color) {
         Button button = new Button(text);
 
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: " + color );
+                "    -fx-background-color: " + color);
         button.setMinHeight(50);
         button.setMinWidth(Region.USE_PREF_SIZE);
 
@@ -341,15 +386,13 @@ public class RuleEditor extends Application {
         return button;
     }
 
-
-
     @Override
     public void start(Stage stage) {
 
         setUpMainPane();
 
         Scene scene = new Scene(mainPane);
-        mainPane.setPrefSize(500,500);
+        mainPane.setPrefSize(500, 500);
 
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
 
@@ -358,10 +401,6 @@ public class RuleEditor extends Application {
 
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
 }
