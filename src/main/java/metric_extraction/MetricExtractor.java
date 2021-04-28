@@ -35,9 +35,7 @@ public class MetricExtractor {
         }
     }
 
-    public ArrayList<ClassMetrics> getMetrics() {
-        return metrics;
-    }
+    public String getFinalPath() { return destination_directory + "/" + exported_file_name ; }
 
     public void executeExtraction() throws InterruptedException {
         if(source_code.isEmpty()) {
