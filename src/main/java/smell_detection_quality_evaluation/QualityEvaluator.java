@@ -97,11 +97,6 @@ public class QualityEvaluator {
         return data;
     }
 
-    /*private boolean parseBooleanFromString(String stringCellValue) {
-        if(stringCellValue.equals("FALSO")) return false;
-        else return true;
-    }*/
-
     public HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
         File java_project = new File(directory_src);

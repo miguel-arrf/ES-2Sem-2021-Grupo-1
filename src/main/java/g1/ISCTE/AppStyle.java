@@ -4,6 +4,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -18,6 +19,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+
 public class AppStyle {
 
 
@@ -27,7 +30,7 @@ public class AppStyle {
      * @return the font with the specified style and size
      */
     public static Font getFont(FontType fontType, int size){
-        return new Font(size);
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
         //TODO Add fonts back!
         //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
@@ -248,6 +251,25 @@ public class AppStyle {
             fadeTransition.play();
 
            currentMoment += delayDuration;
+
+        }
+
+    }
+
+    public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent){
+        double currentMoment = 0;
+
+        for(Node node: nodes){
+            node.setOpacity(0);
+            parent.getChildren().add(node);
+
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+            fadeTransition.setFromValue(0);
+            fadeTransition.setToValue(1);
+            fadeTransition.setDelay(Duration.millis(currentMoment));
+            fadeTransition.play();
+
+            currentMoment += delayDuration;
 
         }
 
