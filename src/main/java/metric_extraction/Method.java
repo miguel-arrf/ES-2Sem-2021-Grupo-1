@@ -3,6 +3,9 @@ package metric_extraction;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * Represents a Java method from a class, its information and metrics
+ */
 public class Method {
 
     private int loc_method;
@@ -10,16 +13,28 @@ public class Method {
     private final String method_name;
     private final String method;
 
+    /**
+     * Constructs an instance of Method
+     * @param method
+     * @param method_name
+     */
     public Method(String method, String method_name) {
         this.method = method;
         this.method_name = method_name;
     }
 
+    /**
+     * Executes the methods responsible for calculating the method's metrics and stores them in the class's designated attributes
+     */
     public void calculateMethodMetrics() {
         loc_method = calculateLoc_Method();
         cyclo_method = calculateCyclo_Method();
     }
 
+    /**
+     * Calculates the value of the cyclomatic complexity of the method
+     * @return The cyclomatic complexity of the method as int
+     */
     private int calculateCyclo_Method() {
         Scanner scanner = new Scanner(method);
         int counter = 1;
@@ -33,6 +48,10 @@ public class Method {
         return counter;
     }
 
+    /**
+     * Calculates the total number of the method's lines of code
+     * @return The total number of the method's lines of code as int
+     */
     private int calculateLoc_Method() {
         Scanner scanner = new Scanner(method);
         int counter = 0;
@@ -44,22 +63,42 @@ public class Method {
         return counter;
     }
 
+    /**
+     * Gets the cyclomatic complexity metric of the method
+     * @return Cyclomatic complexity of the method as int
+     */
     public int getCyclo_method() {
         return cyclo_method;
     }
 
+    /**
+     * Gets the total number of lines of code metric in the method
+     * @return Number of lines of code in the method as int
+     */
     public int getLoc_method() {
         return loc_method;
     }
 
+    /**
+     * Gets the method's name
+     * @return Name of the method as String
+     */
     public String getMethod_name() {
         return method_name;
     }
 
+    /**
+     * Gets the method's body
+     * @return Method's body as String
+     */
     public String getMethod() {
         return method;
     }
 
+    /**
+     * Maps the method's metrics for the functionality of code smell detection
+     * @return A HashMap, mapping the name of each metric of the method to its numeric value
+     */
     public HashMap<String, Integer> getMetricsForDetection() {
         HashMap<String, Integer> metrics = new HashMap<>();
         metrics.put("CYCLO_Method", getCyclo_method());

@@ -8,15 +8,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Given a Java class file, the worker parses the Java code present in the file, extracting it's information and code metrics, and storing them in a ClassMetrics instance for each Java class declaration found in the file
+ */
 public class ExtractionWorker implements Runnable {
 
     private ArrayList<ClassMetrics> metrics = new ArrayList<>();
     private File class_file;
 
+    /**
+     * Constructs an instance of ExtractionWorker
+     * @param class_file
+     */
     public ExtractionWorker(File class_file) {
         this.class_file = class_file;
     }
 
+    /**
+     * Executes the class's behavior
+     */
     @Override
     public void run() {
         try {
@@ -44,12 +54,22 @@ public class ExtractionWorker implements Runnable {
         }
     }
 
+    /**
+     * Extracts a Java class's methods as instances of Method and stores them in a list
+     * @param parser
+     * @return An ArrayList of Method instances
+     */
     private ArrayList<Method> extractClassMethods(ClassOrInterfaceDeclaration parser) {
         MethodVisitor visitor = new MethodVisitor();
         visitor.visit(parser, null);
         return visitor.getMethods();
     }
 
+    /**
+     * Creates a code parser for parsing a given Java class file
+     * @param class_file
+     * @return A code parser associated with the given Java class file
+     */
     private CompilationUnit getCodeParser(File class_file) {
         InputStream in = null;
         CompilationUnit parser = null;
@@ -68,6 +88,11 @@ public class ExtractionWorker implements Runnable {
         return parser;
     }
 
+    /**
+     * Scans the Java class file and counts the total number of lines of code
+     * @return Number of lines of the class as int
+     * @throws FileNotFoundException
+     */
     private int extractLOC_Class() throws FileNotFoundException {
         Scanner scanner = new Scanner(class_file);
         int counter = 0;
@@ -79,6 +104,10 @@ public class ExtractionWorker implements Runnable {
         return counter;
     }
 
+    /**
+     * Gets all the metrics extracted from the class file as a list of ClassMetrics instances
+     * @return An ArrayList of instances of ClassMetrics
+     */
     public ArrayList<ClassMetrics> getMetrics() {
         return this.metrics;
     }
