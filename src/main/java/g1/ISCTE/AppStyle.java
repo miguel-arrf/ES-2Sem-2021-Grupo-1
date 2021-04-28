@@ -18,6 +18,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+
 public class AppStyle {
 
 
@@ -55,6 +57,7 @@ public class AppStyle {
      * @return sub title label
      */
     public static Label getSubTitleLabel(String message){
+
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
         subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
@@ -252,6 +255,7 @@ public class AppStyle {
         }
 
     }
+
 
 }
 

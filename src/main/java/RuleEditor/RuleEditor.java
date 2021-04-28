@@ -51,8 +51,8 @@ public class RuleEditor extends Application {
 
     private Button setUpLoadRulesFileButton() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.txt)", "*.txt"));
-        fileChooser.setInitialFileName("*.txt");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.rule)", "*.rule"));
+        fileChooser.setInitialFileName("*.rule");
         fileChooser.setTitle("Select Rules File");
 
         Button setDirectoryButton = styledButton("Load Rules", "#a3ddcb");
@@ -63,7 +63,7 @@ public class RuleEditor extends Application {
             tempFile = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
 
             if (tempFile != null) {
-                if (tempFile.getName().endsWith(".txt")) {
+                if (tempFile.getName().endsWith(".rule")) {
                     rulesFile = tempFile;
                     ruleComplete.setFile(rulesFile);
 
@@ -93,8 +93,8 @@ public class RuleEditor extends Application {
     private Button setUpSetRulesFileButton() {
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.txt)", "*.txt"));
-        fileChooser.setInitialFileName("*.txt");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.rule)", "*.rule"));
+        fileChooser.setInitialFileName("*.rule");
         fileChooser.setTitle("Save Rules File");
 
         Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
@@ -105,7 +105,7 @@ public class RuleEditor extends Application {
             tempFile = fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
 
             if (tempFile != null) {
-                if (tempFile.getName().endsWith(".txt")) {
+                if (tempFile.getName().endsWith(".rule")) {
                     rulesFile = tempFile;
                     ruleComplete.setFile(rulesFile);
 

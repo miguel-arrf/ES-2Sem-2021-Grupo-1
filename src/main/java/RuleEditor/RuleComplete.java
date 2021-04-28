@@ -43,6 +43,7 @@ public class RuleComplete implements Serializable {
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
         StringBuilder stringBuilder = new StringBuilder("");
+        System.out.print("rule -> ");
         print(rule, "", stringBuilder);
         System.out.println(stringBuilder);
 
