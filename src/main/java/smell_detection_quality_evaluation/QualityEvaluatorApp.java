@@ -105,7 +105,7 @@ public class QualityEvaluatorApp extends Application {
             label.setTextFill(Color.WHITE);
             label.setPadding(new Insets(4, 10, 10, 10));
             label.getStyleClass().add("treeLabel");
-            label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
+            label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
             labels.add(label);
             //textBox.getChildren().add(label);
         }
@@ -172,8 +172,8 @@ public class QualityEvaluatorApp extends Application {
         Label cell = new Label(cellName);
         cell.setTextFill(Color.WHITE);
         label.setTextFill(Color.WHITE);
-        cell.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
-        label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
+        cell.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
+        label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
         VBox box = new VBox(cell, label);
         box.setSpacing(20);
         box.setPadding(new Insets(10));

@@ -1,7 +1,7 @@
 package g1.ISCTE;
 
 public enum FontType{
-    ROUNDED_BOLD("SF-Pro-Rounded-SemiBold.ttf"),
+    ROUNDED_SEMI_BOLD("SF-Pro-Rounded-SemiBold.ttf"),
     DISPLAY_MEDIUM("SFProDisplay-Medium.ttf"),
     REGULAR("SFProDisplay-Regular.ttf"),
     MEDIUM("SFProDisplay-Medium.ttf"),

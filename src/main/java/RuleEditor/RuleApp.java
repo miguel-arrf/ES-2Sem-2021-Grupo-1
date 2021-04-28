@@ -7,7 +7,8 @@ public class RuleApp {
     public static void main(String[] args) {
 
         //FinalMain.main(args);
-        QualityEvaluatorApp.main(args);
+        //QualityEvaluatorApp.main(args);
+        RuleEditor.main(args);
     }
     //    public static void main(String[] args) {
     //        Main.main(args);

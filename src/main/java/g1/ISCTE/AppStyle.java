@@ -4,7 +4,6 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -30,9 +29,9 @@ public class AppStyle {
      * @return the font with the specified style and size
      */
     public static Font getFont(FontType fontType, int size){
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        //return new Font(size);
         //TODO Add fonts back!
-        //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
 
 
@@ -58,6 +57,7 @@ public class AppStyle {
      * @return sub title label
      */
     public static Label getSubTitleLabel(String message){
+
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
         subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
@@ -74,7 +74,7 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }
@@ -250,7 +250,7 @@ public class AppStyle {
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
-           currentMoment += delayDuration;
+            currentMoment += delayDuration;
 
         }
 
@@ -274,6 +274,7 @@ public class AppStyle {
         }
 
     }
+
 
 }
 
