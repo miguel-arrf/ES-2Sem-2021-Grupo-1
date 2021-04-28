@@ -12,6 +12,7 @@ public class DetectionWorker implements Runnable {
     private CodeSmell codeSmell;
     private ArrayList<ClassMetrics> metrics;
     private ArrayList<String> results = new ArrayList<>();
+    private ArrayList<String> undetectedSmells = new ArrayList<>();
 
     public DetectionWorker(CodeSmell codeSmell, ArrayList<ClassMetrics> metrics) {
         this.codeSmell = codeSmell;
@@ -20,6 +21,10 @@ public class DetectionWorker implements Runnable {
 
     public CodeSmell getCodeSmell() {
         return codeSmell;
+    }
+
+    public ArrayList<String> getUndetectedSmells() {
+        return undetectedSmells;
     }
 
     @Override
@@ -41,6 +46,8 @@ public class DetectionWorker implements Runnable {
         boolean result = evaluateNode(metrics, codeSmell.getRule());
         if(result && values instanceof ClassMetrics) results.add( ((ClassMetrics)values).getClass_name() );
         else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() );
+        else if(!result && values instanceof ClassMetrics) undetectedSmells.add( ((ClassMetrics)values).getClass_name() );
+        else if (!result && values instanceof Method) undetectedSmells.add( ((Method)values).getMethod_name() );
     }
 
     private boolean evaluateOperator(RuleOperator operator, boolean left_result, boolean right_result) {

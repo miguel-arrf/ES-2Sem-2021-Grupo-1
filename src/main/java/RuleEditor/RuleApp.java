@@ -1,13 +1,13 @@
 package RuleEditor;
 
-import metric_extraction.Main;
+import smell_detection_quality_evaluation.QualityEvaluatorApp;
 
 public class RuleApp {
 
     public static void main(String[] args) {
 
         //FinalMain.main(args);
-        RuleEditor.main(args);
+        QualityEvaluatorApp.main(args);
     }
     //    public static void main(String[] args) {
     //        Main.main(args);
