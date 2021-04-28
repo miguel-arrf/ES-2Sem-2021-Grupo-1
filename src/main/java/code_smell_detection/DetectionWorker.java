@@ -1,7 +1,6 @@
 package code_smell_detection;
 
 import RuleEditor.ConditionBlock;
-import RuleEditor.CustomNode;
 import metric_extraction.ClassMetrics;
 import metric_extraction.Method;
 

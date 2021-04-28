@@ -20,9 +20,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -34,6 +34,8 @@ public class FinalMain extends Application {
     private final VBox mainPane = new VBox();
     private final ArrayList<CustomNode> rectanglesTypes = new ArrayList<>();
     private final DraggingObject inDragObject = new DraggingObject();
+
+    private boolean isNewRule = true;
 
     private JSONObject rule;
     private String ruleName;
@@ -48,7 +50,17 @@ public class FinalMain extends Application {
     }
 
     public JSONObject getRule() {
-        return rule;
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            if(rule == null){
+                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+            }
+            json = (JSONObject) parser.parse(rule.toJSONString());
+        } catch (ParseException e) {
+            return null;
+        }
+        return json;
     }
 
     @Override
@@ -72,6 +84,22 @@ public class FinalMain extends Application {
         return splitPane;
     }
 
+    public SplitPane getEditRuleEditor(Stage stage, RuleComplete ruleComplete, JSONObject jsonObject, String ruleName){
+        isNewRule = false;
+
+        this.ruleName = ruleName;
+        this.ruleComplete = ruleComplete;
+        SplitPane splitPane = new SplitPane();
+        configureSceneMainView(splitPane, stage);
+
+        mainPane.getChildren().clear();
+        CustomNode firstCustomNode = ruleComplete.teste(jsonObject, inDragObject);
+        addCustomNodeWithouClear(firstCustomNode);
+
+
+        return splitPane;
+    }
+
     private void configureSceneMainView(SplitPane splitPane, Stage stage) {
         addDefaultBlocks();
 
@@ -89,6 +117,8 @@ public class FinalMain extends Application {
 
         configureMainPane(stage);
     }
+
+
 
     private void configureSceneAndStage(Scene scene, Stage stage) {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
@@ -160,7 +190,6 @@ public class FinalMain extends Application {
                 }
 
 
-                //System.out.println(inDragObject);
                 db.setContent(content);
 
                 event.consume();
@@ -217,9 +246,6 @@ public class FinalMain extends Application {
 
         scrollPane.setFitToWidth(true);
 
-
-        //scrollPane.setFitToHeight(true);
-
         scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
 
 
@@ -238,7 +264,12 @@ public class FinalMain extends Application {
         rightVBox.setStyle("-fx-background-color: #1c1c1e");
 
 
-        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), getStackPane(getOptionsVBox(stage)));
+        //We need this to disable the shrinking of the button while resizing the window... Let the upper panel (with the blocks be the one resizing)
+        StackPane saveButtonStackPane = getStackPane(getOptionsVBox(stage));
+        saveButtonStackPane.setMinHeight(Region.USE_PREF_SIZE);
+
+
+        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), saveButtonStackPane);
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
@@ -273,8 +304,10 @@ public class FinalMain extends Application {
         popupStage.setOnCloseRequest(windowEvent -> {
             ruleName = textField.getText();
             stage.setTitle(ruleName);
+
+
+
             rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
-            System.out.println("rule: " + rule.toJSONString());
 
         });
 
@@ -284,44 +317,15 @@ public class FinalMain extends Application {
     private Button getSaveButton(Stage stage) {
 
 
-        Button saveButton = new Button("Save me :3");
+        Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
             textFieldStage(stage);
-            //RuleComplete.saveToFileSerialize(ruleNodes);
         });
 
 
         saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: #a29bfe");
-        saveButton.setMinWidth(150);
-        saveButton.setMinHeight(50);
-        saveButton.setAlignment(Pos.CENTER);
-
-        saveButton.setMaxWidth(Double.MAX_VALUE);
-
-
-        return saveButton;
-    }
-
-    private Button getLoadButton() {
-
-        Button saveButton = new Button("Load me papi :c");
-        saveButton.setOnAction(actionEvent -> {
-
-            try {
-                mainPane.getChildren().clear();
-                CustomNode firstCustomNode = ruleComplete.loadJSONFile(inDragObject);
-                addCustomNode(firstCustomNode);
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
-            }
-        });
-
-
-        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: #d5ecc2");
         saveButton.setMinWidth(150);
         saveButton.setMinHeight(50);
         saveButton.setAlignment(Pos.CENTER);
@@ -430,7 +434,13 @@ public class FinalMain extends Application {
 
         ruleNodes.clear();
         ruleNodes.add(customNode);
+    }
 
+    private void addCustomNodeWithouClear(CustomNode customNode){
+        VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
+        mainPane.getChildren().add(customNode.getGraphicalRepresentation());
+
+        ruleNodes.add(0,customNode);
     }
 
 
@@ -443,14 +453,17 @@ class SortBlockArrayList implements Comparator<CustomNode> {
 
     @Override
     public int compare(CustomNode a, CustomNode b) {
-        if (a.getType() == Types.RuleBlock)
+        if (a.getType() == Types.RuleBlock){
             return -1;
-        if (a.getType() == b.getType())
+        }if (a.getType() == b.getType()){
             return 0;
-        if (a.getType() == Types.LogicBlock && b.getType() == Types.ConditionBlock)
+        }
+        if (a.getType() == Types.LogicBlock && b.getType() == Types.ConditionBlock){
             return 1;
-        if (b.getType() == Types.LogicBlock && a.getType() == Types.ConditionBlock)
+        }
+        if (b.getType() == Types.LogicBlock && a.getType() == Types.ConditionBlock){
             return -1;
+        }
 
         return 1;
     }
