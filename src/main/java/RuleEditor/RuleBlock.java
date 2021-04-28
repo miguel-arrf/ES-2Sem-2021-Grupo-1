@@ -12,7 +12,7 @@ public class RuleBlock implements CustomNode {
 
     private final Node hBox;
 
-    public RuleBlock(String ruleMessage ){
+    public RuleBlock(String ruleMessage){
         this.ruleMessage = ruleMessage;
 
         hBox = getHBox();
