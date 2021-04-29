@@ -1,6 +1,6 @@
 package g1.ISCTE;
 
-import RuleEditor.FinalMain;
+import RuleEditor.RuleEditor;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -15,21 +15,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
 import metric_extraction.MetricExtractor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -51,6 +50,10 @@ public class NewGUI extends Application {
     private final VBox filePane = new VBox();
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
+    private VBox leftPane;
+
+    //SavedRules
+    RuleEditor ruleEditor = new RuleEditor();
 
 
     public static void main( String[] args ) {
@@ -72,7 +75,7 @@ public class NewGUI extends Application {
         leftVBox.getChildren().addAll(stackPaneLeftVBox, filePane);
         VBox.setVgrow(filePane, Priority.ALWAYS);
 
-        filePane.setSpacing(10);
+        filePane.setSpacing(15);
 
         leftVBox.setPadding(new Insets(15,15,15,15));
 
@@ -87,8 +90,18 @@ public class NewGUI extends Application {
         rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
-            FinalMain finalMain = new FinalMain();
-            finalMain.start(AppStyle.setUpPopupStage("Rule Editor","noIcon", true));
+            Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
+            ruleEditor.start(stage);
+
+            rulesEditor.getScene().setFill(Color.web("#3d3c40"));
+            NewGUI.blurBackground(0, 30, 500, rulesEditor.getScene().getRoot());
+
+            stage.setOnCloseRequest(windowEvent -> {
+                NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
+                System.out.println("REGRAS: " + ruleEditor.getRules().size());
+            });
+
+
         });
 
         Button showMetrics = new Button("Mostrar Métricas");
@@ -98,6 +111,7 @@ public class NewGUI extends Application {
         showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
+
             try {
                 updateCenterPane();
             } catch (IOException e) {
@@ -181,14 +195,29 @@ public class NewGUI extends Application {
         calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         calcMetrics.setOnMouseClicked(event -> {
-            MetricExtractor me = new MetricExtractor(selectedFile, "src/main/Created_Excels");
-            try {
-                me.executeExtraction();
-                docPath = me.getFinalPath();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            updateFilePane();
+            blurBackground(0, 30, 500, leftPane);
+
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    MetricExtractor me = new MetricExtractor(selectedFile, "src/main/Created_Excels");
+
+                    try {
+                        me.executeExtraction();
+                        docPath = me.getFinalPath();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Platform.runLater(() ->{
+                        updateFilePane();
+                        blurBackground(30, 0, 500, leftPane);
+                    } );
+                }
+            }.start();
+
         });
 
         calcMetrics.setDisable(true);
@@ -334,15 +363,20 @@ public class NewGUI extends Application {
             metricBoxes.get(a).setText(metrics[a]);
         }
 
+
         centerPane.getChildren().clear();
         VBox.setVgrow(table, Priority.ALWAYS);
+
+
         centerPane.getChildren().addAll(table);
 
     }
 
+
+
     private VBox centerPane(){
         centerPaneVBox = new VBox();
-        centerPaneVBox.setSpacing(10);
+        centerPaneVBox.setSpacing(15);
 
         centerPane.setMinWidth(600);
         centerPane.setAlignment(Pos.CENTER);
@@ -350,13 +384,13 @@ public class NewGUI extends Application {
         VBox.setVgrow(centerPane, Priority.ALWAYS);
         centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/,centerPane);
 
-        centerPaneVBox.setPadding(new Insets(10,10,10,10));
+        centerPaneVBox.setPadding(new Insets(15));
 
         return centerPaneVBox;
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         this.stage = stage;
 
         stage.setTitle("CodeSmells Detector");
@@ -366,7 +400,7 @@ public class NewGUI extends Application {
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
 
-        VBox leftPane = getLeft();
+        leftPane = getLeft();
         leftPane.setMinWidth(300);
 
         splitPane.setDividerPositions(0.20);
@@ -383,6 +417,8 @@ public class NewGUI extends Application {
     }
 
     private void fillTable(String[] cols,String[][] dataSource) {
+        table.setPadding(new Insets(5,0,0,0));
+
         table.getColumns().clear();
 
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
@@ -390,12 +426,43 @@ public class NewGUI extends Application {
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
 
+        Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
+
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
+
             column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
+
             column.setEditable(false);
-            column.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            //column.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            column.setCellFactory(new Callback() {
+
+                @Override
+                public TableCell call(Object param) {
+                    return new TableCell<String, String>(){
+                        public void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if(isEmpty())
+                            {
+                                setText("");
+                            }
+                            else
+                            {
+                                setTextFill(Color.web("#d1d1d1"));
+                                setFont(AppStyle.getFont(FontType.REGULAR, 14));
+                                setText(item);
+                            }
+                        }
+                    };
+                }
+
+            });
+
+
             column.setOnEditCommit(
                     (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
                         t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
@@ -437,7 +504,7 @@ public class NewGUI extends Application {
 
 
         HBox infoBoxes = new HBox();
-        infoBoxes.setSpacing(10);
+        infoBoxes.setSpacing(15);
 
         infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
 

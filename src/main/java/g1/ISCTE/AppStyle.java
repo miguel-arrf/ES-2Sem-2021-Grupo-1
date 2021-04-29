@@ -98,9 +98,9 @@ public class AppStyle {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setResizable(resizable);
 
-        popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
-
-
+        if(iconPlace != null){
+            popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
+        }
 
         return popupStage;
     }

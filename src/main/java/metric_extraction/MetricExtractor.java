@@ -1,6 +1,9 @@
 package metric_extraction;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 
 import java.io.File;
@@ -105,6 +108,18 @@ public class MetricExtractor {
                     for(int z=1; z < 11; z++) {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z-1]);
+
+                        //Adicionei aqui este código para que, caso seja um valor numérico, assim seja interpretado.
+                        /*if(z == 8){
+                            //myCell.setCellValue(Integer.parseInt(oneMethod[z-1]));
+                            //System.out.print("antes: " + myCell.getStringCellValue());
+
+                            //myCell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+                            //System.out.print(" depois: " + myCell.getNumericCellValue());
+                            //System.out.println();
+                        }*/
+
+
                     }
                 }
             }

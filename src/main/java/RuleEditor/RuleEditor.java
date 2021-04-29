@@ -34,16 +34,20 @@ import java.util.ArrayList;
 
 public class RuleEditor extends Application {
 
-    private final VBox mainPane = new VBox();
-    private final VBox rulesPanel = new VBox();
-    private final Label numberOfRules = new Label("No Rules");
-    private final RuleComplete ruleComplete = new RuleComplete();
+    private  VBox mainPane = new VBox();
+    private  VBox rulesPanel = new VBox();
+    private Label numberOfRules = new Label("No Rules");
+    private RuleComplete ruleComplete = new RuleComplete();
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
     private File rulesFile = null;
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+
+    public ObservableList<JSONObject> getRules() {
+        return rules;
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -407,8 +411,19 @@ public class RuleEditor extends Application {
         return button;
     }
 
+    private void resetEverything(){
+        mainPane = new VBox();
+        rulesPanel = new VBox();
+        numberOfRules = new Label("No Rules");
+        ruleComplete = new RuleComplete();
+        setRulesDirectoryButton = null;
+        loadRulesButton = null;
+        addNewRuleButton = null;
+    }
+
     @Override
     public void start(Stage stage) {
+        resetEverything();
 
         setUpMainPane();
 
