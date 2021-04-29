@@ -178,7 +178,7 @@ public class NewGUI extends Application {
         calcMetrics.setTextFill(Color.WHITE);
         calcMetrics.setMaxWidth(Double.MAX_VALUE);
         calcMetrics.getStyleClass().add("selectFolderButton");
-        calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         calcMetrics.setOnMouseClicked(event -> {
             MetricExtractor me = new MetricExtractor(selectedFile, "src/main/Created_Excels");
