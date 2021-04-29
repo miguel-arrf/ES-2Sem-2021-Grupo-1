@@ -124,3 +124,19 @@
 .scroll-pane > .viewport {
     -fx-background-color: #3d3c40;
 }
+
+.progress-bar > .track {
+    -fx-text-box-border: #1c1c1e;
+    -fx-control-inner-background: #1c1c1e;
+    -fx-box-border: #1c1c1e;
+    -fx-background-color: #1c1c1e;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: orange;
+    /*-fx-background-radius: 0.583em; *//* 7 */
+    -fx-background-radius: 4;
+}
+

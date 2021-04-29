@@ -84,7 +84,7 @@ public class NewGUI extends Application {
         rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             FinalMain finalMain = new FinalMain();
@@ -95,7 +95,7 @@ public class NewGUI extends Application {
         showMetrics.setTextFill(Color.BLACK);
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
-        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
             try {
@@ -230,7 +230,7 @@ public class NewGUI extends Application {
                     selectFolder.setTextFill(Color.WHITE);
                     selectFolder.setMaxWidth(Double.MAX_VALUE);
                     selectFolder.getStyleClass().add("errorLabel");
-                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 15));
+                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 15));
                     selectFolder.setWrapText(true);
                     selectFolder.setAlignment(Pos.CENTER);
                     selectFolder.setPadding(new Insets(10));
@@ -268,7 +268,7 @@ public class NewGUI extends Application {
         });
 
         dragAndDropVBox.getChildren().add(
-                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_BOLD, 10, "Drag & drop folder here")
+                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
         );
 
 
@@ -276,7 +276,7 @@ public class NewGUI extends Application {
         selectFolder.setTextFill(Color.WHITE);
         selectFolder.setMaxWidth(Double.MAX_VALUE);
         selectFolder.getStyleClass().add("selectFolderButton");
-        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         selectFolder.setOnMouseClicked(event -> {
             final DirectoryChooser directoryChooser =
@@ -459,7 +459,7 @@ public class NewGUI extends Application {
         typeOfInfoLabel.setWrapText(true);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         numberLabel.setTextFill(Color.BLACK);
         numberLabel.setPadding(new Insets(2,2,2,2));
         numberLabel.setMinWidth(20);

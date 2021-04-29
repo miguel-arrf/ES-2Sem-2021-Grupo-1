@@ -1,5 +1,6 @@
 package code_smell_detection;
 
+import RuleEditor.ConditionBlock;
 import metric_extraction.ClassMetrics;
 import metric_extraction.Method;
 
@@ -11,6 +12,7 @@ public class DetectionWorker implements Runnable {
     private CodeSmell codeSmell;
     private ArrayList<ClassMetrics> metrics;
     private ArrayList<String> results = new ArrayList<>();
+    private ArrayList<String> undetectedSmells = new ArrayList<>();
 
     public DetectionWorker(CodeSmell codeSmell, ArrayList<ClassMetrics> metrics) {
         this.codeSmell = codeSmell;
@@ -19,6 +21,10 @@ public class DetectionWorker implements Runnable {
 
     public CodeSmell getCodeSmell() {
         return codeSmell;
+    }
+
+    public ArrayList<String> getUndetectedSmells() {
+        return undetectedSmells;
     }
 
     @Override
@@ -40,6 +46,8 @@ public class DetectionWorker implements Runnable {
         boolean result = evaluateNode(metrics, codeSmell.getRule());
         if(result && values instanceof ClassMetrics) results.add( ((ClassMetrics)values).getClass_name() );
         else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() );
+        else if(!result && values instanceof ClassMetrics) undetectedSmells.add( ((ClassMetrics)values).getClass_name() );
+        else if (!result && values instanceof Method) undetectedSmells.add( ((Method)values).getMethod_name() );
     }
 
     private boolean evaluateOperator(RuleOperator operator, boolean left_result, boolean right_result) {
@@ -51,10 +59,10 @@ public class DetectionWorker implements Runnable {
     private boolean evaluateNode(HashMap<String, Integer> metrics, RuleNode node) {
         boolean result = false;
         if(node.isLeafNode()) {//Nó representa uma condição
-            RuleCondition condition = (RuleCondition)node.getElement();
+            ConditionBlock condition = (ConditionBlock)node.getElement();
             result = evaluateCondition(condition, metrics);
         } else {//Avaliar o próprio nó, o nó esquerdo e o nó direito
-            RuleOperator operator = (RuleOperator)node.getElement();
+            RuleOperator operator = node.getElement().getOperator();
             boolean left_result = evaluateNode(metrics, node.getLeft_node());
             boolean right_result = evaluateNode(metrics, node.getRight_node());
             result = evaluateOperator(operator, left_result, right_result);
@@ -62,8 +70,8 @@ public class DetectionWorker implements Runnable {
         return result;
     }
 
-    private boolean evaluateCondition(RuleCondition condition, HashMap<String, Integer> metrics) {
-        int value = metrics.get(condition.getMetric());
+    private boolean evaluateCondition(ConditionBlock condition, HashMap<String, Integer> metrics) {
+        int value = metrics.get(condition.getRule());
         return condition.evaluate(value);
     }
 

@@ -2,11 +2,17 @@ package g1.ISCTE;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -17,6 +23,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+
 public class AppStyle {
 
 
@@ -26,9 +34,8 @@ public class AppStyle {
      * @return the font with the specified style and size
      */
     public static Font getFont(FontType fontType, int size){
-        return new Font(size);
         //TODO Add fonts back!
-        //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
 
 
@@ -54,6 +61,7 @@ public class AppStyle {
      * @return sub title label
      */
     public static Label getSubTitleLabel(String message){
+
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
         subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
@@ -70,7 +78,7 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }
@@ -90,6 +98,10 @@ public class AppStyle {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setResizable(resizable);
 
+        popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
+
+
+
         return popupStage;
     }
 
@@ -100,13 +112,37 @@ public class AppStyle {
      * @param iconPlace path for popup icon
      * @param content content to be displayed in the popup
      * @param styleSheet pop stylesheet name
-     * @return popup stage
+     * @return
      */
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
 
         setUpPoupScene(content, popupStage, styleSheet);
 
+        popupStage.show();
+
+        return popupStage;
+    }
+
+
+    /**
+     * Creates popup with given title, icon, content and style.
+     *
+     * @param popupTitle Popup title
+     * @param iconPlace path for popup icon
+     * @param content content to be displayed in the popup
+     * @param styleSheet pop stylesheet name
+     * @param x Coordinate representing where the popup stage should be open in the horizontal axis
+     * @param y Coordinate representing where the popup stage should be open in the vertical axis
+     * @return
+     */
+    public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet, double x, double y){
+        Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
+
+        setUpPoupScene(content, popupStage, styleSheet);
+
+        popupStage.setX(x);
+        popupStage.setY(y);
         popupStage.show();
 
         return popupStage;
@@ -119,7 +155,7 @@ public class AppStyle {
      * @param popupStage popup stage
      * @param styleSheet pop stylesheet name
      */
-    private static void setUpPoupScene(HBox content, Stage popupStage, String styleSheet) {
+    private static void setUpPoupScene(Pane content, Stage popupStage, String styleSheet) {
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));
@@ -195,6 +231,17 @@ public class AppStyle {
         return dropShadow;
     }
 
+
+    /**
+     * Method that adds, in the received nodes order, a fade in animation to each one.
+     * There is the option to change the duration and also the delay. The daly value is, for each node, added to the previous, starting at zero.
+     * Meaning that, if delay is 0, then all animations will be parallel, without waiting for each other.
+     * If delay is 1 second, each animation only starts 1 second after the previous.
+     *
+     * @param duration Duration of the fade in animation in milliseconds.
+     * @param delayDuration Duration of the delay between each animation in milliseconds.
+     * @param nodes Collection of nodes.
+     */
     public static void addFadingInGroup(double duration, double delayDuration, Node... nodes){
         double currentMoment = 0;
 
@@ -207,11 +254,65 @@ public class AppStyle {
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
-           currentMoment += delayDuration;
+            currentMoment += delayDuration;
 
         }
 
     }
+
+    public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent, ProgressBar progressBar){
+        double currentMoment = 0;
+
+        for(Node node: nodes){
+            node.setOpacity(0);
+
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+            fadeTransition.setFromValue(0);
+            fadeTransition.setToValue(1);
+            fadeTransition.setDelay(Duration.millis(currentMoment));
+            fadeTransition.play();
+
+            //parent.getChildren().add(node);
+            double completed = ((double)nodes.indexOf(node)) / (nodes.size()-1);
+            //System.out.println("completed: "  + completed);
+            addAfterDelay(node, parent, currentMoment , progressBar, completed);
+
+            currentMoment += delayDuration;
+
+        }
+
+    }
+
+    private static void addAfterDelay(Node toAdd, VBox parent, double delay, ProgressBar progressBar, double completed){
+        Task<Void> sleeper = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try{
+                    Thread.sleep((long) delay);
+                }catch (InterruptedException e){
+
+                }
+                return null;
+            }
+        };
+
+        sleeper.setOnSucceeded(workerStateEvent -> {
+            parent.getChildren().add(toAdd);
+            Platform.runLater(() -> progressBar.setProgress(completed));
+        });
+
+        new Thread(sleeper).start();
+    }
+
+    /*
+    *  final FadeTransition transition = new FadeTransition(Duration.millis(250), node);
+        transition.setFromValue(0);
+        transition.setToValue(1);
+        transition.setInterpolator(Interpolator.EASE_IN);
+        parent.getChildren().add(node);
+        transition.play();
+    * */
+
 
 }
 
