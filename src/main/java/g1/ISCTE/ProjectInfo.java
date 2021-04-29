@@ -1,5 +1,6 @@
 package g1.ISCTE;
 
+import com.github.javaparser.UnicodeEscapeProcessingProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +17,13 @@ public class ProjectInfo {
 
     private XSSFSheet sheet;
     private int NUM_OF_COLUMNS = 11;
+
+    public static XSSFWorkbook createWorkbook(String path) throws IOException {
+        File file = new File(path);
+        FileInputStream fip = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fip);
+        return workbook;
+    }
 
     public ProjectInfo(XSSFWorkbook workbook) {
         this.sheet = workbook.getSheetAt(0);
@@ -102,9 +110,15 @@ public class ProjectInfo {
     }
 
 
-    static String[] getMainMetricsInfo(File file){
+    String[] getMainMetricsInfo(){
 
-        return null;
+        String[] metrics = new String[4];
+        metrics[0] = Integer.toString(packageCounter());
+        metrics[1] = Integer.toString(classCounter());
+        metrics[2] = Integer.toString(methodCounter());
+        metrics[3] = Integer.toString(lineCounter());
+
+        return metrics;
     }
 
 
