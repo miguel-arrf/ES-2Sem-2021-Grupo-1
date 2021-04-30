@@ -1,5 +1,7 @@
 package RuleEditor;
 
+import code_smell_detection.CodeSmell;
+import code_smell_detection.CodeSmellDetector;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import g1.ISCTE.MyTree;
@@ -25,6 +27,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import metric_extraction.MetricExtractor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -44,6 +47,12 @@ public class RuleEditor extends Application {
     private File rulesFile = null;
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+
+    private MetricExtractor metricExtractor;
+
+    public void setMetricExtractor(MetricExtractor metricExtractor) {
+        this.metricExtractor = metricExtractor;
+    }
 
     public ObservableList<JSONObject> getRules() {
         return rules;
@@ -69,21 +78,7 @@ public class RuleEditor extends Application {
             if (tempFile != null) {
                 if (tempFile.getName().endsWith(".rule")) {
                     rulesFile = tempFile;
-                    ruleComplete.setFile(rulesFile);
-
-                    try {
-                        ArrayList<JSONObject> arrayList = ruleComplete.loadJSONRuleFile();
-                        rules.clear();
-
-                        //If we don't do it this way, the listener for the label, wouldn't work.
-                        rules.addAll(arrayList);
-
-                        updateRulesEditorPanel();
-                        addNewRuleButton.setDisable(false);
-
-                    } catch (ParseException | IOException e) {
-                        e.printStackTrace();
-                    }
+                    loadFile();
 
                 }
             }
@@ -92,6 +87,25 @@ public class RuleEditor extends Application {
         HBox.setHgrow(setDirectoryButton, Priority.ALWAYS);
 
         return setDirectoryButton;
+    }
+
+    private void loadFile(){
+        ruleComplete.setFile(rulesFile);
+
+        try {
+            ArrayList<JSONObject> arrayList = ruleComplete.loadJSONRuleFile();
+            rules.clear();
+
+            //If we don't do it this way, the listener for the label, wouldn't work.
+            rules.addAll(arrayList);
+
+            updateRulesEditorPanel();
+            addNewRuleButton.setDisable(false);
+
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private Button setUpSetRulesFileButton() {
@@ -294,6 +308,7 @@ public class RuleEditor extends Application {
             rulesPanel.getChildren().add(rulePane);
         }
 
+        rulesPanel.getScene();
         rulesPanel.getScene().getWindow().sizeToScene();
 
     }
@@ -421,6 +436,34 @@ public class RuleEditor extends Application {
         addNewRuleButton = null;
     }
 
+
+    private void createCodeSmells( )   {
+        ArrayList<CodeSmell> smells = new ArrayList<>();
+
+        for(JSONObject entry: rules){
+            String ruleName = (String) entry.get("name");
+            ArrayList<CustomNode> tempArrayList = new ArrayList<>();
+            RuleComplete tempRuleComplete = new RuleComplete();
+
+            CustomNode tempCustomNode = tempRuleComplete.teste(entry, new DraggingObject());
+            tempArrayList.add(0,tempCustomNode);
+            CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName);
+            smells.add(codeSmell);
+
+            System.out.println(codeSmell);
+
+        }
+
+        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
+        try {
+            detector.runDetection();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     @Override
     public void start(Stage stage) {
         resetEverything();
@@ -437,6 +480,11 @@ public class RuleEditor extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        if(rulesFile != null){
+            loadFile();
+            createCodeSmells();
+        }
     }
 
 }

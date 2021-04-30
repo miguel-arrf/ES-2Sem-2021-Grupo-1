@@ -1,5 +1,6 @@
 package RuleEditor;
 
+import code_smell_detection.CodeSmell;
 import code_smell_detection.RuleNode;
 import code_smell_detection.RuleOperator;
 import javafx.collections.ObservableList;
@@ -36,7 +37,6 @@ public class RuleComplete implements Serializable {
 
     public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
 
-
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
 
@@ -50,22 +50,20 @@ public class RuleComplete implements Serializable {
 
         JSONObject jsonObject = toJSON(firstCustomNode, customNodeArrayList);
 
-//        CustomNode id = (CustomNode) jsonObject.get("id");
-//        JSONObject newID = new JSONObject();
-//        newID.put("id", id);
-//        newID.put("name", name);
-//        jsonObject.replace("id", newID);
         jsonObject.put("name", name);
 
-
-
-        /*try {
-            saveFile(jsonObject.toJSONString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
         return jsonObject;
+
+    }
+
+    public CodeSmell createRuleNodeCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+
+        //The first node is always in the zero index.
+        CustomNode firstCustomNode = customNodeArrayList.get(0);
+        RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
+
+        CodeSmell codeSmell = new CodeSmell(name, rule, true);
+        return codeSmell;
 
     }
 

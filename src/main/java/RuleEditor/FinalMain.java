@@ -338,14 +338,26 @@ public class FinalMain extends Application {
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
-        RuleBlock classSizeBlock = new RuleBlock("Class Size");
-        RuleBlock godBlock = new RuleBlock("God class");
+        RuleBlock locClassBlock = new RuleBlock("LOC_Class");
+        RuleBlock nomClassBlock = new RuleBlock("NOM_class");
+        RuleBlock WMC_Class = new RuleBlock("WMC_Class");
+        RuleBlock is_God_Class = new RuleBlock("is_God_Class");
+        RuleBlock LOC_method = new RuleBlock("LOC_method");
+        RuleBlock CYCLO_method = new RuleBlock("CYCLO_method");
+        RuleBlock is_Long_Method = new RuleBlock("is_Long_Method");
+
 
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
         LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");
 
-        rectanglesTypes.add(classSizeBlock);
-        rectanglesTypes.add(godBlock);
+        rectanglesTypes.add(locClassBlock);
+        rectanglesTypes.add(nomClassBlock);
+        rectanglesTypes.add(WMC_Class);
+        rectanglesTypes.add(is_God_Class);
+        rectanglesTypes.add(LOC_method);
+        rectanglesTypes.add(CYCLO_method);
+        rectanglesTypes.add(is_Long_Method);
+
 
         rectanglesTypes.add(logicBlock);
         rectanglesTypes.add(orBlock);

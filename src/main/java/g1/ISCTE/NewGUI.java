@@ -53,7 +53,9 @@ public class NewGUI extends Application {
     private VBox leftPane;
 
     //SavedRules
-    RuleEditor ruleEditor = new RuleEditor();
+    private RuleEditor ruleEditor = new RuleEditor();
+    private MetricExtractor metricExtractor;
+
 
 
     public static void main( String[] args ) {
@@ -91,6 +93,7 @@ public class NewGUI extends Application {
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
+            ruleEditor.setMetricExtractor(metricExtractor);
             ruleEditor.start(stage);
 
             rulesEditor.getScene().setFill(Color.web("#3d3c40"));
@@ -201,11 +204,11 @@ public class NewGUI extends Application {
                 @Override
                 public void run() {
                     super.run();
-                    MetricExtractor me = new MetricExtractor(selectedFile, "src/main/Created_Excels");
+                    metricExtractor = new MetricExtractor(selectedFile, "src/main/Created_Excels");
 
                     try {
-                        me.executeExtraction();
-                        docPath = me.getFinalPath();
+                        metricExtractor.executeExtraction();
+                        docPath = metricExtractor.getFinalPath();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
