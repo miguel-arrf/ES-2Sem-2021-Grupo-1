@@ -170,7 +170,7 @@ public class ConditionBlock implements CustomNode, Serializable {
         return button;
     }
 
-    private Button getStyledButton(String operatorToPut, String customColor) {
+    public static Button getStyledButton(String operatorToPut, String customColor) {
         Button button = new Button(operatorToPut);
         button.getStyleClass().add("roundedAddButton");
         button.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 13));

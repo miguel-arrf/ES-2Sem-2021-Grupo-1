@@ -281,10 +281,21 @@ public class FinalMain extends Application {
 
     private void textFieldStage(Stage stage){
 
-        Button closeWindow = new Button("Save");
-        TextField textField = new TextField("Rule name");
+        Button closeWindow = ConditionBlock.getStyledButton("Save", "#a3ddcb");
+        TextField textField = new TextField(ruleName.isBlank() ? "Rule Name" : getRuleName());
+        textField.setStyle("-fx-text-inner-color: white;");
+        textField.setMaxWidth(150);
 
-        HBox hBox = new HBox(closeWindow, textField);
+
+        HBox hBox = new HBox(textField, closeWindow );
+        hBox.setStyle("-fx-background-color: #3d3c40");
+        hBox.getStyleClass().add("ruleBuilderMenu");
+        hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
+        hBox.setMaxHeight(100);
+        hBox.setMaxWidth(500);
+        hBox.setEffect(AppStyle.getDropShadow());
+        hBox.setAlignment(Pos.CENTER);
 
 
         Stage popupStage = AppStyle.setUpPopupStage("Rule name", "/RuleBuilderIcon.gif", true);
@@ -294,6 +305,8 @@ public class FinalMain extends Application {
 
         Scene scene = new Scene(hBox);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+        scene.setFill(Color.web("#3d3c40"));
+
 
         popupStage.setScene(scene);
 
