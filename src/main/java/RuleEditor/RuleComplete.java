@@ -44,7 +44,6 @@ public class RuleComplete implements Serializable {
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
         StringBuilder stringBuilder = new StringBuilder("");
-        System.out.print("rule -> ");
         print(rule, "", stringBuilder);
         System.out.println(stringBuilder);
 
@@ -64,13 +63,39 @@ public class RuleComplete implements Serializable {
 
     }
 
+    public CodeSmell pipi(JSONObject jsonObject, DraggingObject draggingObject, String name, boolean isClassSmell){
+
+        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
+
+        if(firstCustomNode.getType() ==  Types.LogicBlock){
+
+            RuleNode nodeToReturn = new RuleNode(firstCustomNode, null, null);
+
+            toCustomNodeNovo(nodeToReturn, jsonObject, draggingObject);
+
+            CodeSmell codeSmell = new CodeSmell(name, nodeToReturn, isClassSmell);
+            return codeSmell;
+        }
+
+        CodeSmell codeSmell = new CodeSmell(name, new RuleNode(firstCustomNode), isClassSmell);
+
+        return codeSmell;
+
+    }
+
     public CodeSmell createRuleNodeCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell){
 
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
+        StringBuilder builder = new StringBuilder("");
+        print(rule, "\t", builder);
+
+
         CodeSmell codeSmell = new CodeSmell(name, rule, isClassSmell);
+
+
         return codeSmell;
 
     }
@@ -125,7 +150,6 @@ public class RuleComplete implements Serializable {
 
     public  CustomNode teste(JSONObject jsonObject, DraggingObject draggingObject) {
 
-
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
         if(firstCustomNode.getType() ==  Types.LogicBlock){
@@ -139,9 +163,42 @@ public class RuleComplete implements Serializable {
     }
 
 
+    public  void toCustomNodeNovo(RuleNode realParent, JSONObject jsonList, DraggingObject draggingObject){
+        JSONArray child = (JSONArray) jsonList.get("children");
+        if(child.size() == 1){
+            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
+            realParent.setRight_node(new RuleNode(nodeToAddRight));
+
+            if(nodeToAddRight.getType() == Types.LogicBlock){
+                toCustomNodeNovo(realParent, (JSONObject) child.get(0), draggingObject );
+            }
+
+        }else if(child.size() == 2){
+            CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
+            realParent.setRight_node(new RuleNode(nodeToAddRight));
+
+            if(nodeToAddRight.getType() == Types.LogicBlock){
+
+                toCustomNodeNovo(realParent, (JSONObject) child.get(0), draggingObject);
+            }
+
+
+            CustomNode nodeToAddLeft = jsonObjectToCustomNode((JSONObject) child.get(1), draggingObject);
+            realParent.setLeft_node(new RuleNode(nodeToAddLeft));
+
+
+            if(nodeToAddLeft.getType() == Types.LogicBlock){
+                toCustomNodeNovo(realParent, (JSONObject) child.get(1), draggingObject );
+            }
+
+
+
+        }
+
+    }
+
     public  void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
-
         if(child.size() == 1){
             CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
             parent.addToRight(nodeToAddRight);
@@ -150,13 +207,17 @@ public class RuleComplete implements Serializable {
                 toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0), draggingObject );
             }
 
+
         }else if(child.size() == 2){
             CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) child.get(0), draggingObject);
             parent.addToRight(nodeToAddRight);
 
             if(nodeToAddRight.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0), draggingObject );
+
+                toCustomNode((LogicBlock) nodeToAddRight, (JSONObject) child.get(0), draggingObject);
             }
+
+
 
             CustomNode nodeToAddLeft = jsonObjectToCustomNode((JSONObject) child.get(1), draggingObject);
             parent.addToLeft(nodeToAddLeft);
@@ -164,6 +225,8 @@ public class RuleComplete implements Serializable {
             if(nodeToAddLeft.getType() == Types.LogicBlock){
                 toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(1), draggingObject );
             }
+
+
 
         }
 
@@ -233,13 +296,18 @@ public class RuleComplete implements Serializable {
             //significa que é um ANd ou um OR block
             ArrayList<CustomNode> children = getChild(customNode, customNodeArrayList);
 
-            if(children.size() == 0)
+            if(children.size() == 0){
+
                 return null;
+            }
+
 
             if(children.size() == 1){
+
                 return new RuleNode(customNode, createRuleNode(children.get(0), customNodeArrayList), null);
 
             }else{
+
                 return new RuleNode(customNode, createRuleNode(children.get(0), customNodeArrayList),
                         createRuleNode(children.get(1), customNodeArrayList));
 
@@ -268,6 +336,7 @@ public class RuleComplete implements Serializable {
         if (parent.getType() == Types.ConditionBlock){
             return  new ArrayList<>();
         }else{
+
             //É And ou OR block
             LogicBlock logicBlock = (LogicBlock) parent;
 

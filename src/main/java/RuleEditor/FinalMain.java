@@ -358,11 +358,11 @@ public class FinalMain extends Application {
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
         RuleBlock locClassBlock = new RuleBlock("LOC_Class");
-        RuleBlock nomClassBlock = new RuleBlock("NOM_class");
+        RuleBlock nomClassBlock = new RuleBlock("NOM_Class");
         RuleBlock WMC_Class = new RuleBlock("WMC_Class");
         RuleBlock is_God_Class = new RuleBlock("is_God_Class");
-        RuleBlock LOC_method = new RuleBlock("LOC_method");
-        RuleBlock CYCLO_method = new RuleBlock("CYCLO_method");
+        RuleBlock LOC_method = new RuleBlock("LOC_Method");
+        RuleBlock CYCLO_method = new RuleBlock("CYCLO_Method");
         RuleBlock is_Long_Method = new RuleBlock("is_Long_Method");
 
 

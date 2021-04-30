@@ -473,12 +473,13 @@ public class RuleEditor extends Application {
 
             boolean isClassSmell = (Boolean) ((JSONObject) entry.get("outerName")).get("isClassSmell");
 
-            CustomNode tempCustomNode = tempRuleComplete.teste(entry, new DraggingObject());
-            tempArrayList.add(0,tempCustomNode);
-            CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName, isClassSmell);
-            smells.add(codeSmell);
+            //CustomNode tempCustomNode = tempRuleComplete.teste(entry, new DraggingObject());
+            //tempArrayList.add(0,tempCustomNode);
 
-            System.out.println(codeSmell);
+            tempRuleComplete.pipi(entry, new DraggingObject(), ruleName, isClassSmell);
+            //CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName, isClassSmell);
+            smells.add(tempRuleComplete.pipi(entry, new DraggingObject(), ruleName, isClassSmell));
+            //System.out.println(codeSmell);
 
         }
 
