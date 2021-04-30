@@ -431,6 +431,7 @@ public class NewGUI extends Application {
 
         Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
 
+
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
@@ -472,6 +473,32 @@ public class NewGUI extends Application {
                     });
             table.getColumns().add(column);
         }
+
+
+
+
+                table.widthProperty().addListener((observableValue, number, t1) -> {
+
+            double width = 0;
+            for(int i = 0; i < table.getColumns().size(); i++){
+                String text = cols[i];
+
+                width += text.length()*12;
+            }
+
+            if(table.widthProperty().get() > width){
+                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            }else{
+                table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+            }
+
+
+
+        });
+
+
     }
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){

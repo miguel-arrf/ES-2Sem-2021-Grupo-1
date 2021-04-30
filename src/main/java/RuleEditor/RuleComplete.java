@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RuleComplete implements Serializable {
 
@@ -35,7 +36,7 @@ public class RuleComplete implements Serializable {
     }
 
 
-    public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+    public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell){
 
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
@@ -50,19 +51,26 @@ public class RuleComplete implements Serializable {
 
         JSONObject jsonObject = toJSON(firstCustomNode, customNodeArrayList);
 
-        jsonObject.put("name", name);
+        JSONObject outerName = new JSONObject();
+        outerName.put("innerName", name);
+        outerName.put("isClassSmell", isClassSmell);
+        outerName.put("uniqueIdentifier", UUID.randomUUID().toString());
+        jsonObject.put("outerName", outerName);
+
+
+        jsonObject.replace("outerName", outerName);
 
         return jsonObject;
 
     }
 
-    public CodeSmell createRuleNodeCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+    public CodeSmell createRuleNodeCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell){
 
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
-        CodeSmell codeSmell = new CodeSmell(name, rule, true);
+        CodeSmell codeSmell = new CodeSmell(name, rule, isClassSmell);
         return codeSmell;
 
     }

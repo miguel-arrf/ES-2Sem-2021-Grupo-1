@@ -41,6 +41,8 @@ public class FinalMain extends Application {
     private String ruleName;
     private RuleComplete ruleComplete;
 
+    private boolean isClassSmell;
+
     public String getRuleName() {
         return ruleName;
     }
@@ -54,13 +56,17 @@ public class FinalMain extends Application {
         JSONObject json = null;
         try {
             if(rule == null){
-                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName(),isClassSmell);
             }
             json = (JSONObject) parser.parse(rule.toJSONString());
-        } catch (ParseException e) {
+        } catch (ParseException | IndexOutOfBoundsException exception) {
             return null;
         }
         return json;
+    }
+
+    public FinalMain(boolean isClassSmell){
+        this.isClassSmell = isClassSmell;
     }
 
     @Override
@@ -282,7 +288,7 @@ public class FinalMain extends Application {
     private void textFieldStage(Stage stage){
 
         Button closeWindow = ConditionBlock.getStyledButton("Save", "#a3ddcb");
-        TextField textField = new TextField(ruleName.isBlank() ? "Rule Name" : getRuleName());
+        TextField textField = new TextField(ruleName == null ? "Rule Name" : getRuleName());
         textField.setStyle("-fx-text-inner-color: white;");
         textField.setMaxWidth(150);
 
@@ -320,7 +326,7 @@ public class FinalMain extends Application {
 
 
 
-            rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+            rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName(), isClassSmell);
 
         });
 
@@ -363,14 +369,16 @@ public class FinalMain extends Application {
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
         LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");
 
-        rectanglesTypes.add(locClassBlock);
-        rectanglesTypes.add(nomClassBlock);
-        rectanglesTypes.add(WMC_Class);
-        rectanglesTypes.add(is_God_Class);
-        rectanglesTypes.add(LOC_method);
-        rectanglesTypes.add(CYCLO_method);
-        rectanglesTypes.add(is_Long_Method);
-
+        if(isClassSmell){
+            rectanglesTypes.add(locClassBlock);
+            rectanglesTypes.add(nomClassBlock);
+            rectanglesTypes.add(WMC_Class);
+            rectanglesTypes.add(is_God_Class);
+        }else{
+            rectanglesTypes.add(LOC_method);
+            rectanglesTypes.add(CYCLO_method);
+            rectanglesTypes.add(is_Long_Method);
+        }
 
         rectanglesTypes.add(logicBlock);
         rectanglesTypes.add(orBlock);

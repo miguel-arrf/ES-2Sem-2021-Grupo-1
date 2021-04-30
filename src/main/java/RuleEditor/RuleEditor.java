@@ -15,13 +15,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -43,7 +41,9 @@ public class RuleEditor extends Application {
     private RuleComplete ruleComplete = new RuleComplete();
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
+
     private Button addNewRuleButton;
+
     private File rulesFile = null;
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
@@ -150,14 +150,17 @@ public class RuleEditor extends Application {
 
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: #3d3c40");
-        TextField textField = new TextField("0.0");
+        TextField textField = new TextField((String) ((JSONObject)jsonObject.get("outerName")).get("innerName"));
         textField.setStyle("-fx-text-inner-color: white;");
 
 
         updateButton.setOnAction(actionEvent -> {
             label.setText(textField.getText());
 
-            jsonObject.replace("name", textField.getText());
+            JSONObject outerName = (JSONObject) jsonObject.get("outerName");
+            outerName.replace("innerName", textField.getText());
+
+            jsonObject.replace("outerName", outerName);
 
             ruleComplete.arrayListToJSON(rules);
             Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
@@ -204,7 +207,7 @@ public class RuleEditor extends Application {
         HBox pane = new HBox();
         pane.setSpacing(20);
 
-        Label label = new Label((String) nodeJSON.get("name"));
+        Label label = new Label((String) ((JSONObject) nodeJSON.get("outerName")).get("innerName"));
         label.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
         label.setAlignment(Pos.CENTER);
@@ -239,8 +242,11 @@ public class RuleEditor extends Application {
 
             Stage popupStage = AppStyle.setUpPopupStage("Edit Rule", "/RuleBuilderIcon.gif", true);
 
-            FinalMain finalMain = new FinalMain();
-            String ruleName = (String) nodeJSON.get("name");
+            boolean isClassSmell = (Boolean) ((JSONObject) nodeJSON.get("outerName")).get("isClassSmell");
+
+
+            FinalMain finalMain = new FinalMain(isClassSmell);
+            String ruleName = (String) ((JSONObject) nodeJSON.get("outerName")).get("innerName");
 
             SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleComplete, nodeJSON, ruleName);
 
@@ -319,41 +325,60 @@ public class RuleEditor extends Application {
 
         addNewRule.setMaxHeight(30);
 
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem classSmellMenuItem = new MenuItem("Class Smell");
+        classSmellMenuItem.setOnAction(actionEvent -> {
+            openAddRuleEditor(true);
+        });
+        MenuItem methodSmellMenuItem = new MenuItem("Method Smell");
+        methodSmellMenuItem.setOnAction(actionEvent -> {
+            openAddRuleEditor(false);
+        });
 
-        addNewRule.setOnAction(actionEvent -> {
-            Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
+        contextMenu.getItems().addAll(classSmellMenuItem, methodSmellMenuItem);
 
-            FinalMain finalMain = new FinalMain();
-            SplitPane content = finalMain.getRuleEditor(popupStage, ruleComplete);
-
-            VBox.setMargin(content, new Insets(20));
-            content.setPadding(new Insets(10));
-
-            Scene scene = new Scene(content, 1000, 700);
-            scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
-
-            popupStage.setScene(scene);
-
-            popupStage.setMinHeight(300);
-            popupStage.setMinWidth(700);
-
-            popupStage.setOnCloseRequest(windowEvent -> {
-                JSONObject ruleToADD = finalMain.getRule();
-                if (ruleToADD != null) {
-                    rules.add(finalMain.getRule());
-                    updateRulesEditorPanel();
-
-                    ruleComplete.arrayListToJSON(rules);
-                }
+        addNewRule.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getButton() == MouseButton.PRIMARY){
+                contextMenu.show(addNewRule, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            }
+        });
 
 
-            });
 
-            popupStage.show();
+        return addNewRule;
+    }
+
+    private void openAddRuleEditor(boolean isClassSmell){
+        Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
+
+        FinalMain finalMain = new FinalMain(isClassSmell);
+        SplitPane content = finalMain.getRuleEditor(popupStage, ruleComplete);
+
+        VBox.setMargin(content, new Insets(20));
+        content.setPadding(new Insets(10));
+
+        Scene scene = new Scene(content, 1000, 700);
+        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
+
+        popupStage.setScene(scene);
+
+        popupStage.setMinHeight(300);
+        popupStage.setMinWidth(700);
+
+        popupStage.setOnCloseRequest(windowEvent -> {
+            JSONObject ruleToADD = finalMain.getRule();
+            if (ruleToADD != null) {
+                rules.add(finalMain.getRule());
+                updateRulesEditorPanel();
+
+                ruleComplete.arrayListToJSON(rules);
+            }
+
 
         });
 
-        return addNewRule;
+        popupStage.show();
+
     }
 
     private void setUpMainPane() {
@@ -389,6 +414,7 @@ public class RuleEditor extends Application {
         VBox.setVgrow(rulesPanel, Priority.ALWAYS);
 
         mainPane.getChildren().add(rulesPanel);
+
 
         addNewRuleButton = setUpAddNewRuleButton();
         mainPane.getChildren().add(addNewRuleButton);
@@ -441,13 +467,15 @@ public class RuleEditor extends Application {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
         for(JSONObject entry: rules){
-            String ruleName = (String) entry.get("name");
+            String ruleName = (String) ((JSONObject) entry.get("outerName")).get("innerName");
             ArrayList<CustomNode> tempArrayList = new ArrayList<>();
             RuleComplete tempRuleComplete = new RuleComplete();
 
+            boolean isClassSmell = (Boolean) ((JSONObject) entry.get("outerName")).get("isClassSmell");
+
             CustomNode tempCustomNode = tempRuleComplete.teste(entry, new DraggingObject());
             tempArrayList.add(0,tempCustomNode);
-            CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName);
+            CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName, isClassSmell);
             smells.add(codeSmell);
 
             System.out.println(codeSmell);

@@ -145,6 +145,7 @@
 /* Table */
 
 
+
 .table-view {
     -fx-background-radius: 10 10 10 10;
     -fx-border-radius: 10 10 10 10;
@@ -186,6 +187,27 @@
     -fx-border-radius: 10px;
 }
 
+.table-view .cell{
+    -fx-cell-size: 35;
+    -fx-alignment: center-left;
+    -fx-background-color: #3b3b3b;
+    -fx-border-color: transparent;
+    -fx-text-fill: lightgray;
+    -fx-alignment: CENTER_LEFT;
+
+}
+
+.table-view .cell :even{
+    -fx-cell-size: 35;
+    -fx-alignment: center-left;
+    -fx-background-color: #4e4e4e;
+    -fx-border-color: transparent;
+    -fx-text-fill: lightgray;
+    -fx-alignment: CENTER_LEFT;
+
+}
+
+
 .table-view .table-cell{
     -fx-border-color: transparent;
     -fx-padding: 2 0 2 10px;
@@ -205,6 +227,7 @@
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em;
 }
+
 
 
 .scroll-bar{
