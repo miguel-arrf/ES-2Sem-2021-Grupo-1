@@ -7,21 +7,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 
 /**
- * The type Rule block representing the possible metrics to be analysed.
+ * The type Metric block representing the possible metrics to be analysed.
  */
-public class RuleBlock implements CustomNode {
+public class MetricBlock implements CustomNode {
 
-    private final String ruleMessage;
+    private final String metricMessage;
 
     private final Node hBox;
 
     /**
-     * Instantiates a new Rule block.
+     * Instantiates a new Metric block.
      *
-     * @param ruleMessage the rule message
+     * @param metricMessage the metric message.
      */
-    public RuleBlock(String ruleMessage){
-        this.ruleMessage = ruleMessage;
+    public MetricBlock(String metricMessage){
+        this.metricMessage = metricMessage;
 
         hBox = getHBox();
     }
@@ -38,31 +38,31 @@ public class RuleBlock implements CustomNode {
     }
 
     /**
-     * Instantiates the rule block graphical representation.
+     * Instantiates the metric block graphical representation.
      *
-     * @return the rule block graphical representation.
+     * @return the metric block graphical representation.
      */
     public HBox getHBox(){
-        HBox ruleMakerBox = new HBox(new Label(ruleMessage));
-        ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+        HBox metricMakerBox = new HBox(new Label(metricMessage));
+        metricMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: red;");
 
-        ruleMakerBox.setMinWidth(150);
-        ruleMakerBox.setMinHeight(50);
+        metricMakerBox.setMinWidth(150);
+        metricMakerBox.setMinHeight(50);
 
-        ruleMakerBox.setAlignment(Pos.CENTER);
+        metricMakerBox.setAlignment(Pos.CENTER);
 
-        return ruleMakerBox;
+        return metricMakerBox;
     }
 
     /**
-     * Gets rule message.
+     * Gets metric message.
      *
-     * @return the rule message
+     * @return the metric message
      */
-    public String getRuleMessage() {
-        return ruleMessage;
+    public String getMetricMessage() {
+        return metricMessage;
     }
 
     /**
@@ -70,7 +70,7 @@ public class RuleBlock implements CustomNode {
      */
     @Override
     public Types getType() {
-        return Types.RuleBlock;
+        return Types.MetricBlock;
     }
 
     /**
@@ -83,23 +83,23 @@ public class RuleBlock implements CustomNode {
 
         String color = "lightpink";
 
-        HBox ruleMakerBox = new HBox(new Label(ruleMessage));
-        ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+        HBox metricMakerBox = new HBox(new Label(metricMessage));
+        metricMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                 "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: " + color + ";");
 
-        ruleMakerBox.setMinWidth(150);
-        ruleMakerBox.setMinHeight(50);
+        metricMakerBox.setMinWidth(150);
+        metricMakerBox.setMinHeight(50);
 
-        ruleMakerBox.setAlignment(Pos.CENTER);
+        metricMakerBox.setAlignment(Pos.CENTER);
 
-        return ruleMakerBox;
+        return metricMakerBox;
     }
 
     /**
-     * Gets the rule operator, but, since the Rule Block doesn't have operators, returns none.
+     * Gets the metric operator, but, since the Metric Block doesn't have operators, returns none.
      *
-     * @return the rule operator
+     * @return the metric operator
      */
     @Override
     public RuleOperator getOperator() {

@@ -15,15 +15,31 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-public class RuleComplete implements Serializable {
+/**
+ * Rule file manager which allows to import and export from and to Custom Node and JSON types.
+ * Also allows the conversion between JSON <-> GUI.
+ */
+public class RuleFileManager implements Serializable {
 
     private File file;
 
+    /**
+     * Sets the file that contains the rules.
+     *
+     * @param file the file
+     */
     public void setFile(File file) {
         this.file = file;
     }
 
 
+    /**
+     * Loads a file into JSON array format.
+     *
+     * @return an array list of rules.
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     public ArrayList<JSONObject> loadJSONRuleFile() throws IOException, ParseException {
         ArrayList<JSONObject> customNodes = new ArrayList<>();
 
@@ -39,6 +55,11 @@ public class RuleComplete implements Serializable {
         return customNodes;
     }
 
+    /**
+     * Saves a JSON list to the rules file (or updates it).
+     *
+     * @param jsonObjectObservableList the list of rules represented in JSONObjects.
+     */
     @SuppressWarnings("unchecked")
     public void saveJSONListToFile(ObservableList<JSONObject> jsonObjectObservableList) {
 
@@ -55,6 +76,12 @@ public class RuleComplete implements Serializable {
     }
 
 
+    /**
+     * Saves the rules file.
+     *
+     * @param rule the rule file name.
+     * @throws IOException the io exception
+     */
     public void saveFile(String rule) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
         PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -64,6 +91,14 @@ public class RuleComplete implements Serializable {
     }
 
 
+    /**
+     * GUI to JSON object.
+     *
+     * @param customNodeArrayList the custom node array list
+     * @param name                the name
+     * @param isClassSmell        if the code smell is a class or a method one.
+     * @return the json object representing a given rule defined in GUI terms.
+     */
     @SuppressWarnings("unchecked")
     public JSONObject guiToJSONObject(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell) {
 
@@ -85,6 +120,15 @@ public class RuleComplete implements Serializable {
 
     }
 
+    /**
+     * Json object to code smell.
+     *
+     * @param jsonObject     the rule represented by a JSONObject type.
+     * @param draggingObject the dragging object (needs to be used to properly set up the tree model in the nodes).
+     * @param name           the name of the code smell.
+     * @param isClassSmell   if the code smell is a class or a method one.
+     * @return the code smell
+     */
     public CodeSmell jsonObjectToCodeSmell(JSONObject jsonObject, DraggingObject draggingObject, String name, boolean isClassSmell) {
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
@@ -111,6 +155,13 @@ public class RuleComplete implements Serializable {
 
     }
 
+    /**
+     * CustomNode to JSONObject.
+     *
+     * @param node   the custom node (the first one in the three model representing a rule).
+     * @param others the list containing all the CustomNodes in the GUI of a rule.
+     * @return the JSONObject representing the rule represented by the CustomNode node.
+     */
     @SuppressWarnings("unchecked")
     public JSONObject customNodeToJSON(CustomNode node, List<CustomNode> others) {
         JSONObject json = new JSONObject();
@@ -127,6 +178,13 @@ public class RuleComplete implements Serializable {
         return json;
     }
 
+    /**
+     * Json to Custom Node (e.g: JSON to GUI)
+     *
+     * @param jsonObject     the json object representing a rule.
+     * @param draggingObject the dragging object.
+     * @return the custom node representing the rule, to be used in the GUI.
+     */
     public CustomNode jsonToGUI(JSONObject jsonObject, DraggingObject draggingObject) {
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
@@ -162,6 +220,13 @@ public class RuleComplete implements Serializable {
 
     }
 
+    /**
+     * Json object to customNode.
+     *
+     * @param jsonObject     the json object representing a given node in the GUI.
+     * @param draggingObject the dragging object.
+     * @return the custom node that represents the given block in the JSONObject.
+     */
     public CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject) {
         String firstCustomNodeString = ((JSONObject) jsonObject.get("rule")).get("operator").toString();
 
@@ -176,12 +241,24 @@ public class RuleComplete implements Serializable {
             String ruleBlock = parameters.get("ruleLabel").toString();
             String value = parameters.get("valueLabel").toString();
 
-            return new ConditionBlock(getRuleOperator(operator), new RuleBlock(ruleBlock), value, draggingObject);
+            return new ConditionBlock(getRuleOperator(operator), new MetricBlock(ruleBlock), value, draggingObject);
         }
 
         return firstCustomNode;
     }
 
+    /**
+     * Adds each of the parent-children to the correct side. In the end, we have a tree of parent's type.
+     *
+     * @param <T>            the type parameter (either CustomNode or RuleNode).
+     * @param parent         the parent
+     * @param jsonList       the JSONObject with the rule (to be transformed into a rule or into GUI representation).
+     * @param draggingObject the dragging object
+     * @param addToRight     the function that receives an element of parent type and one child,
+     *                       and ands it to the right side while returning a new parent in case this child is not a leaf one, and also has children.
+     * @param addToLeft      the function that receives an element of parent type and one child,
+     *                       and ands it to the left side while returning a new parent in case this child is not a leaf one, and also has children.
+     */
     public <T> void addChildrenToObject(T parent, JSONObject jsonList, DraggingObject draggingObject, BiFunction<T, CustomNode, T> addToRight, BiFunction<T, CustomNode, T> addToLeft){
         JSONArray children = (JSONArray) jsonList.get("children");
 
@@ -215,6 +292,12 @@ public class RuleComplete implements Serializable {
     }
 
 
+    /**
+     * Transforms a operator represented by a string to a RuleOperator type.
+     *
+     * @param operator the operator.
+     * @return the operator in the RuleOperator type.
+     */
     private RuleOperator getRuleOperator(String operator) {
 
         if (operator.equals(RuleOperator.GREATER.label)) {
@@ -239,6 +322,15 @@ public class RuleComplete implements Serializable {
         return RuleOperator.DEFAULT;
     }
 
+    /**
+     * Gets the parent children based on the CustomNodes in the given list.
+     * If the parent is of type ConditionBlock, means there is no children (it is a leaf CustomNode),
+     * otherwise, if the parent is of type LogicBlock, then there are multiple children (0, 1 or 2).
+     *
+     * @param parent              the parent to which we want to get the respective children.
+     * @param customNodeArrayList the array list containing all the CustomNodes (brothers or children nodes).
+     * @return the arraylist containing all the children.
+     */
     public ArrayList<CustomNode> getChild(CustomNode parent, List<CustomNode> customNodeArrayList) {
         ArrayList<CustomNode> children = new ArrayList<>();
 

@@ -88,7 +88,7 @@ public class LogicBlock implements CustomNode  {
             if (db.hasContent(FinalMain.customFormat)) {
                 success = true;
 
-                if(oQueEstaASerDragged.getNode().getType() != Types.RuleBlock){
+                if(oQueEstaASerDragged.getNode().getType() != Types.MetricBlock){
                     addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNode().getCopy());
 
                 }
@@ -118,14 +118,6 @@ public class LogicBlock implements CustomNode  {
                     }
 
                 }
-                    /*for (Node item : change.getRemoved()) {
-                        vBox.getChildren().remove(item);
-                        if (!item.equals(label)) {
-                            if (!vBox.getChildren().contains(label)) {
-                                vBox.getChildren().add(label);
-                            }
-                        }
-                    }*/
 
             }
 
@@ -277,6 +269,7 @@ public class LogicBlock implements CustomNode  {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public String toString() {
         JSONObject object = new JSONObject();
         object.put("operator", getOperator().label);

@@ -39,22 +39,22 @@ public class ConditionBlock implements CustomNode, Serializable {
 
     private HBox optionsHBox;
 
-    private RuleBlock ruleBlock;
+    private MetricBlock metricBlock;
 
-    public ConditionBlock(RuleOperator operator, RuleBlock ruleBlock, String value, DraggingObject oQueEstaASerDragged) {
+    public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value, DraggingObject oQueEstaASerDragged) {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
         this.operator = operator;
 
         valueLabel = new Label(value);
 
-        this.ruleBlock = ruleBlock;
+        this.metricBlock = metricBlock;
 
         ruleLabel = new Label();
-        if (ruleBlock == null) {
+        if (metricBlock == null) {
             ruleLabel.setText("No Rule Block");
         } else {
-            ruleLabel.setText(ruleBlock.getRuleMessage());
+            ruleLabel.setText(metricBlock.getMetricMessage());
         }
 
 
@@ -67,7 +67,7 @@ public class ConditionBlock implements CustomNode, Serializable {
         this.operator = operator;
         valueLabel = new Label(value);
 
-        this.ruleBlock = null;
+        this.metricBlock = null;
 
         ruleLabel = new Label();
         ruleLabel.setText("No Rule Block");
@@ -75,18 +75,18 @@ public class ConditionBlock implements CustomNode, Serializable {
         graphicalRepresentationNode = getHBox();
     }
 
-    public ConditionBlock(RuleOperator operator, RuleBlock ruleBlock, String value) {
+    public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value) {
 
         this.oQueEstaASerDragged = null;
         this.operator = operator;
         valueLabel = new Label(value);
-        this.ruleBlock = ruleBlock;
+        this.metricBlock = metricBlock;
 
         ruleLabel = new Label();
-        if (ruleBlock == null) {
+        if (metricBlock == null) {
             ruleLabel.setText("No Rule Block");
         } else {
-            ruleLabel.setText(ruleBlock.getRuleMessage());
+            ruleLabel.setText(metricBlock.getMetricMessage());
         }
 
 
@@ -96,8 +96,8 @@ public class ConditionBlock implements CustomNode, Serializable {
         return ruleLabel.getText();
     }
 
-    public RuleBlock getRuleBlock() {
-        return ruleBlock;
+    public MetricBlock getRuleBlock() {
+        return metricBlock;
     }
 
     public Node getWidgetGraphicalRepresentation() {
@@ -122,12 +122,12 @@ public class ConditionBlock implements CustomNode, Serializable {
                 success = true;
 
                 //System.out.println("conditionblock: " + oQueEstaASerDragged);
-                if (oQueEstaASerDragged.getNode().getType() == Types.RuleBlock) {
-                    RuleBlock c1 = (RuleBlock) oQueEstaASerDragged.getNode();
+                if (oQueEstaASerDragged.getNode().getType() == Types.MetricBlock) {
+                    MetricBlock c1 = (MetricBlock) oQueEstaASerDragged.getNode();
 
-                    ruleBlock = c1;
+                    metricBlock = c1;
 
-                    ruleLabel.setText(c1.getRuleMessage());
+                    ruleLabel.setText(c1.getMetricMessage());
 
                     operator = RuleOperator.DEFAULT;
 
@@ -304,7 +304,7 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         operatorLabelVbox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (ruleBlock != null) {
+                if (metricBlock != null) {
                     optionsHBox = optionsHBox();
                     optionsHBox.setStyle("-fx-background-color: #3d3c40");
 
@@ -330,7 +330,7 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         valueLabelVbox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (ruleBlock != null) {
+                if (metricBlock != null) {
                     optionsHBox = valueHBox();
 
                     Stage newStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
@@ -413,6 +413,7 @@ public class ConditionBlock implements CustomNode, Serializable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public String toString() {
         JSONObject object = new JSONObject();
         object.put("operator", getOperator().label);

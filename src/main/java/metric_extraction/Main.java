@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import RuleEditor.LogicBlock;
 import RuleEditor.ConditionBlock;
-import RuleEditor.RuleBlock;
+import RuleEditor.MetricBlock;
 import code_smell_detection.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -40,8 +40,8 @@ public class Main extends Application {
         extractor.executeExtraction();
         ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
 
-        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class"), "50"));
-        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class"), "10", null));
+        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
+        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));
 
         RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
 

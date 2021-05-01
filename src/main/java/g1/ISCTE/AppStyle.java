@@ -4,15 +4,16 @@ import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,25 @@ import java.util.ArrayList;
 
 public class AppStyle {
 
+    public static final String darkGrayBoxColor = "#3d3c40";
+    public static final String lightGreenColor = "#a3ddcb";
+    public static final String lightPinkColor = "#d8345f";
+    public static final String lightRedColor = "#f39189";
+    public static final String lightGrayColor = "#ece2e1";
+    public static final String lightYellowColor = "#ded7b1";
+    public static final String lightPurpleColor = "#a29bfe";
+
+    /**
+     * Gets the default style for rounded nodes in the App.
+     *
+     * @param color the background color.
+     * @return the default style string to be used to stylize any node in the App.
+     */
+    public static String setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(String color){
+        return "-fx-background-radius: 7 7 7 7;\n"
+                + "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: " + color;
+    }
 
     /**
      * @param fontType font style to be applied
@@ -112,7 +132,7 @@ public class AppStyle {
      * @param iconPlace path for popup icon
      * @param content content to be displayed in the popup
      * @param styleSheet pop stylesheet name
-     * @return
+     * @return the Stage that contains the given content.
      */
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
@@ -134,7 +154,7 @@ public class AppStyle {
      * @param styleSheet pop stylesheet name
      * @param x Coordinate representing where the popup stage should be open in the horizontal axis
      * @param y Coordinate representing where the popup stage should be open in the vertical axis
-     * @return
+     * @return the Stage that contains the given content.
      */
     public static Stage setUpPopup(String popupTitle, String iconPlace, HBox content, String styleSheet, double x, double y){
         Stage popupStage = setUpPopupStage(popupTitle, iconPlace, false);
@@ -164,7 +184,32 @@ public class AppStyle {
         scene.getStylesheets().add(styleSheet);
 
         popupStage.setScene(scene);
+    }
 
+    /**
+     * Helper method to get an ImageView with an icon from the given resource path with a height of 15. !To be used internally!
+     *
+     * @param imageLocation the location of the icon.
+     * @return the ImageView with the given icon.
+     */
+    public static ImageView getIcon(String imageLocation){
+        Image image = new Image(MyTree.class.getResource("/icons/" + imageLocation).toExternalForm());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(15);
+        imageView.setPreserveRatio(true);
+        imageView.setBlendMode(BlendMode.DIFFERENCE);
+
+        return imageView;
+    }
+
+    /**
+     * Helper method to set the graphic of a button with a given icon.
+     *
+     * @param button the button to where the icon shall be added.
+     * @param imageLocation the location of the icon.
+     */
+    public static void setButtonIcon(Button button, String imageLocation){
+        button.setGraphic(getIcon(imageLocation));
 
     }
 
@@ -263,19 +308,18 @@ public class AppStyle {
     public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent, ProgressBar progressBar){
         double currentMoment = 0;
 
-        for(Node node: nodes){
-            node.setOpacity(0);
+        for(Label label: nodes){
+            label.setOpacity(0);
 
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
             fadeTransition.setFromValue(0);
             fadeTransition.setToValue(1);
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
-            //parent.getChildren().add(node);
-            double completed = ((double)nodes.indexOf(node)) / (nodes.size()-1);
-            //System.out.println("completed: "  + completed);
-            addAfterDelay(node, parent, currentMoment , progressBar, completed);
+            double indexOfNode = nodes.indexOf(label);
+            double completed = ( indexOfNode) / (nodes.size()-1);
+            addAfterDelay(label, parent, currentMoment , progressBar, completed);
 
             currentMoment += delayDuration;
 
@@ -284,12 +328,12 @@ public class AppStyle {
     }
 
     private static void addAfterDelay(Node toAdd, VBox parent, double delay, ProgressBar progressBar, double completed){
-        Task<Void> sleeper = new Task<Void>() {
+        Task<Void> sleeper = new Task<>() {
             @Override
             protected Void call() {
                 try{
                     Thread.sleep((long) delay);
-                }catch (InterruptedException e){
+                }catch (InterruptedException ignored){
 
                 }
                 return null;

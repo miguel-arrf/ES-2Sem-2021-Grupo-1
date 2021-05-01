@@ -4,7 +4,6 @@ import code_smell_detection.CodeSmell;
 import code_smell_detection.CodeSmellDetector;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
-import g1.ISCTE.MyTree;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -16,9 +15,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -33,11 +30,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static g1.ISCTE.AppStyle.*;
+
 
 /**
  * Rules editor: Allows for creation, deletion, and edition of rules.
  */
 public class RulesManager extends Application {
+
+    private static final String FILE_EXTENSION = "rule";
 
     private  VBox mainPane = new VBox();
     private  VBox rulesPanel = new VBox();
@@ -49,7 +50,7 @@ public class RulesManager extends Application {
     private Label numberOfRules = new Label("No Rules");
 
     private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
-    private RuleComplete ruleComplete = new RuleComplete();
+    private RuleFileManager ruleFileManager = new RuleFileManager();
     private MetricExtractor metricExtractor;
 
     private File rulesFile = null;
@@ -83,15 +84,27 @@ public class RulesManager extends Application {
     }
 
     /**
-     * Creates the filechooser for the .rule files and the button that displays it (and how it will react when pressed).
+     * Gets a File Chooser for rules files.
+     *
+     * @param message the type of file chooser (to save or to load).
+     * @return the FileChooser
+     */
+    private FileChooser getFileChooser(String message){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*." + FILE_EXTENSION + ")", "*." + FILE_EXTENSION));
+        fileChooser.setInitialFileName("*." + FILE_EXTENSION);
+        fileChooser.setTitle(message + " Rules File");
+
+        return fileChooser;
+    }
+
+    /**
+     * Creates the fileChooser for the .rule files and the button that displays it (and how it will react when pressed).
      *
      * @return the button that loads the .rule files.
      */
     private Button setUpLoadRulesFileButton() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.rule)", "*.rule"));
-        fileChooser.setInitialFileName("*.rule");
-        fileChooser.setTitle("Select Rules File");
+        FileChooser fileChooser = getFileChooser("Select");
 
         Button setDirectoryButton = styledButton("Load Rules", "#a3ddcb");
         setButtonIcon(setDirectoryButton, "icons8-download-96.png");
@@ -101,7 +114,7 @@ public class RulesManager extends Application {
             tempFile = fileChooser.showOpenDialog(this.mainPane.getScene().getWindow());
 
             if (tempFile != null) {
-                if (tempFile.getName().endsWith(".rule")) {
+                if (tempFile.getName().endsWith("." + FILE_EXTENSION)) {
                     rulesFile = tempFile;
                     loadFile();
 
@@ -118,10 +131,10 @@ public class RulesManager extends Application {
      * Load JSON files from the chosen path.
      */
     private void loadFile(){
-        ruleComplete.setFile(rulesFile);
+        ruleFileManager.setFile(rulesFile);
 
         try {
-            ArrayList<JSONObject> arrayList = ruleComplete.loadJSONRuleFile();
+            ArrayList<JSONObject> arrayList = ruleFileManager.loadJSONRuleFile();
             rules.clear();
 
             //If we don't do it this way, the listener for the label, wouldn't work.
@@ -142,11 +155,7 @@ public class RulesManager extends Application {
      * @return the button that creates the .rule file in the specified path.
      */
     private Button setUpSetRulesFileButton() {
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.rule)", "*.rule"));
-        fileChooser.setInitialFileName("*.rule");
-        fileChooser.setTitle("Save Rules File");
+        FileChooser fileChooser = getFileChooser("Save");
 
         Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
         setButtonIcon(setDirectoryButton, "add-file.png");
@@ -156,9 +165,9 @@ public class RulesManager extends Application {
             tempFile = fileChooser.showSaveDialog(this.mainPane.getScene().getWindow());
 
             if (tempFile != null) {
-                if (tempFile.getName().endsWith(".rule")) {
+                if (tempFile.getName().endsWith("." + FILE_EXTENSION)) {
                     rulesFile = tempFile;
-                    ruleComplete.setFile(rulesFile);
+                    ruleFileManager.setFile(rulesFile);
 
                     rules.clear();
 
@@ -182,18 +191,15 @@ public class RulesManager extends Application {
      */
     @SuppressWarnings("unchecked")
     private HBox getRenameTextField(Label label, JSONObject jsonObject) {
-
-        Button updateButton = styledButton("Update", "#a3ddcb");
-        Button cancelButton = styledButton("Cancel", "#d8345f");
+        Button updateButton = styledButton("Update", lightGreenColor);
+        Button cancelButton = styledButton("Cancel", lightPinkColor);
 
         cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST))));
 
-
         HBox hBox = new HBox();
-        hBox.setStyle("-fx-background-color: #3d3c40");
+        hBox.setStyle("-fx-background-color: " + darkGrayBoxColor);
         TextField textField = new TextField((String) ((JSONObject)jsonObject.get("outerName")).get("innerName"));
         textField.setStyle("-fx-text-inner-color: white;");
-
 
         updateButton.setOnAction(actionEvent -> {
             label.setText(textField.getText());
@@ -203,21 +209,18 @@ public class RulesManager extends Application {
 
             jsonObject.replace("outerName", outerName);
 
-            ruleComplete.saveJSONListToFile(rules);
+            ruleFileManager.saveJSONListToFile(rules);
             Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
         });
-
 
         textField.setMaxWidth(150);
 
         hBox.getChildren().addAll(textField, updateButton, cancelButton);
 
-
         hBox.getStyleClass().add("ruleBuilderMenu");
 
         hBox.setPadding(new Insets(10));
         hBox.setSpacing(10);
-
 
         hBox.setMaxHeight(100);
         hBox.setMaxWidth(500);
@@ -226,33 +229,6 @@ public class RulesManager extends Application {
         hBox.setAlignment(Pos.CENTER);
 
         return hBox;
-    }
-
-    /**
-     * Helper method to get an ImageView with an icon from the given resource path with a height of 15. !To be used internally!
-     *
-     * @param imageLocation the location of the icon.
-     * @return the ImageView with the given icon.
-     */
-    private ImageView getIcon(String imageLocation){
-        Image image = new Image(MyTree.class.getResource("/icons/" + imageLocation).toExternalForm());
-        ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(15);
-        imageView.setPreserveRatio(true);
-        imageView.setBlendMode(BlendMode.DIFFERENCE);
-
-        return imageView;
-    }
-
-    /**
-     * Helper method to set the graphic of a button with a given icon.
-     *
-     * @param button the button to where the icon shall be added.
-     * @param imageLocation the location of the icon.
-     */
-    private void setButtonIcon(Button button, String imageLocation){
-        button.setGraphic(getIcon(imageLocation));
-
     }
 
     /**
@@ -277,24 +253,21 @@ public class RulesManager extends Application {
         label.setMinWidth(Region.USE_PREF_SIZE);
         label.setTextFill(Color.BLACK);
         label.setPadding(new Insets(5));
-        label.setStyle("-fx-background-radius: 7 7 7 7;\n"
-                + "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: #a3ddcb");
+        label.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(lightGreenColor));
 
 
-        Button delete = styledButton("Delete", "#f39189");
+        Button delete = styledButton("Delete", lightRedColor);
         setButtonIcon(delete,"icons8-full-trash-96.png" );
-
 
         delete.setOnAction(actionEvent -> {
             rules.remove(nodeJSON);
-            ruleComplete.saveJSONListToFile(rules);
+            ruleFileManager.saveJSONListToFile(rules);
 
             updateRulesEditorPanel();
         });
         delete.setMinHeight(0);
 
-        Button edit = styledButton("Edit", "#ece2e1");
+        Button edit = styledButton("Edit", lightGrayColor);
         setButtonIcon(edit, "icons8-edit-384.png");
 
         edit.setOnAction(actionEvent -> {
@@ -307,7 +280,7 @@ public class RulesManager extends Application {
             FinalMain finalMain = new FinalMain(isClassSmell);
             String ruleName = (String) ((JSONObject) nodeJSON.get("outerName")).get("innerName");
 
-            SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleComplete, nodeJSON, ruleName);
+            SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleFileManager, nodeJSON, ruleName);
 
             VBox.setMargin(content, new Insets(20));
             content.setPadding(new Insets(10));
@@ -328,7 +301,7 @@ public class RulesManager extends Application {
                 if (ruleToADD != null) {
 
                     rules.add(ruleToADD);
-                    ruleComplete.saveJSONListToFile(rules);
+                    ruleFileManager.saveJSONListToFile(rules);
                     updateRulesEditorPanel();
                 }
 
@@ -339,7 +312,7 @@ public class RulesManager extends Application {
 
         edit.setMinHeight(0);
 
-        Button rename = styledButton("Rename", "#ded7b1");
+        Button rename = styledButton("Rename", lightYellowColor);
         setButtonIcon(rename, "icons8-rename-96.png");
 
         rename.setOnAction(actionEvent -> {
@@ -348,11 +321,11 @@ public class RulesManager extends Application {
             HBox optionsHBox = getRenameTextField(label, nodeJSON);
             Stage popupStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm());
 
-            popupStage.getScene().setFill(Color.web("#3d3c40"));
+            popupStage.getScene().setFill(Color.web(darkGrayBoxColor));
 
             popupStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, rename.getScene().getRoot()));
 
-            rename.getScene().setFill(Color.web("#3d3c40"));
+            rename.getScene().setFill(Color.web(darkGrayBoxColor));
             NewGUI.blurBackground(0, 30, 500, rename.getScene().getRoot());
 
 
@@ -387,7 +360,7 @@ public class RulesManager extends Application {
      * @return the button to add a new rule.
      */
     private Button setUpAddNewRuleButton() {
-        Button addNewRule = styledButton("Add rule", "#a29bfe");
+        Button addNewRule = styledButton("Add rule", lightPurpleColor);
         setButtonIcon(addNewRule, "add.png");
 
         addNewRule.setMaxHeight(30);
@@ -422,7 +395,7 @@ public class RulesManager extends Application {
         Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
 
         FinalMain finalMain = new FinalMain(isClassSmell);
-        SplitPane content = finalMain.getRuleEditor(popupStage, ruleComplete);
+        SplitPane content = finalMain.getRuleEditor(popupStage, ruleFileManager);
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));
@@ -443,7 +416,7 @@ public class RulesManager extends Application {
                 rules.add(finalMain.getRule());
                 updateRulesEditorPanel();
 
-                ruleComplete.saveJSONListToFile(rules);
+                ruleFileManager.saveJSONListToFile(rules);
             }
 
 
@@ -459,7 +432,7 @@ public class RulesManager extends Application {
     private void setUpMainPane() {
 
         mainPane.setSpacing(20);
-        mainPane.setStyle("-fx-background-color: #3d3c40 ");
+        mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
 
@@ -521,10 +494,8 @@ public class RulesManager extends Application {
         Button button = new Button(text);
         button.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
+        button.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
 
-        button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: " + color);
         button.setMinHeight(50);
         button.setMinWidth(Region.USE_PREF_SIZE);
 
@@ -542,7 +513,7 @@ public class RulesManager extends Application {
         mainPane = new VBox();
         rulesPanel = new VBox();
         numberOfRules = new Label("No Rules");
-        ruleComplete = new RuleComplete();
+        ruleFileManager = new RuleFileManager();
         setRulesDirectoryButton = null;
         loadRulesButton = null;
         addNewRuleButton = null;
@@ -557,11 +528,11 @@ public class RulesManager extends Application {
 
         for(JSONObject entry: rules){
             String ruleName = (String) ((JSONObject) entry.get("outerName")).get("innerName");
-            RuleComplete tempRuleComplete = new RuleComplete();
+            RuleFileManager tempRuleFileManager = new RuleFileManager();
             boolean isClassSmell = (Boolean) ((JSONObject) entry.get("outerName")).get("isClassSmell");
 
 
-            smells.add(tempRuleComplete.jsonObjectToCodeSmell(entry, new DraggingObject(), ruleName, isClassSmell));
+            smells.add(tempRuleFileManager.jsonObjectToCodeSmell(entry, new DraggingObject(), ruleName, isClassSmell));
 
         }
 

@@ -39,7 +39,7 @@ public class FinalMain extends Application {
 
     private JSONObject rule;
     private String ruleName;
-    private RuleComplete ruleComplete;
+    private RuleFileManager ruleFileManager;
 
     private boolean isClassSmell;
 
@@ -56,7 +56,7 @@ public class FinalMain extends Application {
         JSONObject json = null;
         try {
             if(rule == null){
-                rule = ruleComplete.guiToJSONObject(ruleNodes, getRuleName(),isClassSmell);
+                rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(),isClassSmell);
             }
             json = (JSONObject) parser.parse(rule.toJSONString());
         } catch (ParseException | IndexOutOfBoundsException exception) {
@@ -82,24 +82,24 @@ public class FinalMain extends Application {
         stage.show();
     }
 
-    public SplitPane getRuleEditor(Stage stage, RuleComplete ruleComplete){
-        this.ruleComplete = ruleComplete;
+    public SplitPane getRuleEditor(Stage stage, RuleFileManager ruleFileManager){
+        this.ruleFileManager = ruleFileManager;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
         return splitPane;
     }
 
-    public SplitPane getEditRuleEditor(Stage stage, RuleComplete ruleComplete, JSONObject jsonObject, String ruleName){
+    public SplitPane getEditRuleEditor(Stage stage, RuleFileManager ruleFileManager, JSONObject jsonObject, String ruleName){
         isNewRule = false;
 
         this.ruleName = ruleName;
-        this.ruleComplete = ruleComplete;
+        this.ruleFileManager = ruleFileManager;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
         mainPane.getChildren().clear();
-        CustomNode firstCustomNode = ruleComplete.jsonToGUI(jsonObject, inDragObject);
+        CustomNode firstCustomNode = ruleFileManager.jsonToGUI(jsonObject, inDragObject);
         addCustomNodeWithouClear(firstCustomNode);
 
 
@@ -187,10 +187,10 @@ public class FinalMain extends Application {
 
                     inDragObject.setNode(copyBlock);
 
-                } else if (vBox1.getType() == Types.RuleBlock) {
+                } else if (vBox1.getType() == Types.MetricBlock) {
 
-                    RuleBlock block = (RuleBlock) vBox1;
-                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage());
+                    MetricBlock block = (MetricBlock) vBox1;
+                    MetricBlock copyBlock = new MetricBlock(block.getMetricMessage());
 
                     inDragObject.setNode(copyBlock);
                 }
@@ -326,7 +326,7 @@ public class FinalMain extends Application {
 
 
 
-            rule = ruleComplete.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
+            rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
 
         });
 
@@ -357,13 +357,13 @@ public class FinalMain extends Application {
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
-        RuleBlock locClassBlock = new RuleBlock("LOC_Class");
-        RuleBlock nomClassBlock = new RuleBlock("NOM_Class");
-        RuleBlock WMC_Class = new RuleBlock("WMC_Class");
-        RuleBlock is_God_Class = new RuleBlock("is_God_Class");
-        RuleBlock LOC_method = new RuleBlock("LOC_Method");
-        RuleBlock CYCLO_method = new RuleBlock("CYCLO_Method");
-        RuleBlock is_Long_Method = new RuleBlock("is_Long_Method");
+        MetricBlock locClassBlock = new MetricBlock("LOC_Class");
+        MetricBlock nomClassBlock = new MetricBlock("NOM_Class");
+        MetricBlock WMC_Class = new MetricBlock("WMC_Class");
+        MetricBlock is_God_Class = new MetricBlock("is_God_Class");
+        MetricBlock LOC_method = new MetricBlock("LOC_Method");
+        MetricBlock CYCLO_method = new MetricBlock("CYCLO_Method");
+        MetricBlock is_Long_Method = new MetricBlock("is_Long_Method");
 
 
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
@@ -439,7 +439,7 @@ public class FinalMain extends Application {
 
 
                 if (mainPane.getChildren().contains(firstLabel)) {
-                    if (inDragObject.getNode().getType() != Types.RuleBlock) {
+                    if (inDragObject.getNode().getType() != Types.MetricBlock) {
                         mainPane.getChildren().clear();
                     }
                 }
@@ -486,7 +486,7 @@ class SortBlockArrayList implements Comparator<CustomNode> {
 
     @Override
     public int compare(CustomNode a, CustomNode b) {
-        if (a.getType() == Types.RuleBlock){
+        if (a.getType() == Types.MetricBlock){
             return -1;
         }if (a.getType() == b.getType()){
             return 0;
