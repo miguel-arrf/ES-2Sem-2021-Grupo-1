@@ -179,20 +179,20 @@ public class FinalMain extends Application {
                     LogicBlock block = (LogicBlock) vBox1;
                     LogicBlock copyBlock = new LogicBlock(inDragObject, block.getOperator(), block.getBoxColor());
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
 
                 } else if (vBox1.getType() == Types.ConditionBlock) {
                     ConditionBlock block = (ConditionBlock) vBox1;
                     ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRuleBlock(), block.getValue(), inDragObject);
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
 
                 } else if (vBox1.getType() == Types.RuleBlock) {
 
                     RuleBlock block = (RuleBlock) vBox1;
                     RuleBlock copyBlock = new RuleBlock(block.getRuleMessage());
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
                 }
 
 
@@ -439,14 +439,14 @@ public class FinalMain extends Application {
 
 
                 if (mainPane.getChildren().contains(firstLabel)) {
-                    if (inDragObject.getNodes().getType() != Types.RuleBlock) {
+                    if (inDragObject.getNode().getType() != Types.RuleBlock) {
                         mainPane.getChildren().clear();
                     }
                 }
 
 
                 if (mainPane.getChildren().size() < 1) {
-                    CustomNode copy = inDragObject.getNodes().getCopy();
+                    CustomNode copy = inDragObject.getNode().getCopy();
                     addCustomNode(copy);
 
                 }

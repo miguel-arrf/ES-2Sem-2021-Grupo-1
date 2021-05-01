@@ -33,35 +33,60 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class RuleEditor extends Application {
+
+/**
+ * Rules editor: Allows for creation, deletion, and edition of rules.
+ */
+public class RulesManager extends Application {
 
     private  VBox mainPane = new VBox();
     private  VBox rulesPanel = new VBox();
-    private Label numberOfRules = new Label("No Rules");
-    private RuleComplete ruleComplete = new RuleComplete();
+
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
-
     private Button addNewRuleButton;
+
+    private Label numberOfRules = new Label("No Rules");
+
+    private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+    private RuleComplete ruleComplete = new RuleComplete();
+    private MetricExtractor metricExtractor;
 
     private File rulesFile = null;
 
-    private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
-
-    private MetricExtractor metricExtractor;
-
+    /**
+     * Sets metric extractor.
+     *
+     * @param metricExtractor the metric extractor
+     */
     public void setMetricExtractor(MetricExtractor metricExtractor) {
         this.metricExtractor = metricExtractor;
     }
 
+    /**
+     * Gets rules.
+     *
+     * @return the rules
+     */
     public ObservableList<JSONObject> getRules() {
         return rules;
     }
 
+
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * Creates the filechooser for the .rule files and the button that displays it (and how it will react when pressed).
+     *
+     * @return the button that loads the .rule files.
+     */
     private Button setUpLoadRulesFileButton() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*.rule)", "*.rule"));
@@ -89,6 +114,9 @@ public class RuleEditor extends Application {
         return setDirectoryButton;
     }
 
+    /**
+     * Load JSON files from the chosen path.
+     */
     private void loadFile(){
         ruleComplete.setFile(rulesFile);
 
@@ -108,6 +136,11 @@ public class RuleEditor extends Application {
 
     }
 
+    /**
+     * Creates the filechooser for the .rule files creation and the button that displays it (and how it will react when pressed).
+     *
+     * @return the button that creates the .rule file in the specified path.
+     */
     private Button setUpSetRulesFileButton() {
 
         FileChooser fileChooser = new FileChooser();
@@ -140,6 +173,14 @@ public class RuleEditor extends Application {
         return setDirectoryButton;
     }
 
+    /**
+     * HBox with the respective content (rule rename text field) to be displayed into a popup.
+     *
+     * @param label the label that displays the rule name and that shall be updated or not by the user.
+     * @param jsonObject the rule in JSON format.
+     * @return the content needed to create a popup to rename a given rule.
+     */
+    @SuppressWarnings("unchecked")
     private HBox getRenameTextField(Label label, JSONObject jsonObject) {
 
         Button updateButton = styledButton("Update", "#a3ddcb");
@@ -187,6 +228,12 @@ public class RuleEditor extends Application {
         return hBox;
     }
 
+    /**
+     * Helper method to get an ImageView with an icon from the given resource path with a height of 15. !To be used internally!
+     *
+     * @param imageLocation the location of the icon.
+     * @return the ImageView with the given icon.
+     */
     private ImageView getIcon(String imageLocation){
         Image image = new Image(MyTree.class.getResource("/icons/" + imageLocation).toExternalForm());
         ImageView imageView = new ImageView(image);
@@ -197,11 +244,23 @@ public class RuleEditor extends Application {
         return imageView;
     }
 
+    /**
+     * Helper method to set the graphic of a button with a given icon.
+     *
+     * @param button the button to where the icon shall be added.
+     * @param imageLocation the location of the icon.
+     */
     private void setButtonIcon(Button button, String imageLocation){
         button.setGraphic(getIcon(imageLocation));
 
     }
 
+    /**
+     * Helper method to create the cell that represents a rule (with the edit, rename and delete buttons)
+     *
+     * @param nodeJSON the rule in JSON format.
+     * @return the cell graphical representation.
+     */
     private Node getRulePane(JSONObject nodeJSON) {
 
         HBox pane = new HBox();
@@ -306,6 +365,9 @@ public class RuleEditor extends Application {
         return pane;
     }
 
+    /**
+     * Updates the rules panel, where each rule is represented.
+     */
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
 
@@ -319,6 +381,11 @@ public class RuleEditor extends Application {
 
     }
 
+    /**
+     * Creates the button to add a new rule of type ClassSmell or MethodSmell.
+     *
+     * @return the button to add a new rule.
+     */
     private Button setUpAddNewRuleButton() {
         Button addNewRule = styledButton("Add rule", "#a29bfe");
         setButtonIcon(addNewRule, "add.png");
@@ -326,14 +393,12 @@ public class RuleEditor extends Application {
         addNewRule.setMaxHeight(30);
 
         ContextMenu contextMenu = new ContextMenu();
+
         MenuItem classSmellMenuItem = new MenuItem("Class Smell");
-        classSmellMenuItem.setOnAction(actionEvent -> {
-            openAddRuleEditor(true);
-        });
+        classSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(true));
+
         MenuItem methodSmellMenuItem = new MenuItem("Method Smell");
-        methodSmellMenuItem.setOnAction(actionEvent -> {
-            openAddRuleEditor(false);
-        });
+        methodSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(false));
 
         contextMenu.getItems().addAll(classSmellMenuItem, methodSmellMenuItem);
 
@@ -348,6 +413,11 @@ public class RuleEditor extends Application {
         return addNewRule;
     }
 
+    /**
+     * Helper method to open the rule editor with the given type of the rule (Class Smell or Method Smell).
+     *
+     * @param isClassSmell the type of the rule.
+     */
     private void openAddRuleEditor(boolean isClassSmell){
         Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
 
@@ -383,6 +453,9 @@ public class RuleEditor extends Application {
 
     }
 
+    /**
+     * Sets up the main pane and deals with the initiation of the GUI.
+     */
     private void setUpMainPane() {
 
         mainPane.setSpacing(20);
@@ -436,6 +509,14 @@ public class RuleEditor extends Application {
         mainPane.getChildren().add(saveAndLoadButtons);
     }
 
+
+    /**
+     * Helper method to have buttons with a consistent design all around.
+     *
+     * @param text the text to be displayed.
+     * @param color the color of the button background.
+     * @return the button.
+     */
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
         button.setFont(AppStyle.getFont(FontType.BOLD, 12));
@@ -454,6 +535,9 @@ public class RuleEditor extends Application {
         return button;
     }
 
+    /**
+     * Helper method to deal with the multiple times this GUI can be presented.
+     */
     private void resetEverything(){
         mainPane = new VBox();
         rulesPanel = new VBox();
@@ -465,6 +549,9 @@ public class RuleEditor extends Application {
     }
 
 
+    /**
+     * Creates the Code Smells for each rule and detects them.
+     */
     private void createCodeSmells( )   {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
@@ -488,6 +575,11 @@ public class RuleEditor extends Application {
     }
 
 
+    /**
+     * Start of the GUI.
+     *
+     * @param stage stage to be displayed.
+     */
     @Override
     public void start(Stage stage) {
         resetEverything();

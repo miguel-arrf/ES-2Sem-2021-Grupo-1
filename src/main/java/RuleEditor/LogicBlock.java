@@ -88,8 +88,8 @@ public class LogicBlock implements CustomNode  {
             if (db.hasContent(FinalMain.customFormat)) {
                 success = true;
 
-                if(oQueEstaASerDragged.getNodes().getType() != Types.RuleBlock){
-                    addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNodes().getCopy());
+                if(oQueEstaASerDragged.getNode().getType() != Types.RuleBlock){
+                    addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNode().getCopy());
 
                 }
 
@@ -225,7 +225,7 @@ public class LogicBlock implements CustomNode  {
 
             ClipboardContent content = new ClipboardContent();
             content.put(FinalMain.customFormat, 1);
-            oQueEstaASerDragged.setNodes(customNode);
+            oQueEstaASerDragged.setNode(customNode);
 
             //System.out.println(oQueEstaASerDragged);
             new_DB.setContent(content);

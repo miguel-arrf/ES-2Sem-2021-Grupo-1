@@ -122,8 +122,8 @@ public class ConditionBlock implements CustomNode, Serializable {
                 success = true;
 
                 //System.out.println("conditionblock: " + oQueEstaASerDragged);
-                if (oQueEstaASerDragged.getNodes().getType() == Types.RuleBlock) {
-                    RuleBlock c1 = (RuleBlock) oQueEstaASerDragged.getNodes();
+                if (oQueEstaASerDragged.getNode().getType() == Types.RuleBlock) {
+                    RuleBlock c1 = (RuleBlock) oQueEstaASerDragged.getNode();
 
                     ruleBlock = c1;
 
@@ -407,6 +407,7 @@ public class ConditionBlock implements CustomNode, Serializable {
         return false;
     }
 
+    @Override
     public ConditionBlock getCopy() {
         return new ConditionBlock(getOperator(), getRuleBlock(), getValue(), oQueEstaASerDragged);
     }
