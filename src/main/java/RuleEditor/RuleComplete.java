@@ -1,5 +1,6 @@
 package RuleEditor;
 
+import code_smell_detection.CodeSmell;
 import code_smell_detection.RuleNode;
 import code_smell_detection.RuleOperator;
 import javafx.collections.ObservableList;
@@ -14,25 +15,6 @@ import java.util.List;
 
 public class RuleComplete implements Serializable {
 
-//    public static void loadDataToGUI() throws FileNotFoundException {
-//        File file = new File("Rules.txt");
-//        Scanner myReader = new Scanner(file);
-//
-//        CustomNode parent = null;
-//
-//        while(myReader.hasNextLine()){
-//            String line = myReader.nextLine();
-//
-//            if(line.contains("LogicBlock")){
-//                CustomNode logicBlock =
-//            }else if(line.contains("ConditionBlock")){
-//
-//            }
-//
-//        }
-//
-//
-//    }
 
     private File file;
 
@@ -54,33 +36,34 @@ public class RuleComplete implements Serializable {
 
 
     public  JSONObject createCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+
         //The first node is always in the zero index.
         CustomNode firstCustomNode = customNodeArrayList.get(0);
 
         RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
 
-
         StringBuilder stringBuilder = new StringBuilder("");
+        System.out.print("rule -> ");
         print(rule, "", stringBuilder);
         System.out.println(stringBuilder);
 
+
         JSONObject jsonObject = toJSON(firstCustomNode, customNodeArrayList);
 
-        CustomNode id = (CustomNode) jsonObject.get("id");
-        JSONObject newID = new JSONObject();
-        newID.put("id", id);
-        newID.put("name", name);
-        jsonObject.replace("id", newID);
-
-
-
-        /*try {
-            saveFile(jsonObject.toJSONString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        jsonObject.put("name", name);
 
         return jsonObject;
+
+    }
+
+    public CodeSmell createRuleNodeCodeSmell(ArrayList<CustomNode> customNodeArrayList, String name){
+
+        //The first node is always in the zero index.
+        CustomNode firstCustomNode = customNodeArrayList.get(0);
+        RuleNode rule = createRuleNode(firstCustomNode, customNodeArrayList);
+
+        CodeSmell codeSmell = new CodeSmell(name, rule, true);
+        return codeSmell;
 
     }
 
@@ -132,15 +115,11 @@ public class RuleComplete implements Serializable {
         return customNodes;
     }
 
-    public  CustomNode loadJSONFile(File file, DraggingObject draggingObject) throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader(file);
+    public  CustomNode teste(JSONObject jsonObject, DraggingObject draggingObject) {
 
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
-        System.out.println("firstCustomNode :" + firstCustomNode);
         if(firstCustomNode.getType() ==  Types.LogicBlock){
             toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
 
@@ -151,26 +130,6 @@ public class RuleComplete implements Serializable {
 
     }
 
-    public  CustomNode loadJSONFile(DraggingObject draggingObject) throws IOException, ParseException {
-        JSONParser jsonParser = new JSONParser();
-        Reader reader = new FileReader(file);
-
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-        JSONObject idWithoutName = (JSONObject) jsonObject.get("id");
-        jsonObject.replace("id", (JSONObject)idWithoutName.get("id"));
-
-        CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-
-        System.out.println("firstCustomNode :" + firstCustomNode);
-        if(firstCustomNode.getType() ==  Types.LogicBlock){
-            toCustomNode((LogicBlock) firstCustomNode, jsonObject, draggingObject);
-
-            return firstCustomNode;
-        }
-
-        return firstCustomNode;
-
-    }
 
     public  void toCustomNode(LogicBlock parent, JSONObject jsonList, DraggingObject draggingObject){
         JSONArray child = (JSONArray) jsonList.get("children");
@@ -195,7 +154,7 @@ public class RuleComplete implements Serializable {
             parent.addToLeft(nodeToAddLeft);
 
             if(nodeToAddLeft.getType() == Types.LogicBlock){
-                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(0), draggingObject );
+                toCustomNode((LogicBlock) nodeToAddLeft, (JSONObject) child.get(1), draggingObject );
             }
 
         }
@@ -286,7 +245,6 @@ public class RuleComplete implements Serializable {
 
     private  void print(RuleNode ruleNode, String tab, StringBuilder representation){
         representation.append(tab).append(ruleNode.getElement());
-        //System.out.println(tab + ruleNode.getElement());
         if(ruleNode.getLeft_node() != null){
             print(ruleNode.getLeft_node(), tab + "\n\t", representation);
         }

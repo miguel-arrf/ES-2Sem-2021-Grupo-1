@@ -190,7 +190,7 @@ public class LogicBlock implements CustomNode  {
 
         andLabel.setPadding(new Insets(30));
         andLabelVBox.setStyle("-fx-background-color: #f0e4d7;");
-        andLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        andLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         andLabel.setTextFill(Color.web("#8e7f7f"));
 
         box.getChildren().addAll(leftLabelVBox, andLabelVBox, rightLabelVBox);
@@ -282,7 +282,6 @@ public class LogicBlock implements CustomNode  {
         object.put("operator", getOperator().label);
         return object.toJSONString();
         //return "LogicBlock [ operator: " + getOperator().label + " ]";
-
     }
 
 

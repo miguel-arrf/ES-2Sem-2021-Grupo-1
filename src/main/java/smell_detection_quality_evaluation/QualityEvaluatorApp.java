@@ -3,27 +3,35 @@ package smell_detection_quality_evaluation;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class QualityEvaluatorApp extends Application {
 
-    private Label truePositivesLabel = new Label("0");
-    private Label falsePositivesLabel = new Label("0");
-    private Label trueNegativesLabel = new Label("0");
-    private Label falseNegativesLabel = new Label("0");
+    private final Label truePositivesLabel = new Label("0");
+    private final Label falsePositivesLabel = new Label("0");
+    private final Label trueNegativesLabel = new Label("0");
+    private final Label falseNegativesLabel = new Label("0");
     private Button detectionButton;
     private VBox mainBox;
+    private VBox addButtonVBox = new VBox();
+    private final ProgressBar progressBar = new ProgressBar();
+
+    private final String[] possibleValues = new String[]{"All","True Positive", "False Positive", "False Negative", "True Negative"};
+    private final ChoiceBox choiceBox = new ChoiceBox(FXCollections.observableArrayList("All", "True Positive", "False Positive", "False Negative", "True Negative"));
+    private final ArrayList<String> consoleOutputs = new ArrayList<>();
 
     public static void main(String[] args) {
         launch(args);
@@ -38,13 +46,47 @@ public class QualityEvaluatorApp extends Application {
     }
 
     private Scene initializeGUI() {
+
         mainBox = new VBox(createMatrix());
         mainBox.setSpacing(20);
         mainBox.setPadding(new Insets(10));
         detectionButton = styledButton("Detect", "ORANGE");
         detectionButton.setOnAction(actionEvent -> detectOnClick());
-        mainBox.getChildren().add(detectionButton);
+
+        detectionButton.setMinHeight(25);
+
+        addButtonVBox.setPadding(new Insets(5));
+        addButtonVBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
+                "    -fx-border-radius: 7 7 7 7;\n" +
+                "    -fx-background-color: orange");
+
+        addButtonVBox.getChildren().add(detectionButton);
+
+        mainBox.getChildren().add(addButtonVBox);
         mainBox.setStyle("-fx-background-color: #3d3c40 ");
+
+        progressBar.setProgress(0);
+        progressBar.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(progressBar, Priority.ALWAYS);
+        progressBar.setMinHeight(15);
+
+        choiceBox.setValue("All");
+        choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+            System.out.println("selected: "  + possibleValues[t1.intValue()]);
+
+
+            if(possibleValues[t1.intValue()].equalsIgnoreCase("ALL")){
+                setupScrollPane(consoleOutputs, false);
+            }else{
+                List<String> temp = consoleOutputs.stream().filter(a -> a.contains(possibleValues[t1.intValue()])).collect(Collectors.toList());
+
+                setupScrollPane(temp, false);
+            }
+
+
+
+        });
+
         Scene scene = new Scene(mainBox);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         return scene;
@@ -53,6 +95,8 @@ public class QualityEvaluatorApp extends Application {
     private StackPane getStackPane(VBox content){
         //ScrollPane where boxes go
         ScrollPane scrollPane = getScrollPane(content);
+
+        //scrollPane.vvalueProperty().bind(content.heightProperty());
 
         //StackPane due to rounded corners...
         StackPane stackPane = new StackPane();
@@ -74,7 +118,6 @@ public class QualityEvaluatorApp extends Application {
 
         scrollPane.setMinWidth(250);
         scrollPane.setPrefWidth(200);
-        scrollPane.setMaxWidth(350);
 
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
 
@@ -87,30 +130,64 @@ public class QualityEvaluatorApp extends Application {
     }
 
     private void detectOnClick() {
+        //mainBox.getChildren().add(progressBar);
+        addButtonVBox.getChildren().add(progressBar);
+
+
         resetLabelValues();
         changeButtonState("Pressed");
         QualityEvaluator evaluator = new QualityEvaluator();
         evaluator.run();
         changeButtonState("Normal");
-        setupScrollPane(evaluator.getEvaluation().getConsoleOutputs());
-        updateLabelValues(evaluator.getEvaluation().getConfusionMatrix());
+
+        consoleOutputs.clear() ;
+        consoleOutputs.addAll(evaluator.getEvaluation().getConsoleOutputs());
+
+        setupScrollPane(consoleOutputs, true );
+
+        progressBar.progressProperty().addListener((observableValue, number, t1) -> {
+            if(t1.doubleValue() == 1){
+                addButtonVBox.getChildren().remove(progressBar);
+                progressBar.setProgress(0.0);
+                updateLabelValues(evaluator.getEvaluation().getConfusionMatrix());
+                if(!mainBox.getChildren().contains(choiceBox)){
+                    mainBox.getChildren().add(2,choiceBox);
+                }
+
+            }
+        });
+
     }
 
-    private void setupScrollPane(ArrayList<String> consoleOutputs) {
+    private void setupScrollPane(List<String> localOutputs,  boolean animation) {
         VBox textBox = new VBox();
         textBox.setSpacing(5);
+
         ArrayList<Label> labels = new ArrayList<>();
-        for(String output : consoleOutputs) {
+
+        for(String output : localOutputs) {
             Label label = new Label(output);
             label.setTextFill(Color.WHITE);
             label.setPadding(new Insets(4, 10, 10, 10));
             label.getStyleClass().add("treeLabel");
-            label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
+            label.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(label, Priority.ALWAYS);
+            label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
             labels.add(label);
-            //textBox.getChildren().add(label);
+            if(!animation)
+                textBox.getChildren().add(label);
         }
-        AppStyle.addFadingInGroup(250, 50, labels, textBox);
-        mainBox.getChildren().add(getStackPane(textBox));
+
+        if(animation){
+            AppStyle.addFadingInGroup(150, 20, labels, textBox, progressBar);
+
+        }
+
+        StackPane stackPane = getStackPane(textBox);
+
+        mainBox.getChildren().removeIf(node -> node instanceof StackPane);
+
+        mainBox.getChildren().add(stackPane);
     }
 
     private void changeButtonState(String pressed) {
@@ -119,6 +196,7 @@ public class QualityEvaluatorApp extends Application {
                     "    -fx-border-radius: 7 7 7 7;\n" +
                     "    -fx-background-color: #cd6133");
             detectionButton.setText("Running...");
+
         } else {
             detectionButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
                     "    -fx-border-radius: 7 7 7 7;\n" +
@@ -159,24 +237,57 @@ public class QualityEvaluatorApp extends Application {
         return button;
     }
 
+    private void setColumnConstraints(GridPane gridPane){
+        ColumnConstraints columnConstraints1 = new ColumnConstraints();
+        columnConstraints1.setPercentWidth(50);
+
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints2.setPercentWidth(50);
+
+        gridPane.getColumnConstraints().addAll(columnConstraints1, columnConstraints2);
+    }
+
+    private void addToGrid(Pane node, GridPane gridPane, int row, int column){
+        GridPane.setRowIndex(node, row);
+        GridPane.setColumnIndex(node, column);
+
+        gridPane.getChildren().add(node);
+    }
+
     private Pane createMatrix() {
-        HBox firstRow = new HBox(createMatrixPanel("True Positive", truePositivesLabel), createMatrixPanel("False Positive", falsePositivesLabel));
-        HBox secondRow = new HBox(createMatrixPanel("False Negative", falseNegativesLabel), createMatrixPanel("True Negative", trueNegativesLabel));
-        VBox matrix = new VBox(firstRow, secondRow);
+        Pane truePositivesPane = createMatrixPanel("True Positive", truePositivesLabel);
+        Pane falsePositivesPane =  createMatrixPanel("False Positive", falsePositivesLabel);
+        Pane falseNegativesPane = createMatrixPanel("False Negative", falseNegativesLabel);
+        Pane trueNegativesPane = createMatrixPanel("True Negative", trueNegativesLabel);
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10));
+
+        setColumnConstraints(grid);
+
+        addToGrid(truePositivesPane,grid, 0, 0);
+        addToGrid(falsePositivesPane,grid, 0, 1);
+
+        addToGrid(falseNegativesPane, grid, 1,0);
+        addToGrid(trueNegativesPane, grid, 1,1);
+
+
+        VBox matrix = new VBox(grid);
         matrix.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
         matrix.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
         return matrix;
     }
 
     private Pane createMatrixPanel(String cellName, Label label) {
-        Label cell = new Label(cellName);
-        cell.setTextFill(Color.WHITE);
+        Label cellNameLabel = new Label(cellName);
+        cellNameLabel.setTextFill(Color.WHITE);
         label.setTextFill(Color.WHITE);
-        cell.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
-        label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD,12));
-        VBox box = new VBox(cell, label);
+        cellNameLabel.setFont(AppStyle.getFont(FontType.BOLD,14));
+        label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
+        VBox box = new VBox(cellNameLabel, label);
         box.setSpacing(20);
         box.setPadding(new Insets(10));
+
         return box;
     }
 

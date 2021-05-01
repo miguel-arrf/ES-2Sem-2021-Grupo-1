@@ -1,5 +1,6 @@
 package g1.ISCTE;
 
+import com.github.javaparser.UnicodeEscapeProcessingProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +17,13 @@ public class ProjectInfo {
 
     private XSSFSheet sheet;
     private int NUM_OF_COLUMNS = 11;
+
+    public static XSSFWorkbook createWorkbook(String path) throws IOException {
+        File file = new File(path);
+        FileInputStream fip = new FileInputStream(file);
+        XSSFWorkbook workbook = new XSSFWorkbook(fip);
+        return workbook;
+    }
 
     public ProjectInfo(XSSFWorkbook workbook) {
         this.sheet = workbook.getSheetAt(0);
@@ -70,9 +78,16 @@ public class ProjectInfo {
         while (itr.hasNext()) {
             Row row = itr.next();
             Cell cell = row.getCell(8, Row.CREATE_NULL_AS_BLANK);
-            if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                counter += cell.getNumericCellValue();
+            //if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            try{
+                counter += Integer.parseInt(cell.getStringCellValue());
+            }catch (NumberFormatException numberFormatException){
+                System.err.println("There was a problem while extracting data from metrics.");
             }
+            //System.out.println(cell.getStringCellValue());
+                //counter += cell.getNumericCellValue();
+
+            //}
         }
         return counter;
     }
@@ -97,14 +112,20 @@ public class ProjectInfo {
 
     private void printArray(ArrayList<String> list) {
         for (String cell : list) {
-            System.out.println(cell);
+            //System.out.println(cell);
         }
     }
 
 
-    static String[] getMainMetricsInfo(File file){
+    String[] getMainMetricsInfo(){
 
-        return null;
+        String[] metrics = new String[4];
+        metrics[0] = Integer.toString(packageCounter());
+        metrics[1] = Integer.toString(classCounter());
+        metrics[2] = Integer.toString(methodCounter());
+        metrics[3] = Integer.toString(lineCounter());
+
+        return metrics;
     }
 
 
@@ -117,10 +138,10 @@ public class ProjectInfo {
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         ProjectInfo metricsinfo = new ProjectInfo(workbook);
         metricsinfo.getMetricsTable();
-        System.out.println(metricsinfo.packageCounter());
-        System.out.println(metricsinfo.classCounter());
-        System.out.println(metricsinfo.methodCounter());
-        System.out.println(metricsinfo.lineCounter());
+        //System.out.println(metricsinfo.packageCounter());
+        //System.out.println(metricsinfo.classCounter());
+        //System.out.println(metricsinfo.methodCounter());
+        //System.out.println(metricsinfo.lineCounter());
 
     }
 

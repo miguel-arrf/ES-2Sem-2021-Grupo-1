@@ -2,11 +2,15 @@ package g1.ISCTE;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -30,9 +34,8 @@ public class AppStyle {
      * @return the font with the specified style and size
      */
     public static Font getFont(FontType fontType, int size){
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
         //TODO Add fonts back!
-        //return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
     }
 
 
@@ -58,6 +61,7 @@ public class AppStyle {
      * @return sub title label
      */
     public static Label getSubTitleLabel(String message){
+
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
         subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
@@ -74,7 +78,7 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }
@@ -94,9 +98,9 @@ public class AppStyle {
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setResizable(resizable);
 
-        popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
-
-
+        if(iconPlace != null){
+            popupStage.getIcons().add(new Image(AppStyle.class.getResourceAsStream(iconPlace)));
+        }
 
         return popupStage;
     }
@@ -250,18 +254,17 @@ public class AppStyle {
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
-           currentMoment += delayDuration;
+            currentMoment += delayDuration;
 
         }
 
     }
 
-    public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent){
+    public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent, ProgressBar progressBar){
         double currentMoment = 0;
 
         for(Node node: nodes){
             node.setOpacity(0);
-            parent.getChildren().add(node);
 
             FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
             fadeTransition.setFromValue(0);
@@ -269,11 +272,47 @@ public class AppStyle {
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
+            //parent.getChildren().add(node);
+            double completed = ((double)nodes.indexOf(node)) / (nodes.size()-1);
+            //System.out.println("completed: "  + completed);
+            addAfterDelay(node, parent, currentMoment , progressBar, completed);
+
             currentMoment += delayDuration;
 
         }
 
     }
+
+    private static void addAfterDelay(Node toAdd, VBox parent, double delay, ProgressBar progressBar, double completed){
+        Task<Void> sleeper = new Task<Void>() {
+            @Override
+            protected Void call() {
+                try{
+                    Thread.sleep((long) delay);
+                }catch (InterruptedException e){
+
+                }
+                return null;
+            }
+        };
+
+        sleeper.setOnSucceeded(workerStateEvent -> {
+            parent.getChildren().add(toAdd);
+            Platform.runLater(() -> progressBar.setProgress(completed));
+        });
+
+        new Thread(sleeper).start();
+    }
+
+    /*
+    *  final FadeTransition transition = new FadeTransition(Duration.millis(250), node);
+        transition.setFromValue(0);
+        transition.setToValue(1);
+        transition.setInterpolator(Interpolator.EASE_IN);
+        parent.getChildren().add(node);
+        transition.play();
+    * */
+
 
 }
 

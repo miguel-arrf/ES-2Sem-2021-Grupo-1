@@ -1,7 +1,6 @@
 package g1.ISCTE;
 
-import RuleEditor.FinalMain;
-import javafx.animation.FadeTransition;
+import RuleEditor.RuleEditor;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -16,22 +15,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.Duration;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import metric_extraction.MetricExtractor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -39,22 +36,27 @@ import java.util.TimerTask;
 
 public class NewGUI extends Application {
 
+    private Stage stage;
     private File selectedFile = null;
+    private String docPath = "";
 
+    //Right Side
     private final VBox centerPane = new VBox();
-    private final VBox filePane = new VBox();
-
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
-
     public TableView table = new TableView();
     private VBox centerPaneVBox;
 
+    //Left Side
+    private final VBox filePane = new VBox();
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
-    private Stage stage;
-    private VBox centerPaneWebViewPane = new VBox();
+    private VBox leftPane;
 
-    private WebEngine webEngine;
+    //SavedRules
+    private RuleEditor ruleEditor = new RuleEditor();
+    private MetricExtractor metricExtractor;
+
+
 
     public static void main( String[] args ) {
         launch(args);
@@ -75,7 +77,7 @@ public class NewGUI extends Application {
         leftVBox.getChildren().addAll(stackPaneLeftVBox, filePane);
         VBox.setVgrow(filePane, Priority.ALWAYS);
 
-        filePane.setSpacing(10);
+        filePane.setSpacing(15);
 
         leftVBox.setPadding(new Insets(15,15,15,15));
 
@@ -87,21 +89,37 @@ public class NewGUI extends Application {
         rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
-            FinalMain finalMain = new FinalMain();
-            finalMain.start(AppStyle.setUpPopupStage("Rule Editor","noIcon", true));
+            Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
+            ruleEditor.setMetricExtractor(metricExtractor);
+            ruleEditor.start(stage);
+
+            rulesEditor.getScene().setFill(Color.web("#3d3c40"));
+            NewGUI.blurBackground(0, 30, 500, rulesEditor.getScene().getRoot());
+
+            stage.setOnCloseRequest(windowEvent -> {
+                NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
+                System.out.println("REGRAS: " + ruleEditor.getRules().size());
+            });
+
+
         });
 
         Button showMetrics = new Button("Mostrar Métricas");
         showMetrics.setTextFill(Color.BLACK);
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
-        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
-            addTableToCenterPane();
+
+            try {
+                updateCenterPane();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
         VBox emptyLeftPane = new VBox();
@@ -167,17 +185,45 @@ public class NewGUI extends Application {
         return pane;
     }
 
-    private Pane getSpacer(int height){
-        Pane pane = new Pane();
-        pane.setPrefHeight(height);
-
-        return pane;
-    }
 
     private VBox getEmptyLeftPane(){
 
         VBox emptyLeftPane = new VBox();
         emptyLeftPane.setSpacing(10);
+
+        Button calcMetrics = new Button("Processar Projeto");
+        calcMetrics.setTextFill(Color.WHITE);
+        calcMetrics.setMaxWidth(Double.MAX_VALUE);
+        calcMetrics.getStyleClass().add("selectFolderButton");
+        calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+
+        calcMetrics.setOnMouseClicked(event -> {
+            blurBackground(0, 30, 500, leftPane);
+
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    metricExtractor = new MetricExtractor(selectedFile, "src/main/Created_Excels");
+
+                    try {
+                        metricExtractor.executeExtraction();
+                        docPath = metricExtractor.getFinalPath();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Platform.runLater(() ->{
+                        updateFilePane();
+                        blurBackground(30, 0, 500, leftPane);
+                    } );
+                }
+            }.start();
+
+        });
+
+        calcMetrics.setDisable(true);
 
         VBox dragAndDropVBox = new VBox();
         dragAndDropVBox.setPrefHeight(50);
@@ -203,20 +249,20 @@ public class NewGUI extends Application {
                     stage.setTitle(file.getName());
 
                     String name = file.getName();
-                    webEngine.executeScript("changeFirstBox("+"'"+ name +"'"+ ")");
+                    //webEngine.executeScript("changeFirstBox("+"'"+ name +"'"+ ")");
 
                     selectedFile = file;
-                    updateFilePane();
-                    updateCenterPane();
+                    calcMetrics.setDisable(false);
                     success = true;
                 }else{
+                    calcMetrics.setDisable(true);
                     blurBackground(0, 30, 500, leftUnderVBox);
 
                     Label selectFolder = new Label("Drag a folder, not a file!");
                     selectFolder.setTextFill(Color.WHITE);
                     selectFolder.setMaxWidth(Double.MAX_VALUE);
                     selectFolder.getStyleClass().add("errorLabel");
-                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 15));
+                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 15));
                     selectFolder.setWrapText(true);
                     selectFolder.setAlignment(Pos.CENTER);
                     selectFolder.setPadding(new Insets(10));
@@ -254,7 +300,7 @@ public class NewGUI extends Application {
         });
 
         dragAndDropVBox.getChildren().add(
-                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_BOLD, 10, "Drag & drop folder here")
+                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
         );
 
 
@@ -262,7 +308,7 @@ public class NewGUI extends Application {
         selectFolder.setTextFill(Color.WHITE);
         selectFolder.setMaxWidth(Double.MAX_VALUE);
         selectFolder.getStyleClass().add("selectFolderButton");
-        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 10));
+        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         selectFolder.setOnMouseClicked(event -> {
             final DirectoryChooser directoryChooser =
@@ -271,12 +317,12 @@ public class NewGUI extends Application {
                     directoryChooser.showDialog(selectFolder.getScene().getWindow());
             if (selectedDirectory != null) {
                 selectedFile = selectedDirectory;
-                updateFilePane();
-                updateCenterPane();
-            }
+                calcMetrics.setDisable(false);
+            } else {  calcMetrics.setDisable(true); }
         });
 
-        HBox buttonsBox = new HBox(selectFolder);
+
+        VBox buttonsBox = new VBox(selectFolder, calcMetrics);
         buttonsBox.setSpacing(10);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.setMaxWidth(Double.MAX_VALUE);
@@ -293,58 +339,61 @@ public class NewGUI extends Application {
         return emptyLeftPane;
     }
 
-    private void loadCenterPaneWebView(){
-        WebView webView = new WebView();
-        webEngine = webView.getEngine();
+    private void updateCenterPane() throws IOException {
+        //Passar isto para classe separada e arranjar ordenação
 
-        File f = new File(getClass().getResource("/testeScript.html").getFile());
-        webEngine.load(f.toURI().toString());
+        ProjectInfo pi = new ProjectInfo(ProjectInfo.createWorkbook(docPath));
+        String[] metrics = pi.getMainMetricsInfo();
+        ArrayList<ArrayList<String>> tableData = pi.getMetricsTable();
 
-        //VBox.setVgrow(webView, Priority.ALWAYS);
+        String[][] sdata = new String[tableData.size()][tableData.get(0).size()];
+        String[] cols = new String[tableData.size()];
+        int j = 0;
+        for(int a = 1; a!=tableData.size()-1; a++) {
+            ArrayList<String> al = tableData.get(a);
+            for(String s : al) {
+                sdata[a-1][j] = s;
+                j++;
+            }
+            j = 0;
+        }
+        int i = 0;
+        for(String s : tableData.get(0))
+            cols[i++] = s;
+        fillTable(cols,sdata);
 
-        webView.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;");
-
-        centerPaneWebViewPane.setMaxHeight(132);
-        centerPaneWebViewPane.setMinHeight(132);
-
-        centerPaneWebViewPane.getChildren().add(webView);
-    }
-
-
-    private void updateCenterPane(){
-        String[] metrics = ProjectInfo.getMainMetricsInfo(selectedFile);
-
-        for(int i = 0; i < metrics.length && i <metricBoxes.size(); i++){
-            metricBoxes.get(i).setText(metrics[i]);
+        for(int a = 0; a < metrics.length && a <metricBoxes.size(); a++){
+            metricBoxes.get(a).setText(metrics[a]);
         }
 
+
+        centerPane.getChildren().clear();
+        VBox.setVgrow(table, Priority.ALWAYS);
+
+
+        centerPane.getChildren().addAll(table);
+
     }
+
+
 
     private VBox centerPane(){
         centerPaneVBox = new VBox();
-        centerPaneVBox.setSpacing(10);
+        centerPaneVBox.setSpacing(15);
 
-        loadCenterPaneWebView();
         centerPane.setMinWidth(600);
         centerPane.setAlignment(Pos.CENTER);
 
         VBox.setVgrow(centerPane, Priority.ALWAYS);
         centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/,centerPane);
 
-        centerPaneVBox.setPadding(new Insets(10,10,10,10));
+        centerPaneVBox.setPadding(new Insets(15));
 
         return centerPaneVBox;
     }
 
-    private void addTableToCenterPane(){
-        centerPane.getChildren().clear();
-        VBox.setVgrow(table, Priority.ALWAYS);
-        centerPane.getChildren().addAll(table);
-    }
-
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         this.stage = stage;
 
         stage.setTitle("CodeSmells Detector");
@@ -354,7 +403,7 @@ public class NewGUI extends Application {
 
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
 
-        VBox leftPane = getLeft();
+        leftPane = getLeft();
         leftPane.setMinWidth(300);
 
         splitPane.setDividerPositions(0.20);
@@ -366,44 +415,13 @@ public class NewGUI extends Application {
         stage.setMinWidth(1000);
         stage.setMinHeight(400);
 
-        try{
-            configureTableData();
-        }catch (IOException exception){
-            System.err.println("There was a problem while loading the table");
-        }
-
         stage.setScene(scene);
         stage.show();
     }
 
-    private void configureTableData() throws IOException  {
-
-        File file = new File("C:\\Users\\mferr\\Downloads\\addCustomNodeOnDrag\\Code_Smells (1).xlsx");
-        FileInputStream fip = new FileInputStream(file);
-        XSSFWorkbook workbook = new XSSFWorkbook(fip);
-        ProjectInfo metricsinfo = new ProjectInfo(workbook);
-        ArrayList<ArrayList<String>> table = metricsinfo.getMetricsTable();
-
-        String[][] sdata = new String[table.size()][table.get(0).size()];
-        String[] cols = new String[table.size()];
-        int i = 0;
-        int j = 0;
-        for(ArrayList<String> al : table) {
-            for(String s : al) {
-                sdata[i][j] = s;
-                j++;
-            }
-            j = 0;
-            cols[i] = al.get(0);
-            i++;
-        }
-        fillTable(cols,sdata);
-
-    }
-
-
-
     private void fillTable(String[] cols,String[][] dataSource) {
+        table.setPadding(new Insets(5,0,0,0));
+
         table.getColumns().clear();
 
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
@@ -411,12 +429,43 @@ public class NewGUI extends Application {
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
 
+        Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
+
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
+
             column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
+
             column.setEditable(false);
-            column.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            //column.setCellFactory(TextFieldTableCell.forTableColumn());
+
+            column.setCellFactory(new Callback() {
+
+                @Override
+                public TableCell call(Object param) {
+                    return new TableCell<String, String>(){
+                        public void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+
+                            if(isEmpty())
+                            {
+                                setText("");
+                            }
+                            else
+                            {
+                                setTextFill(Color.web("#d1d1d1"));
+                                setFont(AppStyle.getFont(FontType.REGULAR, 14));
+                                setText(item);
+                            }
+                        }
+                    };
+                }
+
+            });
+
+
             column.setOnEditCommit(
                     (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
                         t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
@@ -424,7 +473,6 @@ public class NewGUI extends Application {
             table.getColumns().add(column);
         }
     }
-
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){
         GaussianBlur gaussianBlur = new GaussianBlur(startValue);
@@ -444,7 +492,6 @@ public class NewGUI extends Application {
         timeline.play();
     }
 
-
     private HBox getInfoBoxes(){
         VBox infoBox = getSquareInfoBox("Número total de packages", "?");
         VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
@@ -460,7 +507,7 @@ public class NewGUI extends Application {
 
 
         HBox infoBoxes = new HBox();
-        infoBoxes.setSpacing(10);
+        infoBoxes.setSpacing(15);
 
         infoBoxes.getChildren().addAll(infoBox, infoBox1, infoBox2, infoBox3);
 
@@ -482,7 +529,7 @@ public class NewGUI extends Application {
         typeOfInfoLabel.setWrapText(true);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 14));
+        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         numberLabel.setTextFill(Color.BLACK);
         numberLabel.setPadding(new Insets(2,2,2,2));
         numberLabel.setMinWidth(20);

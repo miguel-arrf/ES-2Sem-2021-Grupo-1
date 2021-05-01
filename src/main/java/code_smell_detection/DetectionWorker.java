@@ -1,7 +1,6 @@
 package code_smell_detection;
 
 import RuleEditor.ConditionBlock;
-import RuleEditor.CustomNode;
 import metric_extraction.ClassMetrics;
 import metric_extraction.Method;
 
@@ -115,6 +114,10 @@ public class DetectionWorker implements Runnable {
      * @return The boolean value of the condition's evaluation
      */
     private boolean evaluateCondition(ConditionBlock condition, HashMap<String, Integer> metrics) {
+        //TODO Remove:
+        //System.out.println("metrics " + metrics);
+        //System.out.println("condition " + condition);
+        //System.out.println("condition.getRule " + condition.getRule());
         int value = metrics.get(condition.getRule());
         return condition.evaluate(value);
     }
