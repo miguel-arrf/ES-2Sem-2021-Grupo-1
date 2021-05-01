@@ -46,7 +46,7 @@ public class RuleEditor extends Application {
 
     private File rulesFile = null;
 
-    private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+    private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
 
     private MetricExtractor metricExtractor;
 
@@ -162,7 +162,7 @@ public class RuleEditor extends Application {
 
             jsonObject.replace("outerName", outerName);
 
-            ruleComplete.arrayListToJSON(rules);
+            ruleComplete.saveJSONListToFile(rules);
             Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
         });
 
@@ -229,7 +229,7 @@ public class RuleEditor extends Application {
 
         delete.setOnAction(actionEvent -> {
             rules.remove(nodeJSON);
-            ruleComplete.arrayListToJSON(rules);
+            ruleComplete.saveJSONListToFile(rules);
 
             updateRulesEditorPanel();
         });
@@ -269,7 +269,7 @@ public class RuleEditor extends Application {
                 if (ruleToADD != null) {
 
                     rules.add(ruleToADD);
-                    ruleComplete.arrayListToJSON(rules);
+                    ruleComplete.saveJSONListToFile(rules);
                     updateRulesEditorPanel();
                 }
 
@@ -371,7 +371,7 @@ public class RuleEditor extends Application {
                 rules.add(finalMain.getRule());
                 updateRulesEditorPanel();
 
-                ruleComplete.arrayListToJSON(rules);
+                ruleComplete.saveJSONListToFile(rules);
             }
 
 
@@ -468,18 +468,11 @@ public class RuleEditor extends Application {
 
         for(JSONObject entry: rules){
             String ruleName = (String) ((JSONObject) entry.get("outerName")).get("innerName");
-            ArrayList<CustomNode> tempArrayList = new ArrayList<>();
             RuleComplete tempRuleComplete = new RuleComplete();
-
             boolean isClassSmell = (Boolean) ((JSONObject) entry.get("outerName")).get("isClassSmell");
 
-            //CustomNode tempCustomNode = tempRuleComplete.teste(entry, new DraggingObject());
-            //tempArrayList.add(0,tempCustomNode);
 
-            tempRuleComplete.pipi(entry, new DraggingObject(), ruleName, isClassSmell);
-            //CodeSmell codeSmell = tempRuleComplete.createRuleNodeCodeSmell(tempArrayList, ruleName, isClassSmell);
-            smells.add(tempRuleComplete.pipi(entry, new DraggingObject(), ruleName, isClassSmell));
-            //System.out.println(codeSmell);
+            smells.add(tempRuleComplete.jsonObjectToCodeSmell(entry, new DraggingObject(), ruleName, isClassSmell));
 
         }
 

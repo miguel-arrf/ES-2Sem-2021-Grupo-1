@@ -56,7 +56,7 @@ public class FinalMain extends Application {
         JSONObject json = null;
         try {
             if(rule == null){
-                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName(),isClassSmell);
+                rule = ruleComplete.guiToJSONObject(ruleNodes, getRuleName(),isClassSmell);
             }
             json = (JSONObject) parser.parse(rule.toJSONString());
         } catch (ParseException | IndexOutOfBoundsException exception) {
@@ -99,7 +99,7 @@ public class FinalMain extends Application {
         configureSceneMainView(splitPane, stage);
 
         mainPane.getChildren().clear();
-        CustomNode firstCustomNode = ruleComplete.teste(jsonObject, inDragObject);
+        CustomNode firstCustomNode = ruleComplete.jsonToGUI(jsonObject, inDragObject);
         addCustomNodeWithouClear(firstCustomNode);
 
 
@@ -326,7 +326,7 @@ public class FinalMain extends Application {
 
 
 
-            rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName(), isClassSmell);
+            rule = ruleComplete.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
 
         });
 
