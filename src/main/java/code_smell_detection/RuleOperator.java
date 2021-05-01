@@ -1,5 +1,8 @@
 package code_smell_detection;
 
+/**
+ * Enumerate to define the various operators used in the construction of rules to evaluate/detect the presence of code smells
+ */
 public enum RuleOperator {
 
     AND("AND"),

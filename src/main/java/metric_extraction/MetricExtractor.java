@@ -13,6 +13,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Class that extracts code metrics from all Java class files contained in a user-specified source code directory. After extraction, the results are stored and exported into an .xlsx file format
+ */
 public class MetricExtractor {
 
     private final ExecutorService threadPool;
@@ -21,6 +24,11 @@ public class MetricExtractor {
     private final String destination_directory;
     private ArrayList<ClassMetrics> metrics = new ArrayList<>();
 
+    /**
+     * Constructs an instance of MetricExtractor
+     * @param project_directory
+     * @param destination_directory
+     */
     public MetricExtractor(File project_directory, String destination_directory) {
         getFilesFromProjectDirectory(project_directory);
         this.threadPool = Executors.newFixedThreadPool(5);
@@ -28,6 +36,10 @@ public class MetricExtractor {
         this.destination_directory = destination_directory;
     }
 
+    /**
+     * Given a project directory, extracts all its Java class files for metric extraction, storing them in the designated attribute
+     * @param project
+     */
     private void getFilesFromProjectDirectory(File project) {
         for (File file : project.listFiles()) {
             if (file.isFile() && file.getName().endsWith(".java")) {
@@ -38,8 +50,20 @@ public class MetricExtractor {
         }
     }
 
+    /**
+     * Gets the extracted metrics from the source code
+     * @return An ArrayList of ClassMetrics instances
+     */
+    public ArrayList<ClassMetrics> getMetrics() {
+        return metrics;
+    }
+  
     public String getFinalPath() { return destination_directory + "/" + exported_file_name ; }
 
+    /**
+     * If there's source code present in the source directory, executes metric extraction process on the source code, and exports results to file
+     * @throws InterruptedException
+     */
     public void executeExtraction() throws InterruptedException {
         if(source_code.isEmpty()) {
             System.out.println("ERROR: No source code files found in given directory. No metrics extracted.");
@@ -59,6 +83,9 @@ public class MetricExtractor {
         }
     }
 
+    /**
+     * Exports metric extraction results to .xlsx file format
+     */
     private void exportResultsToFile() {
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
@@ -155,7 +182,4 @@ public class MetricExtractor {
         }
     }
 
-    public ArrayList<ClassMetrics> getResults() {
-        return metrics;
-    }
 }
