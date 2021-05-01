@@ -367,6 +367,8 @@ public class RuleEditor extends Application {
 
         popupStage.setOnCloseRequest(windowEvent -> {
             JSONObject ruleToADD = finalMain.getRule();
+
+
             if (ruleToADD != null) {
                 rules.add(finalMain.getRule());
                 updateRulesEditorPanel();

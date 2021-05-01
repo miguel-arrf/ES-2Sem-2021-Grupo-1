@@ -72,9 +72,9 @@ public class DetectionWorker implements Runnable {
 
     private boolean evaluateCondition(ConditionBlock condition, HashMap<String, Integer> metrics) {
         //TODO Remove:
-        System.out.println("metrics " + metrics);
-        System.out.println("condition " + condition);
-        System.out.println("condition.getRule " + condition.getRule());
+        //System.out.println("metrics " + metrics);
+        //System.out.println("condition " + condition);
+        //System.out.println("condition.getRule " + condition.getRule());
 
         int value = metrics.get(condition.getRule());
         return condition.evaluate(value);
