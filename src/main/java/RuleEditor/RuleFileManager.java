@@ -19,9 +19,13 @@ import java.util.function.BiFunction;
  * Rule file manager which allows to import and export from and to Custom Node and JSON types.
  * Also allows the conversion between JSON <-> GUI.
  */
-public class RuleFileManager implements Serializable {
+public class RuleFileManager {
 
     private File file;
+
+    public File getFile() {
+        return this.file;
+    }
 
     /**
      * Sets the file that contains the rules.
@@ -131,7 +135,7 @@ public class RuleFileManager implements Serializable {
      */
     public CodeSmell jsonObjectToCodeSmell(JSONObject jsonObject, DraggingObject draggingObject, String name, boolean isClassSmell) {
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-
+        System.out.println("firstCustomNode: "  + firstCustomNode);
         if (firstCustomNode.getType() == Types.LogicBlock) {
             RuleNode nodeToReturn = new RuleNode(firstCustomNode, null, null);
 
@@ -298,8 +302,7 @@ public class RuleFileManager implements Serializable {
      * @param operator the operator.
      * @return the operator in the RuleOperator type.
      */
-    private RuleOperator getRuleOperator(String operator) {
-
+    protected RuleOperator getRuleOperator(String operator) {
         if (operator.equals(RuleOperator.GREATER.label)) {
             return RuleOperator.GREATER;
         }
@@ -318,7 +321,6 @@ public class RuleFileManager implements Serializable {
         if (operator.equals(RuleOperator.DIFFERENT.label)) {
             return RuleOperator.DIFFERENT;
         }
-
         return RuleOperator.DEFAULT;
     }
 

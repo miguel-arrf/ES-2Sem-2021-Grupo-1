@@ -34,7 +34,6 @@ public class ConditionBlock implements CustomNode, Serializable {
     private Node graphicalRepresentationNode;
     private Label operatorLabel;
 
-
     private Stage popupStage;
 
     private HBox optionsHBox;

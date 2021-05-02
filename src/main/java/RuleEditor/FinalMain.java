@@ -321,9 +321,9 @@ public class FinalMain extends Application {
         popupStage.show();
 
         popupStage.setOnCloseRequest(windowEvent -> {
+        	//TODO verificar se o nome novo ou atualizado já existe.
             ruleName = textField.getText();
             stage.setTitle(ruleName);
-
 
 
             rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);

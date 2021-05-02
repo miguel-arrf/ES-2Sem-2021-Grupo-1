@@ -572,6 +572,7 @@ public class RulesManager extends Application {
             loadFile();
             createCodeSmells();
         }
+
     }
 
 }
