@@ -29,6 +29,9 @@ public class CodeSmellDetector {
             results.put(codeSmell.getName(), new ArrayList<>());
         }
         results.put("NoCodeSmellDetected", new ArrayList<>());
+        for(int i=0; i!= results.size(); i++) {
+            System.out.println("ESTAMOS AQUI :D " + results.get(i));
+        }
     }
 
     /**
@@ -57,6 +60,10 @@ public class CodeSmellDetector {
             results.get("NoCodeSmellDetected").addAll(worker.getUndetectedSmells());
         }
         printResults();
+
+        for(int i=0; i!= results.size(); i++) {
+            System.out.println("ESTAMOS AQUI :D " + results.get(i));
+        }
     }
 
     /**

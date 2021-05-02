@@ -1,6 +1,8 @@
 package g1.ISCTE;
 
 import RuleEditor.RuleEditor;
+import code_smell_detection.CodeSmellDetector;
+import code_smell_detection.RuleApplier;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -31,6 +33,7 @@ import metric_extraction.MetricExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -393,7 +396,7 @@ public class NewGUI extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         this.stage = stage;
 
         stage.setTitle("CodeSmells Detector");
@@ -417,6 +420,15 @@ public class NewGUI extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        //APAGAR
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
+        ArrayList<String> s =  new ArrayList<String>();
+        s.add("toString");
+        map.put("isFrog",s);
+        RuleApplier ra = new RuleApplier(map,"C:\\Users\\Henrique\\IdeaProjects\\ES-2Sem-2021-Grupo-1\\src\\main\\Created_Excels\\src_metrics.xlsx");
+        ra.mandar();
+
     }
 
     private void fillTable(String[] cols,String[][] dataSource) {
