@@ -172,7 +172,7 @@ public class QualityEvaluatorApp extends Application {
             label.getStyleClass().add("treeLabel");
             label.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(label, Priority.ALWAYS);
-            label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
+           // label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
             labels.add(label);
             if(!animation)
                 textBox.getChildren().add(label);
@@ -221,7 +221,7 @@ public class QualityEvaluatorApp extends Application {
 
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
-        button.setFont(AppStyle.getFont(FontType.BOLD, 12));
+      //  button.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
 
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
@@ -282,8 +282,8 @@ public class QualityEvaluatorApp extends Application {
         Label cellNameLabel = new Label(cellName);
         cellNameLabel.setTextFill(Color.WHITE);
         label.setTextFill(Color.WHITE);
-        cellNameLabel.setFont(AppStyle.getFont(FontType.BOLD,14));
-        label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
+    //    cellNameLabel.setFont(AppStyle.getFont(FontType.BOLD,14));
+    //    label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
         VBox box = new VBox(cellNameLabel, label);
         box.setSpacing(20);
         box.setPadding(new Insets(10));

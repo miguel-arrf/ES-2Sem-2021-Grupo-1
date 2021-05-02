@@ -182,4 +182,8 @@ public class MetricExtractor {
         }
     }
 
+    public ArrayList<ClassMetrics> getResults() {
+        return metrics;
+
+    }
 }

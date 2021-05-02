@@ -205,7 +205,7 @@ public class RuleEditor extends Application {
         pane.setSpacing(20);
 
         Label label = new Label((String) nodeJSON.get("name"));
-        label.setFont(AppStyle.getFont(FontType.BOLD, 12));
+       // label.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
         label.setAlignment(Pos.CENTER);
 
@@ -374,7 +374,7 @@ public class RuleEditor extends Application {
         });
 
         numberOfRules.setTextFill(Color.WHITE);
-        numberOfRules.setFont(AppStyle.getFont(FontType.BOLD, 12));
+       // numberOfRules.setFont(AppStyle.getFont(FontType.BOLD, 12));
         numberOfRules.setGraphic(getIcon("bird.png"));
 
         rulesPanel.getChildren().add(numberOfRules);
@@ -410,7 +410,7 @@ public class RuleEditor extends Application {
 
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
-        button.setFont(AppStyle.getFont(FontType.BOLD, 12));
+       // button.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
 
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
