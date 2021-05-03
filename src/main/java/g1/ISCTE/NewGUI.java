@@ -423,10 +423,10 @@ public class NewGUI extends Application {
 
         //APAGAR
         HashMap<String, ArrayList<String>> map = new HashMap<>();
-        ArrayList<String> s =  new ArrayList<String>();
+        ArrayList<String> s =  new ArrayList<>();
         s.add("toString");
         map.put("isFrog",s);
-        RuleApplier ra = new RuleApplier(map,"C:\\Users\\Henrique\\IdeaProjects\\ES-2Sem-2021-Grupo-1\\src\\main\\Created_Excels\\src_metrics.xlsx");
+        RuleApplier ra = new RuleApplier(map,"C:\\Users\\Henrique\\IdeaProjects\\ES-2Sem-2021-Grupo-1\\src\\main\\Created_Excels\\ES-2Sem-2021-Grupo-1_metrics.xlsx");
         ra.mandar();
 
     }
