@@ -3,11 +3,13 @@ package RuleEditor;
 import code_smell_detection.CodeSmell;
 import code_smell_detection.RuleNode;
 import code_smell_detection.RuleOperator;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.util.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,11 +24,11 @@ import java.util.function.BiFunction;
 public class RuleFileManager {
 
     private File file;
+    private ObservableList<JSONObject> rules;
 
     public File getFile() {
         return this.file;
     }
-
     /**
      * Sets the file that contains the rules.
      *
@@ -59,6 +61,8 @@ public class RuleFileManager {
             customNodes.add((JSONObject) jsonObject);
         }
 
+        reader.close();
+
         return customNodes;
     }
 
@@ -70,16 +74,24 @@ public class RuleFileManager {
      * @throws IOException
      * @throws ParseException
      */
-    public Boolean isNameValid(String ruleName) throws IOException, ParseException {
-        ArrayList<JSONObject> ruleFileToArray = loadJSONRuleFile();
-        for(JSONObject rule : ruleFileToArray) {
-            JSONObject outerName = (JSONObject) rule.get("outerName");
-            String innerName = (String) outerName.get("innerName");
-            if(ruleName.equals(innerName))
-                return false;
+    public Boolean isNameValid(String ruleName) {
+
+            ArrayList<JSONObject> ruleFileToArray = new ArrayList();
+
+            for(Object object : rules){
+                ruleFileToArray.add((JSONObject) object);
+            }
+
+            for(JSONObject rule : ruleFileToArray) {
+                JSONObject outerName = (JSONObject) rule.get("outerName");
+                String innerName = (String) outerName.get("innerName");
+                if(ruleName.equals(innerName))
+                    return false;
+            }
+            return true;
         }
-        return true;
-    }
+
+
 
     /**
      * Saves a JSON list to the rules file (or updates it).

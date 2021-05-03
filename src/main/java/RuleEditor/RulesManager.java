@@ -53,7 +53,7 @@ public class RulesManager extends Application {
     private HashMap<String, ArrayList<String>> results = new HashMap<>();
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
-    private RuleFileManager ruleFileManager = new RuleFileManager();
+    private RuleFileManager ruleFileManager;
     private MetricExtractor metricExtractor;
 
     /**
@@ -203,7 +203,7 @@ public class RulesManager extends Application {
         textField.setStyle("-fx-text-inner-color: white;");
 
         updateButton.setOnAction(actionEvent -> {
-            try {
+
                 if(ruleFileManager.isNameValid(textField.getText())) {
                     label.setText(textField.getText());
 
@@ -217,9 +217,7 @@ public class RulesManager extends Application {
                 } else {
                     System.out.println("Nome inválido");
                 }
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
-            }
+
         });
 
         textField.setMaxWidth(150);
@@ -524,6 +522,7 @@ public class RulesManager extends Application {
         rulesPanel = new VBox();
         numberOfRules = new Label("No Rules");
         ruleFileManager = new RuleFileManager();
+        ruleFileManager.setRules(rules);
         setRulesDirectoryButton = null;
         loadRulesButton = null;
         addNewRuleButton = null;
@@ -581,6 +580,11 @@ public class RulesManager extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+      if(rulesFile != null){
+          loadFile();
+          ruleFileManager.setRules(rules);
+      }
 
     }
 

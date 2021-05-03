@@ -287,7 +287,7 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         DecimalFormat format = new DecimalFormat("-#.0;#.0");
 
-        textField.setTextFormatter(new TextFormatter<>(c ->
+        /*textField.setTextFormatter(new TextFormatter<>(c ->
         {
             if (c.getControlNewText().isEmpty()) {
                 return c;
@@ -301,7 +301,7 @@ public class ConditionBlock implements CustomNode, Serializable {
             } else {
                 return c;
             }
-        }));
+        }));*/
         textField.setMaxWidth(150);
 
         hBox.getChildren().addAll(textField, updateButton, cancelButton);

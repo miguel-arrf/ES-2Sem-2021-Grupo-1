@@ -322,17 +322,13 @@ public class FinalMain extends Application {
         popupStage.setScene(scene);
 
         closeWindow.setOnAction(actionEvent -> {
-            try {
-                ruleName = textField.getText();
-                if(ruleFileManager.isNameValid(ruleName)) {
-                    popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                    primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                } else {
+            ruleName = textField.getText();
+            if(ruleFileManager.isNameValid(ruleName)) {
+                popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+                primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+            } else {
 
-                    System.out.println("Nome invalido");
-                }
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
+                System.out.println("Nome invalido");
             }
         });
 

@@ -454,7 +454,7 @@ public class NewGUI extends Application {
     }
 
     private void fillTable(String[] cols,String[][] dataSource) {
-        table.setPadding(new Insets(5,0,0,0));
+        //table.setPadding(new Insets(5,0,0,0));
 
         table.getColumns().clear();
 
@@ -506,6 +506,10 @@ public class NewGUI extends Application {
                     });
             table.getColumns().add(column);
         }
+
+
+
+
     }
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){

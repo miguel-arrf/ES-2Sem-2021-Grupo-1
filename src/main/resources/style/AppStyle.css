@@ -147,86 +147,48 @@
 
 
 .table-view {
-    -fx-background-radius: 10 10 10 10;
-    -fx-border-radius: 10 10 10 10;
     -fx-background-color: #3d3c40;
 }
 
-
-.table-view .column-header-background .filler {
-    -fx-background-color: transparent;
-}
 
 .table-view .corner {
     -fx-background-color: transparent;
 }
 
-
 .table-view .column-header-background{
     -fx-background-color: #3d3c40;
-    -fx-background-radius: 7px 0px 0px 0px;
-    -fx-background-insets: 0 11px 0 0;
-    -fx-padding: 0 0 5px 0;
-}
 
+}
 .table-view .column-header {
     -fx-background-color: transparent;
     -fx-text-background-color: #b7b7b8;
-
-
-
-    -fx-padding: 3;
 }
 
 .table-view .column-header .label {
-    -fx-font-family: "SF Pro Rounded";
     -fx-text-fill: #b7b7b8;
-    -fx-font-weight: bold;
-
     -fx-border-color: rgba(255,255,255,0.1);
-    -fx-border-radius: 10px;
 }
 
-.table-view .cell{
-    -fx-cell-size: 35;
-    -fx-alignment: center-left;
-    -fx-background-color: #3b3b3b;
-    -fx-border-color: transparent;
-    -fx-text-fill: lightgray;
-    -fx-alignment: CENTER_LEFT;
-
-}
-
-.table-view .cell :even{
-    -fx-cell-size: 35;
-    -fx-alignment: center-left;
-    -fx-background-color: #4e4e4e;
-    -fx-border-color: transparent;
-    -fx-text-fill: lightgray;
-    -fx-alignment: CENTER_LEFT;
-
-}
+/* problema daqui para baixo */
 
 
 .table-view .table-cell{
     -fx-border-color: transparent;
-    -fx-padding: 2 0 2 10px;
 }
 .table-row-cell :hover {
     -fx-background-color: #93f9b911;
     -fx-text-background-color: red;
 }
+
 .table-row-cell :odd{
     -fx-background-color: #3b3b3b;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
 
 }
 .table-row-cell :even{
     -fx-background-color: #4e4e4e;
-    -fx-background-insets: 0, 0 0 1 0;
-    -fx-padding: 0.0em;
 }
+/* problema até aqui */
+/* FIXED :`DDD */
 
 
 
