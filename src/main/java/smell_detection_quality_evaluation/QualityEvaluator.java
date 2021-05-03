@@ -19,10 +19,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Given the results of code smell detection upon the project 'jasml', compares the results obtained by this application's execution with the manually inputed results in the given .xlsx file, via extraction of the required columns from the original file.
+ * The comparison results in an abstract data structure representing the quality evaluation of the application's performance.
+ */
 public class QualityEvaluator {
 
     private QualityEvaluation evaluation;
 
+    /**
+     * Runs the quality evaluation process
+     */
     public void run() {
         try {
             HashMap<String, ArrayList<String>> detection_results = initializeData();
@@ -33,10 +40,19 @@ public class QualityEvaluator {
         }
     }
 
+    /**
+     * Gets the evaluation resultant from the execution
+     * @return An instance of QualityEvaluation
+     */
     public QualityEvaluation getEvaluation() {
         return evaluation;
     }
 
+    /**
+     * Performs the evaluation by comparing the obtained data to the reference data
+     * @param detection_results The results obtained from the application's execution of code smell detection
+     * @param comparison_data The reference results obtained from the .xlsx file
+     */
     private void performEvaluation(HashMap<String, ArrayList<String>> detection_results, HashMap<String, ArrayList<String>> comparison_data) {
         ConfusionMatrix confusionMatrix = new ConfusionMatrix();
         ArrayList<String> consoleOutputs = new ArrayList<>();
@@ -68,11 +84,27 @@ public class QualityEvaluator {
         evaluation = new QualityEvaluation(confusionMatrix, consoleOutputs);
     }
 
+    /**
+     * Gets the reference data from the .xlsx file in the shape of a map data structure
+     * @return A HashMap mapping the name of the code smell to a list of where it was detected
+     */
     private HashMap<String, ArrayList<String>> getDataForComparison() {
         try {
             String directory_src = System.getProperty("user.dir") + "\\Code_Smells.xlsx";
             XSSFWorkbook workBook = new XSSFWorkbook(OPCPackage.open(new File(directory_src)));
-            HashMap<String, ArrayList<String>> data = extractDataFromBook(workBook);
+            XSSFSheet sheet = workBook.getSheet("Code Smells");
+            HashMap<String, ArrayList<String>> data = new HashMap<>();
+            data.put("isGodClass", new ArrayList<>());
+            data.put("isLongMethod", new ArrayList<>());
+            for(int i = 1; i < sheet.getLastRowNum(); i++) {
+                XSSFRow currentRow = sheet.getRow(i);
+                String className = currentRow.getCell(2).getStringCellValue();
+                String methodName = currentRow.getCell(3).getStringCellValue();
+                boolean isGodClass = currentRow.getCell(7).getBooleanCellValue();
+                boolean isLongMethod = currentRow.getCell(10).getBooleanCellValue();
+                if(isGodClass) data.get("isGodClass").add(className);
+                if(isLongMethod) data.get("isLongMethod").add(methodName);
+            }
             return data;
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
@@ -80,23 +112,11 @@ public class QualityEvaluator {
         return null;
     }
 
-    private HashMap<String, ArrayList<String>> extractDataFromBook(XSSFWorkbook workBook) {
-        XSSFSheet sheet = workBook.getSheet("Code Smells");
-        HashMap<String, ArrayList<String>> data = new HashMap<>();
-        data.put("isGodClass", new ArrayList<>());
-        data.put("isLongMethod", new ArrayList<>());
-        for(int i = 1; i < sheet.getLastRowNum(); i++) {
-            XSSFRow currentRow = sheet.getRow(i);
-            String className = currentRow.getCell(2).getStringCellValue();
-            String methodName = currentRow.getCell(3).getStringCellValue();
-            boolean isGodClass = currentRow.getCell(7).getBooleanCellValue();
-            boolean isLongMethod = currentRow.getCell(10).getBooleanCellValue();
-            if(isGodClass) data.get("isGodClass").add(className);
-            if(isLongMethod) data.get("isLongMethod").add(methodName);
-        }
-        return data;
-    }
-
+    /**
+     * Gets the data obtained from the application's execution of code smell detection
+     * @return A HashMap mapping the name of the code smell to a list of where it was detected
+     * @throws InterruptedException
+     */
     public HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
         File java_project = new File(directory_src);
@@ -104,12 +124,16 @@ public class QualityEvaluator {
         extractor.executeExtraction();
 
         ArrayList<CodeSmell> smells = initializeCodeSmells();
-        CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
+        CodeSmellDetector detector = new CodeSmellDetector(extractor.getMetrics(), smells);
         detector.runDetection();
 
         return detector.getResults();
     }
 
+    /**
+     * Instantiates the code smells present in the reference data to be detected by the application, and returns a list containing them
+     * @return A list of code smells
+     */
     private static ArrayList<CodeSmell> initializeCodeSmells() {
         ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
 
