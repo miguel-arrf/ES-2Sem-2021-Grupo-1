@@ -6,8 +6,6 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -18,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Interface displaying the confusion matrix and all the code smells detected with the appropriate tag.
+ */
 public class QualityEvaluatorApp extends Application {
 
     private final Label truePositivesLabel = new Label("0");
@@ -26,25 +27,35 @@ public class QualityEvaluatorApp extends Application {
     private final Label falseNegativesLabel = new Label("0");
     private Button detectionButton;
     private VBox mainBox;
-    private VBox addButtonVBox = new VBox();
+    private final VBox addButtonVBox = new VBox();
     private final ProgressBar progressBar = new ProgressBar();
 
     private final String[] possibleValues = new String[]{"All","True Positive", "False Positive", "False Negative", "True Negative"};
-    private final ChoiceBox choiceBox = new ChoiceBox(FXCollections.observableArrayList("All", "True Positive", "False Positive", "False Negative", "True Negative"));
+    private final ChoiceBox<String> choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("All", "True Positive", "False Positive", "False Negative", "True Negative"));
     private final ArrayList<String> consoleOutputs = new ArrayList<>();
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments (shall be none).
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         Scene mainScene = initializeGUI();
         stage.setScene(mainScene);
         mainScene.getWindow().sizeToScene();
         stage.show();
     }
 
+    /**
+     * Method in charge of initializing the GUI.
+     *
+     * @return the scene containing the interface
+     */
     private Scene initializeGUI() {
 
         mainBox = new VBox(createMatrix());
@@ -92,6 +103,12 @@ public class QualityEvaluatorApp extends Application {
         return scene;
     }
 
+    /**
+     * Method that adds a content to the top of a stackPane allowing us to mimic a content with rounded corners. Purely for style purposes.
+     *
+     * @param content the content (vbox) to be added to the stack pane.
+     * @return the stackPane with the given content on top.
+     */
     private StackPane getStackPane(VBox content){
         //ScrollPane where boxes go
         ScrollPane scrollPane = getScrollPane(content);
@@ -110,6 +127,12 @@ public class QualityEvaluatorApp extends Application {
         return stackPane;
     }
 
+    /**
+     * Helper method that stylizes and creates a scrollpane with the appropriate design for this application.
+     *
+     * @param content to be added in the scrollpane
+     * @return the scrollpane with the respective content
+     */
     private ScrollPane getScrollPane(VBox content) {
         ScrollPane scrollPane = new ScrollPane();
 
@@ -129,10 +152,13 @@ public class QualityEvaluatorApp extends Application {
         return scrollPane;
     }
 
+    /**
+     * Method in charge of adding (and removing when completed) the progress bar to the detect button.
+     * Also creates a listener for the progress property of the progress bar, removing it from the detect button when the progress is complete.
+     */
     private void detectOnClick() {
         //mainBox.getChildren().add(progressBar);
         addButtonVBox.getChildren().add(progressBar);
-
 
         resetLabelValues();
         changeButtonState("Pressed");
@@ -159,6 +185,12 @@ public class QualityEvaluatorApp extends Application {
 
     }
 
+    /**
+     * Method that adds each string to a row in the scrollpane, and animates them in a waterfall way.
+     *
+     * @param localOutputs list of strings to be displayed.
+     * @param animation if the scrollpane should add the items with animation or not.
+     */
     private void setupScrollPane(List<String> localOutputs,  boolean animation) {
         VBox textBox = new VBox();
         textBox.setSpacing(5);
@@ -190,6 +222,11 @@ public class QualityEvaluatorApp extends Application {
         mainBox.getChildren().add(stackPane);
     }
 
+    /**
+     * Helper method that changes the text on a button and the respective color.
+     *
+     * @param pressed text to be displayed in the button.
+     */
     private void changeButtonState(String pressed) {
         if(pressed.equals("Pressed")) {
             detectionButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
@@ -205,6 +242,9 @@ public class QualityEvaluatorApp extends Application {
         }
     }
 
+    /**
+     * Every label in the confusion matrix is setted to 0.
+     */
     private void resetLabelValues() {
         truePositivesLabel.setText("0");
         falsePositivesLabel.setText("0");
@@ -212,6 +252,11 @@ public class QualityEvaluatorApp extends Application {
         trueNegativesLabel.setText("0");
     }
 
+    /**
+     * Updates the confusion matrix graphical representation with the correct values from the analysis.
+     *
+     * @param matrix the confusion matrix
+     */
     private void updateLabelValues(ConfusionMatrix matrix) {
         truePositivesLabel.setText(Integer.toString(matrix.getTruePositives()));
         falsePositivesLabel.setText(Integer.toString(matrix.getFalsePositives()));
@@ -219,6 +264,13 @@ public class QualityEvaluatorApp extends Application {
         trueNegativesLabel.setText(Integer.toString(matrix.getTrueNegatives()));
     }
 
+    /**
+     * Creates a button with the Application general style.
+     *
+     * @param text the text to be displayed in the button.
+     * @param color the background color of the button
+     * @return the stylized button with the given color and text.
+     */
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
         button.setFont(AppStyle.getFont(FontType.BOLD, 12));
@@ -237,6 +289,11 @@ public class QualityEvaluatorApp extends Application {
         return button;
     }
 
+    /**
+     * Sets the first two columns of a given gridpane as occupying 50% each of the grid size.
+     *
+     * @param gridPane the gridpane to which we want to apply the column constraints
+     */
     private void setColumnConstraints(GridPane gridPane){
         ColumnConstraints columnConstraints1 = new ColumnConstraints();
         columnConstraints1.setPercentWidth(50);
@@ -247,6 +304,14 @@ public class QualityEvaluatorApp extends Application {
         gridPane.getColumnConstraints().addAll(columnConstraints1, columnConstraints2);
     }
 
+    /**
+     * Adds a given node in a given gridPane in a given position defined by a row and a column.
+     *
+     * @param node the node to be added to the gridPane.
+     * @param gridPane the gridPane to where the items shall be added.
+     * @param row the row to put the node.
+     * @param column the column to put the node.
+     */
     private void addToGrid(Pane node, GridPane gridPane, int row, int column){
         GridPane.setRowIndex(node, row);
         GridPane.setColumnIndex(node, column);
@@ -254,6 +319,11 @@ public class QualityEvaluatorApp extends Application {
         gridPane.getChildren().add(node);
     }
 
+    /**
+     * Method in charge of creating the graphical representation of the confusion matrix using a gridPane.
+     *
+     * @return a Pane that represents a confusion matrix.
+     */
     private Pane createMatrix() {
         Pane truePositivesPane = createMatrixPanel("True Positive", truePositivesLabel);
         Pane falsePositivesPane =  createMatrixPanel("False Positive", falsePositivesLabel);
@@ -278,12 +348,21 @@ public class QualityEvaluatorApp extends Application {
         return matrix;
     }
 
+    /**
+     * Creates a confusion matrix label with the correct design. Associating to each row/column in the confusion matrix a description (cellName) and the value (result of the analysis - label).
+     *
+     * @param cellName the cell description.
+     * @param label the label containing the value of the analysis.
+     * @return a Pane representing the description and value of each of the rows and columns of the confusion matrix.
+     */
     private Pane createMatrixPanel(String cellName, Label label) {
         Label cellNameLabel = new Label(cellName);
         cellNameLabel.setTextFill(Color.WHITE);
-        label.setTextFill(Color.WHITE);
         cellNameLabel.setFont(AppStyle.getFont(FontType.BOLD,14));
+
+        label.setTextFill(Color.WHITE);
         label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
+
         VBox box = new VBox(cellNameLabel, label);
         box.setSpacing(20);
         box.setPadding(new Insets(10));

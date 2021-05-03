@@ -454,7 +454,7 @@ public class RuleEditor extends Application {
 
         }
 
-        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
+        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getMetrics(), smells);
         try {
             detector.runDetection();
         } catch (InterruptedException e) {
