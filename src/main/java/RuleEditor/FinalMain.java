@@ -23,6 +23,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -37,9 +38,13 @@ public class FinalMain extends Application {
 
     private boolean isNewRule = true;
 
+    private Stage primaryStage;
+
     private JSONObject rule;
     private String ruleName;
-    private RuleComplete ruleComplete;
+    private RuleFileManager ruleFileManager;
+
+    private boolean isClassSmell;
 
     public String getRuleName() {
         return ruleName;
@@ -54,13 +59,17 @@ public class FinalMain extends Application {
         JSONObject json = null;
         try {
             if(rule == null){
-                rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
+                rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(),isClassSmell);
             }
             json = (JSONObject) parser.parse(rule.toJSONString());
-        } catch (ParseException e) {
+        } catch (ParseException | IndexOutOfBoundsException exception) {
             return null;
         }
         return json;
+    }
+
+    public FinalMain(boolean isClassSmell){
+        this.isClassSmell = isClassSmell;
     }
 
     @Override
@@ -72,30 +81,32 @@ public class FinalMain extends Application {
         Scene scene = new Scene(splitPane, 1200, 1200);
 
         configureSceneAndStage(scene, stage);
+        primaryStage = stage;
 
         stage.show();
     }
 
-    public SplitPane getRuleEditor(Stage stage, RuleComplete ruleComplete){
-        this.ruleComplete = ruleComplete;
+    public SplitPane getRuleEditor(Stage stage, RuleFileManager ruleFileManager){
+        this.ruleFileManager = ruleFileManager;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
+        primaryStage = stage;
 
         return splitPane;
     }
 
-    public SplitPane getEditRuleEditor(Stage stage, RuleComplete ruleComplete, JSONObject jsonObject, String ruleName){
+    public SplitPane getEditRuleEditor(Stage stage, RuleFileManager ruleFileManager, JSONObject jsonObject, String ruleName){
         isNewRule = false;
 
         this.ruleName = ruleName;
-        this.ruleComplete = ruleComplete;
+        this.ruleFileManager = ruleFileManager;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
         mainPane.getChildren().clear();
-        CustomNode firstCustomNode = ruleComplete.teste(jsonObject, inDragObject);
+        CustomNode firstCustomNode = ruleFileManager.jsonToGUI(jsonObject, inDragObject);
         addCustomNodeWithouClear(firstCustomNode);
-
+        primaryStage = stage;
 
         return splitPane;
     }
@@ -173,20 +184,20 @@ public class FinalMain extends Application {
                     LogicBlock block = (LogicBlock) vBox1;
                     LogicBlock copyBlock = new LogicBlock(inDragObject, block.getOperator(), block.getBoxColor());
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
 
                 } else if (vBox1.getType() == Types.ConditionBlock) {
                     ConditionBlock block = (ConditionBlock) vBox1;
                     ConditionBlock copyBlock = new ConditionBlock(block.getOperator(), block.getRuleBlock(), block.getValue(), inDragObject);
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
 
-                } else if (vBox1.getType() == Types.RuleBlock) {
+                } else if (vBox1.getType() == Types.MetricBlock) {
 
-                    RuleBlock block = (RuleBlock) vBox1;
-                    RuleBlock copyBlock = new RuleBlock(block.getRuleMessage());
+                    MetricBlock block = (MetricBlock) vBox1;
+                    MetricBlock copyBlock = new MetricBlock(block.getMetricMessage());
 
-                    inDragObject.setNodes(copyBlock);
+                    inDragObject.setNode(copyBlock);
                 }
 
 
@@ -282,7 +293,7 @@ public class FinalMain extends Application {
     private void textFieldStage(Stage stage){
 
         Button closeWindow = ConditionBlock.getStyledButton("Save", "#a3ddcb");
-        TextField textField = new TextField(ruleName.isBlank() ? "Rule Name" : getRuleName());
+        TextField textField = new TextField(ruleName == null ? "Rule Name" : getRuleName());
         textField.setStyle("-fx-text-inner-color: white;");
         textField.setMaxWidth(150);
 
@@ -310,25 +321,35 @@ public class FinalMain extends Application {
 
         popupStage.setScene(scene);
 
-        closeWindow.setOnAction(actionEvent -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+        closeWindow.setOnAction(actionEvent -> {
+            try {
+                ruleName = textField.getText();
+                if(ruleFileManager.isNameValid(ruleName)) {
+                    popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+                    primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+                } else {
+
+                    System.out.println("Nome invalido");
+                }
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
+        });
 
         popupStage.show();
 
         popupStage.setOnCloseRequest(windowEvent -> {
+        	//TODO verificar se o nome novo ou atualizado já existe.
             ruleName = textField.getText();
             stage.setTitle(ruleName);
-
-
-
-            rule = ruleComplete.createCodeSmell(ruleNodes, getRuleName());
-
+            rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
         });
 
     }
 
 
-    private Button getSaveButton(Stage stage) {
 
+    private Button getSaveButton(Stage stage) {
 
         Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
@@ -346,31 +367,34 @@ public class FinalMain extends Application {
         saveButton.setMaxWidth(Double.MAX_VALUE);
 
 
+
         return saveButton;
     }
 
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
-        RuleBlock locClassBlock = new RuleBlock("LOC_Class");
-        RuleBlock nomClassBlock = new RuleBlock("NOM_class");
-        RuleBlock WMC_Class = new RuleBlock("WMC_Class");
-        RuleBlock is_God_Class = new RuleBlock("is_God_Class");
-        RuleBlock LOC_method = new RuleBlock("LOC_method");
-        RuleBlock CYCLO_method = new RuleBlock("CYCLO_method");
-        RuleBlock is_Long_Method = new RuleBlock("is_Long_Method");
+        MetricBlock locClassBlock = new MetricBlock("LOC_Class");
+        MetricBlock nomClassBlock = new MetricBlock("NOM_Class");
+        MetricBlock WMC_Class = new MetricBlock("WMC_Class");
+        MetricBlock is_God_Class = new MetricBlock("is_God_Class");
+        MetricBlock LOC_method = new MetricBlock("LOC_Method");
+        MetricBlock CYCLO_method = new MetricBlock("CYCLO_Method");
+        MetricBlock is_Long_Method = new MetricBlock("is_Long_Method");
 
 
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
         LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");
 
-        rectanglesTypes.add(locClassBlock);
-        rectanglesTypes.add(nomClassBlock);
-        rectanglesTypes.add(WMC_Class);
-        rectanglesTypes.add(is_God_Class);
-        rectanglesTypes.add(LOC_method);
-        rectanglesTypes.add(CYCLO_method);
-        rectanglesTypes.add(is_Long_Method);
-
+        if(isClassSmell){
+            rectanglesTypes.add(locClassBlock);
+            rectanglesTypes.add(nomClassBlock);
+            rectanglesTypes.add(WMC_Class);
+            rectanglesTypes.add(is_God_Class);
+        }else{
+            rectanglesTypes.add(LOC_method);
+            rectanglesTypes.add(CYCLO_method);
+            rectanglesTypes.add(is_Long_Method);
+        }
 
         rectanglesTypes.add(logicBlock);
         rectanglesTypes.add(orBlock);
@@ -431,14 +455,14 @@ public class FinalMain extends Application {
 
 
                 if (mainPane.getChildren().contains(firstLabel)) {
-                    if (inDragObject.getNodes().getType() != Types.RuleBlock) {
+                    if (inDragObject.getNode().getType() != Types.MetricBlock) {
                         mainPane.getChildren().clear();
                     }
                 }
 
 
                 if (mainPane.getChildren().size() < 1) {
-                    CustomNode copy = inDragObject.getNodes().getCopy();
+                    CustomNode copy = inDragObject.getNode().getCopy();
                     addCustomNode(copy);
 
                 }
@@ -478,7 +502,7 @@ class SortBlockArrayList implements Comparator<CustomNode> {
 
     @Override
     public int compare(CustomNode a, CustomNode b) {
-        if (a.getType() == Types.RuleBlock){
+        if (a.getType() == Types.MetricBlock){
             return -1;
         }if (a.getType() == b.getType()){
             return 0;

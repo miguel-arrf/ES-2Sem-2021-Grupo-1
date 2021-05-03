@@ -2,7 +2,7 @@ package smell_detection_quality_evaluation;
 
 import RuleEditor.ConditionBlock;
 import RuleEditor.LogicBlock;
-import RuleEditor.RuleBlock;
+import RuleEditor.MetricBlock;
 import code_smell_detection.CodeSmell;
 import code_smell_detection.CodeSmellDetector;
 import code_smell_detection.RuleNode;
@@ -137,14 +137,14 @@ public class QualityEvaluator {
     private static ArrayList<CodeSmell> initializeCodeSmells() {
         ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
 
-        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("WMC_Class"), "50"));
-        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("NOM_Class"), "10", null));
+        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
+        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));
         RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
         CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
         smells.add(god_class);
 
-        left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("LOC_Method"), "50"));
-        right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new RuleBlock("CYCLO_Method"), "10", null));
+        left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "50"));
+        right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("CYCLO_Method"), "10", null));
         rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
         CodeSmell long_method = new CodeSmell("isLongMethod", rule, false);
         smells.add(long_method);

@@ -1,6 +1,6 @@
 package g1.ISCTE;
 
-import RuleEditor.RuleEditor;
+import RuleEditor.RulesManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -53,7 +53,7 @@ public class NewGUI extends Application {
     private VBox leftPane;
 
     //SavedRules
-    private RuleEditor ruleEditor = new RuleEditor();
+    private RulesManager rulesManager = new RulesManager();
     private MetricExtractor metricExtractor;
 
 
@@ -93,15 +93,15 @@ public class NewGUI extends Application {
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
-            ruleEditor.setMetricExtractor(metricExtractor);
-            ruleEditor.start(stage);
+            rulesManager.setMetricExtractor(metricExtractor);
+            rulesManager.start(stage);
 
             rulesEditor.getScene().setFill(Color.web("#3d3c40"));
             NewGUI.blurBackground(0, 30, 500, rulesEditor.getScene().getRoot());
 
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
-                System.out.println("REGRAS: " + ruleEditor.getRules().size());
+                System.out.println("REGRAS: " + rulesManager.getRules().size());
             });
 
 
@@ -431,6 +431,7 @@ public class NewGUI extends Application {
 
         Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
 
+
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
@@ -472,6 +473,32 @@ public class NewGUI extends Application {
                     });
             table.getColumns().add(column);
         }
+
+
+
+
+                table.widthProperty().addListener((observableValue, number, t1) -> {
+
+            double width = 0;
+            for(int i = 0; i < table.getColumns().size(); i++){
+                String text = cols[i];
+
+                width += text.length()*12;
+            }
+
+            if(table.widthProperty().get() > width){
+                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            }else{
+                table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+            }
+
+
+
+        });
+
+
     }
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){

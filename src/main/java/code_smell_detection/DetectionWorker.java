@@ -13,10 +13,10 @@ import java.util.HashMap;
  */
 public class DetectionWorker implements Runnable {
 
-    private CodeSmell codeSmell;
-    private ArrayList<ClassMetrics> metrics;
-    private ArrayList<String> results = new ArrayList<>();
-    private ArrayList<String> undetectedSmells = new ArrayList<>();
+    private final CodeSmell codeSmell;
+    private final ArrayList<ClassMetrics> metrics;
+    private final ArrayList<String> results = new ArrayList<>();
+    private final ArrayList<String> undetectedSmells = new ArrayList<>();
 
     /**
      * Constructs an instance of DetectionWorker
@@ -118,6 +118,7 @@ public class DetectionWorker implements Runnable {
         //System.out.println("metrics " + metrics);
         //System.out.println("condition " + condition);
         //System.out.println("condition.getRule " + condition.getRule());
+
         int value = metrics.get(condition.getRule());
         return condition.evaluate(value);
     }
