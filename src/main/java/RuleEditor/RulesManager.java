@@ -202,15 +202,23 @@ public class RulesManager extends Application {
         textField.setStyle("-fx-text-inner-color: white;");
 
         updateButton.setOnAction(actionEvent -> {
-            label.setText(textField.getText());
+            try {
+                if(ruleFileManager.isNameValid(textField.getText())) {
+                    label.setText(textField.getText());
 
-            JSONObject outerName = (JSONObject) jsonObject.get("outerName");
-            outerName.replace("innerName", textField.getText());
+                    JSONObject outerName = (JSONObject) jsonObject.get("outerName");
+                    outerName.replace("innerName", textField.getText());
 
-            jsonObject.replace("outerName", outerName);
+                    jsonObject.replace("outerName", outerName);
 
-            ruleFileManager.saveJSONListToFile(rules);
-            Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+                    ruleFileManager.saveJSONListToFile(rules);
+                    Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+                } else {
+                    System.out.println("Nome inválido");
+                }
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
         });
 
         textField.setMaxWidth(150);
