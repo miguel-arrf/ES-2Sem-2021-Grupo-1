@@ -60,6 +60,25 @@ public class RuleFileManager {
     }
 
     /**
+     * Returns true if the name is valid (is not duplicated) or false otherwise
+     *
+     * @param ruleName the new name introduced
+     * @return boolean that is true if the name don't exist, false otherwise
+     * @throws IOException
+     * @throws ParseException
+     */
+    public Boolean isNameValid(String ruleName) throws IOException, ParseException {
+        ArrayList<JSONObject> ruleFileToArray = loadJSONRuleFile();
+        for(JSONObject rule : ruleFileToArray) {
+            JSONObject outerName = (JSONObject) rule.get("outerName");
+            String innerName = (String) outerName.get("innerName");
+            if(ruleName.equals(innerName))
+                return false;
+        }
+        return true;
+    }
+
+    /**
      * Saves a JSON list to the rules file (or updates it).
      *
      * @param jsonObjectObservableList the list of rules represented in JSONObjects.

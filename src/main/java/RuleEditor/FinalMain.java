@@ -23,6 +23,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -36,6 +37,8 @@ public class FinalMain extends Application {
     private final DraggingObject inDragObject = new DraggingObject();
 
     private boolean isNewRule = true;
+
+    private Stage primaryStage;
 
     private JSONObject rule;
     private String ruleName;
@@ -78,6 +81,7 @@ public class FinalMain extends Application {
         Scene scene = new Scene(splitPane, 1200, 1200);
 
         configureSceneAndStage(scene, stage);
+        primaryStage = stage;
 
         stage.show();
     }
@@ -86,6 +90,7 @@ public class FinalMain extends Application {
         this.ruleFileManager = ruleFileManager;
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
+        primaryStage = stage;
 
         return splitPane;
     }
@@ -101,7 +106,7 @@ public class FinalMain extends Application {
         mainPane.getChildren().clear();
         CustomNode firstCustomNode = ruleFileManager.jsonToGUI(jsonObject, inDragObject);
         addCustomNodeWithouClear(firstCustomNode);
-
+        primaryStage = stage;
 
         return splitPane;
     }
@@ -316,7 +321,20 @@ public class FinalMain extends Application {
 
         popupStage.setScene(scene);
 
-        closeWindow.setOnAction(actionEvent -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+        closeWindow.setOnAction(actionEvent -> {
+            try {
+                ruleName = textField.getText();
+                if(ruleFileManager.isNameValid(ruleName)) {
+                    popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+                    primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+                } else {
+
+                    System.out.println("Nome invalido");
+                }
+            } catch (IOException | ParseException e) {
+                e.printStackTrace();
+            }
+        });
 
         popupStage.show();
 
@@ -324,17 +342,14 @@ public class FinalMain extends Application {
         	//TODO verificar se o nome novo ou atualizado já existe.
             ruleName = textField.getText();
             stage.setTitle(ruleName);
-
-
             rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
-
         });
 
     }
 
 
-    private Button getSaveButton(Stage stage) {
 
+    private Button getSaveButton(Stage stage) {
 
         Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
@@ -350,6 +365,7 @@ public class FinalMain extends Application {
         saveButton.setAlignment(Pos.CENTER);
 
         saveButton.setMaxWidth(Double.MAX_VALUE);
+
 
 
         return saveButton;
