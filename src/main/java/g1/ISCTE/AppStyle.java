@@ -348,15 +348,5 @@ public class AppStyle {
         new Thread(sleeper).start();
     }
 
-    /*
-    *  final FadeTransition transition = new FadeTransition(Duration.millis(250), node);
-        transition.setFromValue(0);
-        transition.setToValue(1);
-        transition.setInterpolator(Interpolator.EASE_IN);
-        parent.getChildren().add(node);
-        transition.play();
-    * */
-
-
 }
 

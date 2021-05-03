@@ -80,20 +80,7 @@ public class MetricBlock implements CustomNode {
      */
     @Override
     public Node getWidgetGraphicalRepresentation() {
-
-        String color = "lightpink";
-
-        HBox metricMakerBox = new HBox(new Label(metricMessage));
-        metricMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: " + color + ";");
-
-        metricMakerBox.setMinWidth(150);
-        metricMakerBox.setMinHeight(50);
-
-        metricMakerBox.setAlignment(Pos.CENTER);
-
-        return metricMakerBox;
+        return CustomNode.getDefaultWidgetGraphicalRepresentation(metricMessage, "lightpink");
     }
 
     /**

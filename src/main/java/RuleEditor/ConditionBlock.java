@@ -25,6 +25,9 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 
+/**
+ * Esta classe é para fazer canja
+ */
 public class ConditionBlock implements CustomNode, Serializable {
 
     private final Label ruleLabel;
@@ -40,6 +43,14 @@ public class ConditionBlock implements CustomNode, Serializable {
 
     private MetricBlock metricBlock;
 
+    /**
+     * Instantiates a new Condition block.
+     *
+     * @param operator            the operator
+     * @param metricBlock         the metric block
+     * @param value               the value
+     * @param oQueEstaASerDragged the o que esta a ser dragged
+     */
     public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value, DraggingObject oQueEstaASerDragged) {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
@@ -60,6 +71,13 @@ public class ConditionBlock implements CustomNode, Serializable {
         graphicalRepresentationNode = getHBox();
     }
 
+    /**
+     * Instantiates a new Condition block.
+     *
+     * @param operator            the operator
+     * @param value               the value
+     * @param oQueEstaASerDragged the o que esta a ser dragged
+     */
     public ConditionBlock(RuleOperator operator, String value, DraggingObject oQueEstaASerDragged) {
 
         this.oQueEstaASerDragged = oQueEstaASerDragged;
@@ -74,6 +92,13 @@ public class ConditionBlock implements CustomNode, Serializable {
         graphicalRepresentationNode = getHBox();
     }
 
+    /**
+     * Instantiates a new Condition block.
+     *
+     * @param operator    the operator
+     * @param metricBlock the metric block
+     * @param value       the value
+     */
     public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value) {
 
         this.oQueEstaASerDragged = null;
@@ -91,10 +116,20 @@ public class ConditionBlock implements CustomNode, Serializable {
 
     }
 
+    /**
+     * Gets rule.
+     *
+     * @return the rule
+     */
     public String getRule() {
         return ruleLabel.getText();
     }
 
+    /**
+     * Gets rule block.
+     *
+     * @return the rule block
+     */
     public MetricBlock getRuleBlock() {
         return metricBlock;
     }
@@ -143,10 +178,21 @@ public class ConditionBlock implements CustomNode, Serializable {
         });
     }
 
+    /**
+     * Este método retorna um botão com o design default
+     *
+     * @param label o operator a ser representado no botão
+     * @return um botão com o estilo default e a label pedida
+     */
     private Button getStyledButton(RuleOperator label) {
         return getStyledButton(label, null);
     }
 
+    /**
+     * @param operatorToPut
+     * @param customColor
+     * @return
+     */
     private Button getStyledButton(RuleOperator operatorToPut, String customColor) {
         Button button = new Button(operatorToPut.label);
         button.getStyleClass().add("roundedAddButton");
@@ -169,6 +215,13 @@ public class ConditionBlock implements CustomNode, Serializable {
         return button;
     }
 
+    /**
+     * Gets styled button.
+     *
+     * @param operatorToPut the operator to put
+     * @param customColor   the custom color
+     * @return the styled button
+     */
     public static Button getStyledButton(String operatorToPut, String customColor) {
         Button button = new Button(operatorToPut);
         button.getStyleClass().add("roundedAddButton");
@@ -269,6 +322,9 @@ public class ConditionBlock implements CustomNode, Serializable {
         return hBox;
     }
 
+    /**
+     * @param box
+     */
     private void setHBoxDelete(Node box) {
         ContextMenu menu = new ContextMenu();
         box.setOnContextMenuRequested(contextMenuEvent -> menu.show(box.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
@@ -379,6 +435,11 @@ public class ConditionBlock implements CustomNode, Serializable {
         return operator;
     }
 
+    /**
+     * Gets value.
+     *
+     * @return the value
+     */
     public String getValue() {
         return valueLabel.getText();
     }
@@ -388,6 +449,12 @@ public class ConditionBlock implements CustomNode, Serializable {
         return Types.ConditionBlock;
     }
 
+    /**
+     * Evaluate boolean.
+     *
+     * @param value the value
+     * @return the boolean
+     */
     public boolean evaluate(int value) {
         switch (operator) {
             case EQUAL:

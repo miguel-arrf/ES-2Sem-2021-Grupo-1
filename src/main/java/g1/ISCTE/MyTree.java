@@ -71,7 +71,8 @@ public class MyTree {
                 Image image;
                 ImageView imageView;
 
-                if(fileExtension.get().equals("xlsx")){
+                //TODO temos que verificar primeiro se é válido
+                if(fileExtension.isPresent() && fileExtension.get().equals("xlsx")){
 
                     label.getStyleClass().add("excelLabel");
                     image = new Image(MyTree.class.getResource("/icons/icons8-microsoft-excel-90.png").toExternalForm());
