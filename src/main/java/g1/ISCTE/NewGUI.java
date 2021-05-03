@@ -137,13 +137,38 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10,10,10,10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox);
+        emptyLeftPane.getChildren().addAll(buttonsBox, setUpProcessRulesButton());
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
         return emptyLeftPane;
 
 
+    }
+
+    private Button setUpProcessRulesButton() {
+        Button processRulesButton = new Button("Process Rules");
+        processRulesButton.setTextFill(Color.BLACK);
+        processRulesButton.setMaxWidth(Double.MAX_VALUE);
+        processRulesButton.getStyleClass().add("selectShowMetricsButton");
+        // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+
+        processRulesButton.setOnMouseClicked(mouseEvent -> {
+
+            try {
+                if(ruleEditor.getRulesFile() != null){
+                    ruleEditor.loadFile();
+                    ruleEditor.createCodeSmells();
+                    RuleApplier ra = new RuleApplier(ruleEditor.getResults(),docPath);
+                    ra.mandar();
+                }
+                updateCenterPane();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return processRulesButton;
     }
 
     private void updateFilePane(){
@@ -422,12 +447,12 @@ public class NewGUI extends Application {
         stage.show();
 
         //APAGAR
-        HashMap<String, ArrayList<String>> map = new HashMap<>();
+        /*HashMap<String, ArrayList<String>> map = new HashMap<>();
         ArrayList<String> s =  new ArrayList<>();
         s.add("toString");
         map.put("isFrog",s);
-        RuleApplier ra = new RuleApplier(map,"C:\\Users\\Henrique\\IdeaProjects\\ES-2Sem-2021-Grupo-1\\src\\main\\Created_Excels\\ES-2Sem-2021-Grupo-1_metrics.xlsx");
-        ra.mandar();
+        RuleApplier ra = new RuleApplier(map,"C");
+        ra.mandar();*/
 
     }
 

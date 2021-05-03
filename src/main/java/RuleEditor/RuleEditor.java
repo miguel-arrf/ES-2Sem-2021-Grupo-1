@@ -2,6 +2,7 @@ package RuleEditor;
 
 import code_smell_detection.CodeSmell;
 import code_smell_detection.CodeSmellDetector;
+import code_smell_detection.RuleApplier;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import g1.ISCTE.MyTree;
@@ -34,6 +35,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RuleEditor extends Application {
 
@@ -45,6 +47,7 @@ public class RuleEditor extends Application {
     private Button loadRulesButton;
     private Button addNewRuleButton;
     private File rulesFile = null;
+    private HashMap<String, ArrayList<String>> results = new HashMap<>();
 
     private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
 
@@ -89,7 +92,7 @@ public class RuleEditor extends Application {
         return setDirectoryButton;
     }
 
-    private void loadFile(){
+    public void loadFile(){
         ruleComplete.setFile(rulesFile);
 
         try {
@@ -401,6 +404,7 @@ public class RuleEditor extends Application {
         loadRulesButton = setUpLoadRulesFileButton();
 
 
+
         saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
         saveAndLoadButtons.setMaxWidth(Double.MAX_VALUE);
@@ -437,7 +441,11 @@ public class RuleEditor extends Application {
     }
 
 
-    private void createCodeSmells( )   {
+    public HashMap<String, ArrayList<String>> getResults() {
+        return results;
+    }
+
+    public void createCodeSmells( )   {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
         for(JSONObject entry: rules){
@@ -457,6 +465,7 @@ public class RuleEditor extends Application {
         CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
         try {
             detector.runDetection();
+            results = detector.getResults();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -481,10 +490,13 @@ public class RuleEditor extends Application {
         stage.setScene(scene);
         stage.show();
 
-        if(rulesFile != null){
+       /* if(rulesFile != null){
             loadFile();
             createCodeSmells();
-        }
+        } */
     }
 
+    public File getRulesFile() {
+        return rulesFile;
+    }
 }
