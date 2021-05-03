@@ -47,7 +47,7 @@ public class Main extends Application {
 
         CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
         smells.add(god_class);
-        CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
+        CodeSmellDetector detector = new CodeSmellDetector(extractor.getMetrics(), smells);
         detector.runDetection();
     }
 }
