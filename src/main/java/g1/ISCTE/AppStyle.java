@@ -53,10 +53,10 @@ public class AppStyle {
      * @param size the display size of the font
      * @return the font with the specified style and size
      */
-    public static Font getFont(FontType fontType, int size){
+  //  public static Font getFont(FontType fontType, int size){
         //TODO Add fonts back!
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
-    }
+     //   return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+   // }
 
 
     /**
@@ -69,7 +69,7 @@ public class AppStyle {
     public static Label getLabelWithColorAndFont(Paint paint, FontType fontType, int size, String string){
         Label label = new Label(string);
         label.setTextFill(paint);
-        label.setFont(getFont(fontType, size));
+       // label.setFont(getFont(fontType, size));
 
         return label;
     }
@@ -84,7 +84,7 @@ public class AppStyle {
 
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
-        subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
+      //  subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
 
         return subTitleLabel;
     }
@@ -98,7 +98,7 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-        titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
+       // titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }

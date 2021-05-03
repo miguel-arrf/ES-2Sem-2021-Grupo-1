@@ -2,8 +2,10 @@ package RuleEditor;
 
 import code_smell_detection.CodeSmell;
 import code_smell_detection.CodeSmellDetector;
+import code_smell_detection.RuleApplier;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
+import g1.ISCTE.MyTree;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,6 +31,7 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static g1.ISCTE.AppStyle.*;
 
@@ -42,18 +45,17 @@ public class RulesManager extends Application {
 
     private  VBox mainPane = new VBox();
     private  VBox rulesPanel = new VBox();
-
+    private Label numberOfRules = new Label("No Rules");
+    private RuleComplete ruleComplete = new RuleComplete();
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
+    private File rulesFile = null;
+    private HashMap<String, ArrayList<String>> results = new HashMap<>();
 
-    private Label numberOfRules = new Label("No Rules");
-
-    private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+    private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
     private RuleFileManager ruleFileManager = new RuleFileManager();
     private MetricExtractor metricExtractor;
-
-    private File rulesFile = null;
 
     /**
      * Sets metric extractor.
@@ -483,6 +485,7 @@ public class RulesManager extends Application {
         loadRulesButton = setUpLoadRulesFileButton();
 
 
+
         saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
         saveAndLoadButtons.setMaxWidth(Double.MAX_VALUE);
@@ -528,10 +531,13 @@ public class RulesManager extends Application {
     }
 
 
+    public HashMap<String, ArrayList<String>> getResults() {
+        return results;
+    }
     /**
      * Creates the Code Smells for each rule and detects them.
      */
-    private void createCodeSmells( )   {
+    public void createCodeSmells( )   {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
         for(JSONObject entry: rules){
@@ -547,6 +553,7 @@ public class RulesManager extends Application {
         CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getMetrics(), smells);
         try {
             detector.runDetection();
+            results = detector.getResults();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -576,11 +583,13 @@ public class RulesManager extends Application {
         stage.setScene(scene);
         stage.show();
 
-        if(rulesFile != null){
+       /* if(rulesFile != null){
             loadFile();
             createCodeSmells();
-        }
-
+        } */
     }
 
+    public File getRulesFile() {
+        return rulesFile;
+    }
 }

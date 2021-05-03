@@ -8,6 +8,7 @@ import java.util.Scanner;
  */
 public class Method {
 
+
     private int loc_method;
     private int cyclo_method;
     private final String method_name;

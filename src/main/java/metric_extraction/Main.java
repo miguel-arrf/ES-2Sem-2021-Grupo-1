@@ -49,5 +49,6 @@ public class Main extends Application {
         smells.add(god_class);
         CodeSmellDetector detector = new CodeSmellDetector(extractor.getMetrics(), smells);
         detector.runDetection();
+
     }
 }

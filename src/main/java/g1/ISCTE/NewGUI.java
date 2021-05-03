@@ -1,6 +1,8 @@
 package g1.ISCTE;
 
-import RuleEditor.RulesManager;
+import RuleEditor.RuleEditor;
+import code_smell_detection.CodeSmellDetector;
+import code_smell_detection.RuleApplier;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -31,6 +33,7 @@ import metric_extraction.MetricExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,7 +56,7 @@ public class NewGUI extends Application {
     private VBox leftPane;
 
     //SavedRules
-    private RulesManager rulesManager = new RulesManager();
+    private RuleEditor ruleEditor = new RuleEditor();
     private MetricExtractor metricExtractor;
 
 
@@ -89,19 +92,19 @@ public class NewGUI extends Application {
         rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-        rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+      //  rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
-            rulesManager.setMetricExtractor(metricExtractor);
-            rulesManager.start(stage);
+            ruleEditor.setMetricExtractor(metricExtractor);
+            ruleEditor.start(stage);
 
             rulesEditor.getScene().setFill(Color.web("#3d3c40"));
             NewGUI.blurBackground(0, 30, 500, rulesEditor.getScene().getRoot());
 
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
-                System.out.println("REGRAS: " + rulesManager.getRules().size());
+                System.out.println("REGRAS: " + ruleEditor.getRules().size());
             });
 
 
@@ -111,7 +114,7 @@ public class NewGUI extends Application {
         showMetrics.setTextFill(Color.BLACK);
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
-        showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+       // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
 
@@ -134,13 +137,38 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10,10,10,10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox);
+        emptyLeftPane.getChildren().addAll(buttonsBox, setUpProcessRulesButton());
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
         return emptyLeftPane;
 
 
+    }
+
+    private Button setUpProcessRulesButton() {
+        Button processRulesButton = new Button("Process Rules");
+        processRulesButton.setTextFill(Color.BLACK);
+        processRulesButton.setMaxWidth(Double.MAX_VALUE);
+        processRulesButton.getStyleClass().add("selectShowMetricsButton");
+        // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+
+        processRulesButton.setOnMouseClicked(mouseEvent -> {
+
+            try {
+                if(ruleEditor.getRulesFile() != null){
+                    ruleEditor.loadFile();
+                    ruleEditor.createCodeSmells();
+                    RuleApplier ra = new RuleApplier(ruleEditor.getResults(),docPath);
+                    ra.mandar();
+                }
+                updateCenterPane();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return processRulesButton;
     }
 
     private void updateFilePane(){
@@ -195,7 +223,7 @@ public class NewGUI extends Application {
         calcMetrics.setTextFill(Color.WHITE);
         calcMetrics.setMaxWidth(Double.MAX_VALUE);
         calcMetrics.getStyleClass().add("selectFolderButton");
-        calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+      //  calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         calcMetrics.setOnMouseClicked(event -> {
             blurBackground(0, 30, 500, leftPane);
@@ -262,7 +290,7 @@ public class NewGUI extends Application {
                     selectFolder.setTextFill(Color.WHITE);
                     selectFolder.setMaxWidth(Double.MAX_VALUE);
                     selectFolder.getStyleClass().add("errorLabel");
-                    selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 15));
+             //       selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 15));
                     selectFolder.setWrapText(true);
                     selectFolder.setAlignment(Pos.CENTER);
                     selectFolder.setPadding(new Insets(10));
@@ -299,16 +327,16 @@ public class NewGUI extends Application {
             event.consume();
         });
 
-        dragAndDropVBox.getChildren().add(
+     /*   dragAndDropVBox.getChildren().add(
                 AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
-        );
+        );*/
 
 
         Button selectFolder = new Button("Select Folder");
         selectFolder.setTextFill(Color.WHITE);
         selectFolder.setMaxWidth(Double.MAX_VALUE);
         selectFolder.getStyleClass().add("selectFolderButton");
-        selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+       // selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         selectFolder.setOnMouseClicked(event -> {
             final DirectoryChooser directoryChooser =
@@ -393,7 +421,7 @@ public class NewGUI extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         this.stage = stage;
 
         stage.setTitle("CodeSmells Detector");
@@ -417,6 +445,15 @@ public class NewGUI extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        //APAGAR
+        /*HashMap<String, ArrayList<String>> map = new HashMap<>();
+        ArrayList<String> s =  new ArrayList<>();
+        s.add("toString");
+        map.put("isFrog",s);
+        RuleApplier ra = new RuleApplier(map,"C");
+        ra.mandar();*/
+
     }
 
     private void fillTable(String[] cols,String[][] dataSource) {
@@ -429,8 +466,7 @@ public class NewGUI extends Application {
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
 
-        Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
-
+      //  Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
 
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
@@ -457,7 +493,7 @@ public class NewGUI extends Application {
                             else
                             {
                                 setTextFill(Color.web("#d1d1d1"));
-                                setFont(AppStyle.getFont(FontType.REGULAR, 14));
+         //                       setFont(AppStyle.getFont(FontType.REGULAR, 14));
                                 setText(item);
                             }
                         }
@@ -473,32 +509,6 @@ public class NewGUI extends Application {
                     });
             table.getColumns().add(column);
         }
-
-
-
-
-                table.widthProperty().addListener((observableValue, number, t1) -> {
-
-            double width = 0;
-            for(int i = 0; i < table.getColumns().size(); i++){
-                String text = cols[i];
-
-                width += text.length()*12;
-            }
-
-            if(table.widthProperty().get() > width){
-                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-            }else{
-                table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-
-            }
-
-
-
-        });
-
-
     }
 
     public static void blurBackground(double startValue, double endValue, double duration, Node pane){
@@ -556,7 +566,7 @@ public class NewGUI extends Application {
         typeOfInfoLabel.setWrapText(true);
 
         Label numberLabel = new Label(number);
-        numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
+      //  numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         numberLabel.setTextFill(Color.BLACK);
         numberLabel.setPadding(new Insets(2,2,2,2));
         numberLabel.setMinWidth(20);
