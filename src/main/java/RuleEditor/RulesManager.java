@@ -46,7 +46,6 @@ public class RulesManager extends Application {
     private  VBox mainPane = new VBox();
     private  VBox rulesPanel = new VBox();
     private Label numberOfRules = new Label("No Rules");
-    private RuleComplete ruleComplete = new RuleComplete();
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
@@ -132,7 +131,7 @@ public class RulesManager extends Application {
     /**
      * Load JSON files from the chosen path.
      */
-    private void loadFile(){
+    public void loadFile(){
         ruleFileManager.setFile(rulesFile);
 
         try {
@@ -583,10 +582,6 @@ public class RulesManager extends Application {
         stage.setScene(scene);
         stage.show();
 
-       /* if(rulesFile != null){
-            loadFile();
-            createCodeSmells();
-        } */
     }
 
     public File getRulesFile() {

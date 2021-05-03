@@ -36,6 +36,9 @@ public class RuleFileManager {
         this.file = file;
     }
 
+    public void setRules(ObservableList<JSONObject> rules) {
+        this.rules = rules;
+    }
 
     /**
      * Loads a file into JSON array format.

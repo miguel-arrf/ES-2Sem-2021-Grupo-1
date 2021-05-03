@@ -53,10 +53,10 @@ public class AppStyle {
      * @param size the display size of the font
      * @return the font with the specified style and size
      */
-  //  public static Font getFont(FontType fontType, int size){
-        //TODO Add fonts back!
-     //   return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
-   // }
+    public static Font getFont(FontType fontType, int size){
+//        TODO Add fonts back!
+        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
+    }
 
 
     /**

@@ -1,7 +1,6 @@
 package g1.ISCTE;
 
-import RuleEditor.RuleEditor;
-import code_smell_detection.CodeSmellDetector;
+import RuleEditor.RulesManager;
 import code_smell_detection.RuleApplier;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -23,7 +22,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -33,7 +31,6 @@ import metric_extraction.MetricExtractor;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,7 +53,7 @@ public class NewGUI extends Application {
     private VBox leftPane;
 
     //SavedRules
-    private RuleEditor ruleEditor = new RuleEditor();
+    private RulesManager rulesManager = new RulesManager();
     private MetricExtractor metricExtractor;
 
 
@@ -96,15 +93,15 @@ public class NewGUI extends Application {
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
-            ruleEditor.setMetricExtractor(metricExtractor);
-            ruleEditor.start(stage);
+            rulesManager.setMetricExtractor(metricExtractor);
+            rulesManager.start(stage);
 
             rulesEditor.getScene().setFill(Color.web("#3d3c40"));
             NewGUI.blurBackground(0, 30, 500, rulesEditor.getScene().getRoot());
 
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
-                System.out.println("REGRAS: " + ruleEditor.getRules().size());
+                System.out.println("REGRAS: " + rulesManager.getRules().size());
             });
 
 
@@ -156,10 +153,10 @@ public class NewGUI extends Application {
         processRulesButton.setOnMouseClicked(mouseEvent -> {
 
             try {
-                if(ruleEditor.getRulesFile() != null){
-                    ruleEditor.loadFile();
-                    ruleEditor.createCodeSmells();
-                    RuleApplier ra = new RuleApplier(ruleEditor.getResults(),docPath);
+                if(rulesManager.getRulesFile() != null){
+                    rulesManager.loadFile();
+                    rulesManager.createCodeSmells();
+                    RuleApplier ra = new RuleApplier(rulesManager.getResults(),docPath);
                     ra.mandar();
                 }
                 updateCenterPane();
