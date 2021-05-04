@@ -42,35 +42,20 @@ public class Method {
         Scanner scanner = new Scanner(method);
         int node = 1;
         int edge = 0;
-        boolean info = false;
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             line = line.replaceAll("\\s+","");
-            System.out.println(line);
-            if(line.startsWith("if")) {
-                String conditions[] = line.split("[&|]+");
-                for (String condition : conditions) {
-                    System.out.println(condition + " node+1 e edge+2");
-                    node++;
-                    edge += 2;
-                }
+            if(line.startsWith("while") || line.startsWith("for") || line.startsWith("case") || line.startsWith("if")) {
+                node += 1;
+                edge += 2;
                 continue;
             }
             if(!line.equals("{") && !line.equals("}")) {
-                if(!info) {
-                    System.out.println(line + " node+1 e edge+1");
-                    node++;
-                    edge++;
-                    info = true;
-                }else {
-                    info = false;
-                }
+                node++;
+                edge++;
             }
         }
         scanner.close();
-        System.out.println("");
-        System.out.println("edge: " + edge + " node: " + node);
-        System.out.println(edge - node + 2);
         return edge - node + 2;
     }
 
