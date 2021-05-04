@@ -440,7 +440,19 @@ public class NewGUI extends Application {
         String[] metrics = projectInfo.getMainMetricsInfo();
         ArrayList<ArrayList<String>> tableData = projectInfo.getMetricsTable();
 
-        String[][] sdata = new String[tableData.size()][tableData.get(0).size()];
+        loadMethod(tableData, metrics);
+        
+        centerPane.getChildren().clear();
+        VBox.setVgrow(table, Priority.ALWAYS);
+
+
+        centerPane.getChildren().addAll(table);
+
+    }
+
+    //TODO António 1
+    private void loadMethod(ArrayList<ArrayList<String>> tableData,  String[] metrics) {
+    	String[][] sdata = new String[tableData.size()][tableData.get(0).size()];
         String[] cols = new String[tableData.size()];
         int j = 0;
         for (int a = 1; a != tableData.size() - 1; a++) {
@@ -459,15 +471,8 @@ public class NewGUI extends Application {
         for (int a = 0; a < metrics.length && a < metricBoxes.size(); a++) {
             metricBoxes.get(a).setText(metrics[a]);
         }
-
-
-        centerPane.getChildren().clear();
-        VBox.setVgrow(table, Priority.ALWAYS);
-
-
-        centerPane.getChildren().addAll(table);
-
     }
+    
 
     private VBox centerPane() {
         centerPaneVBox = new VBox();
@@ -612,17 +617,8 @@ public class NewGUI extends Application {
 
         typeOfInfoLabel.setWrapText(true);
 
-        Label numberLabel = new Label(number);
-        //  numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
-        numberLabel.setTextFill(Color.BLACK);
-        numberLabel.setPadding(new Insets(2, 2, 2, 2));
-        numberLabel.setMinWidth(20);
-        numberLabel.setAlignment(Pos.CENTER);
-
-        numberLabel.setStyle("-fx-background-color: #a3ddcb;" +
-                " -fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;");
-
+        Label numberLabel = getStyledLabel(number);
+		numberLabel.setPadding(new Insets(2, 2, 2, 2));
         Pane spacer = new Pane();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
@@ -632,6 +628,15 @@ public class NewGUI extends Application {
 
         return emptyLeftPane;
     }
+
+	private Label getStyledLabel(String number) {
+		Label numberLabel = new Label(number);
+		numberLabel.setTextFill(Color.BLACK);
+		numberLabel.setMinWidth(20);
+		numberLabel.setAlignment(Pos.CENTER);
+		numberLabel.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.lightGreenColor));
+		return numberLabel;
+	}
 
 
 }

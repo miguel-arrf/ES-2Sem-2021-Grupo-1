@@ -166,6 +166,7 @@ public class QualityEvaluatorApp extends Application {
      */
     private void detectOnClick() {
         //mainBox.getChildren().add(progressBar);
+        //todo miguel fixed pls my dear ...
         addButtonVBox.getChildren().add(progressBar);
 
         resetLabelValues();

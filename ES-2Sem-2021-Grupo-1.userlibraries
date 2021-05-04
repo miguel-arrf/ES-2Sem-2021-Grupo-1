@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.3">
+    <archive path="C:/Users/Henrique/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.12.3/jackson-annotations-2.12.3.jar" />
+  </library>
+  <library name="Maven: org.apache.poi:poi:3.9">
+    <archive path="C:/Users/Henrique/.m2/repository/org/apache/poi/poi/3.9/poi-3.9.jar" />
+  </library>
+  <library name="Maven: org.apache.poi:poi-ooxml:3.9">
+    <archive path="C:/Users/Henrique/.m2/repository/org/apache/poi/poi-ooxml/3.9/poi-ooxml-3.9.jar" />
+  </library>
+  <library name="Maven: org.apache.xmlbeans:xmlbeans:2.3.0">
+    <archive path="C:/Users/Henrique/.m2/repository/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-controls:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-controls/15.0.1/javafx-controls-15.0.1.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-controls:win:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-controls/15.0.1/javafx-controls-15.0.1-win.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-base:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-base/15.0.1/javafx-base-15.0.1.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-base:win:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-base/15.0.1/javafx-base-15.0.1-win.jar" />
+  </library>
+  <library name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.3">
+    <archive path="C:/Users/Henrique/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.12.3/jackson-databind-2.12.3.jar" />
+  </library>
+  <library name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3">
+    <archive path="C:/Users/Henrique/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.12.3/jackson-core-2.12.3.jar" />
+  </library>
+  <library name="Maven: com.googlecode.json-simple:json-simple:1.1.1">
+    <archive path="C:/Users/Henrique/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar" />
+  </library>
+  <library name="Maven: com.github.javaparser:javaparser-core:3.20.0">
+    <archive path="C:/Users/Henrique/.m2/repository/com/github/javaparser/javaparser-core/3.20.0/javaparser-core-3.20.0.jar" />
+  </library>
+  <library name="Maven: dom4j:dom4j:1.6.1">
+    <archive path="C:/Users/Henrique/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" />
+  </library>
+  <library name="Maven: commons-codec:commons-codec:1.5">
+    <archive path="C:/Users/Henrique/.m2/repository/commons-codec/commons-codec/1.5/commons-codec-1.5.jar" />
+  </library>
+  <library name="Maven: org.apache.poi:poi-ooxml-schemas:3.9">
+    <archive path="C:/Users/Henrique/.m2/repository/org/apache/poi/poi-ooxml-schemas/3.9/poi-ooxml-schemas-3.9.jar" />
+  </library>
+  <library name="Maven: stax:stax-api:1.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar" />
+  </library>
+  <library name="Maven: xml-apis:xml-apis:1.0.b2">
+    <archive path="C:/Users/Henrique/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-media:17-ea+2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-media/17-ea+2/javafx-media-17-ea+2.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-media:win:17-ea+2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-media/17-ea+2/javafx-media-17-ea+2-win.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-graphics:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-graphics/15.0.1/javafx-graphics-15.0.1.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-graphics:win:15.0.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-graphics/15.0.1/javafx-graphics-15.0.1-win.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-web:17-ea+2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-web/17-ea+2/javafx-web-17-ea+2.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-web:win:17-ea+2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-web/17-ea+2/javafx-web-17-ea+2-win.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-swing:11">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-swing/11/javafx-swing-11.jar" />
+  </library>
+  <library name="Maven: org.openjfx:javafx-swing:win:11">
+    <archive path="C:/Users/Henrique/.m2/repository/org/openjfx/javafx-swing/11/javafx-swing-11-win.jar" />
+  </library>
+  <library name="Maven: org.junit.platform:junit-platform-commons:1.6.2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/platform/junit-platform-commons/1.6.2/junit-platform-commons-1.6.2.jar" />
+  </library>
+  <library name="Maven: junit:junit:4.10">
+    <archive path="C:/Users/Henrique/.m2/repository/junit/junit/4.10/junit-4.10.jar" />
+  </library>
+  <library name="Maven: org.opentest4j:opentest4j:1.2.0">
+    <archive path="C:/Users/Henrique/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar" />
+  </library>
+  <library name="Maven: org.junit.jupiter:junit-jupiter-params:5.6.2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.6.2/junit-jupiter-params-5.6.2.jar" />
+  </library>
+  <library name="Maven: org.junit.jupiter:junit-jupiter-engine:5.6.2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.6.2/junit-jupiter-engine-5.6.2.jar" />
+  </library>
+  <library name="Maven: org.junit.platform:junit-platform-engine:1.6.2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/platform/junit-platform-engine/1.6.2/junit-platform-engine-1.6.2.jar" />
+  </library>
+  <library name="Maven: org.junit.jupiter:junit-jupiter-api:5.6.2">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.6.2/junit-jupiter-api-5.6.2.jar" />
+  </library>
+  <library name="Maven: org.hamcrest:hamcrest-core:1.1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" />
+  </library>
+  <library name="Maven: org.apiguardian:apiguardian-api:1.1.0">
+    <archive path="C:/Users/Henrique/.m2/repository/org/apiguardian/apiguardian-api/1.1.0/apiguardian-api-1.1.0.jar" />
+  </library>
+  <library name="Maven: org.junit.jupiter:junit-jupiter:5.8.0-M1">
+    <archive path="C:/Users/Henrique/.m2/repository/org/junit/jupiter/junit-jupiter/5.8.0-M1/junit-jupiter-5.8.0-M1.jar" />
+  </library>
+</eclipse-userlibraries>
+
