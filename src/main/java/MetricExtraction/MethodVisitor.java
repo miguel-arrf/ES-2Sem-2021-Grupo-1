@@ -1,4 +1,4 @@
-package metric_extraction;
+package MetricExtraction;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;

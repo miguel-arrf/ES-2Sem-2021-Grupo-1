@@ -1,13 +1,13 @@
-package smell_detection_quality_evaluation;
+package SmellDetectionQualityEvaluation;
 
 import RuleEditor.ConditionBlock;
 import RuleEditor.LogicBlock;
 import RuleEditor.MetricBlock;
-import code_smell_detection.CodeSmell;
-import code_smell_detection.CodeSmellDetector;
-import code_smell_detection.RuleNode;
-import code_smell_detection.RuleOperator;
-import metric_extraction.MetricExtractor;
+import CodeSmellDetection.CodeSmell;
+import CodeSmellDetection.CodeSmellDetector;
+import CodeSmellDetection.RuleNode;
+import CodeSmellDetection.RuleOperator;
+import MetricExtraction.MetricExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFRow;

@@ -1,4 +1,4 @@
-package code_smell_detection;
+package CodeSmellDetection;
 
 import RuleEditor.CustomNode;
 

@@ -1,16 +1,10 @@
-package metric_extraction;
+package MetricExtraction;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import RuleEditor.LogicBlock;
-import RuleEditor.ConditionBlock;
-import RuleEditor.MetricBlock;
-import code_smell_detection.*;
-import javafx.application.Application;
 import javafx.stage.Stage;
-import smell_detection_quality_evaluation.QualityEvaluator;
-import smell_detection_quality_evaluation.QualityEvaluatorApp;
+import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 
 public class Main{
 

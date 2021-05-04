@@ -1,9 +1,8 @@
 package RuleEditor;
 
-import code_smell_detection.CodeSmell;
-import code_smell_detection.RuleNode;
-import code_smell_detection.RuleOperator;
-import javafx.collections.FXCollections;
+import CodeSmellDetection.CodeSmell;
+import CodeSmellDetection.RuleNode;
+import CodeSmellDetection.RuleOperator;
 import javafx.collections.ObservableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

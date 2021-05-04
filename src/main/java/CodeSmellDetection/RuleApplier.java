@@ -1,4 +1,4 @@
-package code_smell_detection;
+package CodeSmellDetection;
 
 import g1.ISCTE.ProjectInfo;
 import org.apache.poi.xssf.usermodel.XSSFCell;

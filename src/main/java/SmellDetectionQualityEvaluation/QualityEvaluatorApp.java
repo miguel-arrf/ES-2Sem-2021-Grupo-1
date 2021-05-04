@@ -1,4 +1,4 @@
-package smell_detection_quality_evaluation;
+package SmellDetectionQualityEvaluation;
 
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;

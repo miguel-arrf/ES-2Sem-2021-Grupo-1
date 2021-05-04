@@ -1,4 +1,4 @@
-package smell_detection_quality_evaluation;
+package SmellDetectionQualityEvaluation;
 
 import java.util.ArrayList;
 

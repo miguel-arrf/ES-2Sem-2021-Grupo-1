@@ -1,6 +1,6 @@
-package code_smell_detection;
+package CodeSmellDetection;
 
-import metric_extraction.ClassMetrics;
+import MetricExtraction.ClassMetrics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
