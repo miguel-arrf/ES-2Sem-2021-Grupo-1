@@ -118,8 +118,7 @@ public class QualityEvaluator {
      * @throws InterruptedException
      */
     public HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
-        String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
-        File java_project = new File(directory_src);
+       File java_project = getDefaultProject();
         MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
         extractor.executeExtraction();
 
@@ -128,6 +127,16 @@ public class QualityEvaluator {
         detector.runDetection();
 
         return detector.getResults();
+    }
+
+    /**
+     * Gets the file for the default project's folder.
+     *
+     * @return the file for the default project's folder.
+     */
+    static public File getDefaultProject(){
+        String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
+        return new File(directory_src);
     }
 
     /**

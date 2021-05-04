@@ -17,6 +17,24 @@
     -fx-background-color: #6562fc;
 }
 
+.processProjectButton {
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-color: #fd79a8;
+}
+
+.showConfusionMatrixButton {
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-color: #55efc4;
+}
+
+.loadJASMLButton {
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-color: #74b9ff;
+}
+
 .selectRuleBuilderButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
@@ -263,3 +281,12 @@
     -fx-background-radius: 15px;
 }
 
+
+
+/* Choice box */
+.choice-box{
+    -fx-background-radius: 7;
+    -fx-border-radius: 7;
+    -fx-background-color: orange;
+    -fx-mark-color: #636e72;
+}
