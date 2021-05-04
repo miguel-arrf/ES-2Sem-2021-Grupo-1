@@ -2,7 +2,6 @@ package RuleEditor;
 
 import code_smell_detection.RuleOperator;
 import g1.ISCTE.AppStyle;
-import g1.ISCTE.FontType;
 import g1.ISCTE.NewGUI;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -23,16 +22,15 @@ import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.text.ParsePosition;
 
 /**
- * Esta classe é para fazer canja
+ * The type Condition block.
  */
 public class ConditionBlock implements CustomNode, Serializable {
 
     private final Label ruleLabel;
     private final Label valueLabel;
-    private final DraggingObject oQueEstaASerDragged;
+    private final DraggingObject whatIsBeingDragged;
     private RuleOperator operator;
     private Node graphicalRepresentationNode;
     private Label operatorLabel;
@@ -49,11 +47,11 @@ public class ConditionBlock implements CustomNode, Serializable {
      * @param operator            the operator
      * @param metricBlock         the metric block
      * @param value               the value
-     * @param oQueEstaASerDragged the o que esta a ser dragged
+     * @param whatIsBeingDragged  what is being dragged
      */
-    public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value, DraggingObject oQueEstaASerDragged) {
+    public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value, DraggingObject whatIsBeingDragged) {
 
-        this.oQueEstaASerDragged = oQueEstaASerDragged;
+        this.whatIsBeingDragged = whatIsBeingDragged;
         this.operator = operator;
 
         valueLabel = new Label(value);
@@ -76,11 +74,11 @@ public class ConditionBlock implements CustomNode, Serializable {
      *
      * @param operator            the operator
      * @param value               the value
-     * @param oQueEstaASerDragged the o que esta a ser dragged
+     * @param whatIsBeingDragged  what is being dragged
      */
-    public ConditionBlock(RuleOperator operator, String value, DraggingObject oQueEstaASerDragged) {
+    public ConditionBlock(RuleOperator operator, String value, DraggingObject whatIsBeingDragged) {
 
-        this.oQueEstaASerDragged = oQueEstaASerDragged;
+        this.whatIsBeingDragged = whatIsBeingDragged;
         this.operator = operator;
         valueLabel = new Label(value);
 
@@ -101,7 +99,7 @@ public class ConditionBlock implements CustomNode, Serializable {
      */
     public ConditionBlock(RuleOperator operator, MetricBlock metricBlock, String value) {
 
-        this.oQueEstaASerDragged = null;
+        this.whatIsBeingDragged = null;
         this.operator = operator;
         valueLabel = new Label(value);
         this.metricBlock = metricBlock;
@@ -117,9 +115,9 @@ public class ConditionBlock implements CustomNode, Serializable {
     }
 
     /**
-     * Gets rule.
+     * Gets rule label.
      *
-     * @return the rule
+     * @return the rule label
      */
     public String getRule() {
         return ruleLabel.getText();
@@ -138,7 +136,9 @@ public class ConditionBlock implements CustomNode, Serializable {
         return CustomNode.getDefaultWidgetGraphicalRepresentation("CONDITION", "lightblue");
     }
 
-
+    /**
+     * Set what happens when a Condition block is dragged.
+     */
     private void setDrag(VBox vBox) {
 
         vBox.setOnDragOver(event -> {
@@ -155,9 +155,9 @@ public class ConditionBlock implements CustomNode, Serializable {
             if (db.hasContent(FinalMain.customFormat)) {
                 success = true;
 
-                //System.out.println("conditionblock: " + oQueEstaASerDragged);
-                if (oQueEstaASerDragged.getNode().getType() == Types.MetricBlock) {
-                    MetricBlock c1 = (MetricBlock) oQueEstaASerDragged.getNode();
+                //System.out.println("conditionblock: " + whatIsBeingDragged);
+                if (whatIsBeingDragged.getNode().getType() == Types.MetricBlock) {
+                    MetricBlock c1 = (MetricBlock) whatIsBeingDragged.getNode();
 
                     metricBlock = c1;
 
@@ -179,10 +179,10 @@ public class ConditionBlock implements CustomNode, Serializable {
     }
 
     /**
-     * Este método retorna um botão com o design default
+     * Returns a button with the default design
      *
-     * @param label o operator a ser representado no botão
-     * @return um botão com o estilo default e a label pedida
+     * @param label operator being represented in button
+     * @return button with default design and desired label
      */
     private Button getStyledButton(RuleOperator label) {
         return getStyledButton(label, null);
@@ -238,6 +238,11 @@ public class ConditionBlock implements CustomNode, Serializable {
         return button;
     }
 
+    /**
+     * Returns HBox with operator options.
+     *
+     * @return hBox
+     */
     private HBox optionsHBox() {
         HBox hBox = new HBox();
 
@@ -266,6 +271,11 @@ public class ConditionBlock implements CustomNode, Serializable {
 
     }
 
+    /**
+     * Returns an HBox where the value is introduced by user.
+     *
+     * @return hBox
+     */
     private HBox valueHBox() {
 
         Button updateButton = getStyledButton("Update", "#a3ddcb");
@@ -323,6 +333,8 @@ public class ConditionBlock implements CustomNode, Serializable {
     }
 
     /**
+     * Setup the ConditionBlock delete menu
+     *
      * @param box
      */
     private void setHBoxDelete(Node box) {
@@ -345,6 +357,11 @@ public class ConditionBlock implements CustomNode, Serializable {
 
     }
 
+    /**
+     * Setup the ConditionBlock main HBox
+     *
+     * @return box
+     */
     private HBox getHBox() {
         HBox box = new HBox();
 
@@ -431,12 +448,17 @@ public class ConditionBlock implements CustomNode, Serializable {
         return graphicalRepresentationNode;
     }
 
+    /**
+     * Gets operator.
+     *
+     * @return the operator
+     */
     public RuleOperator getOperator() {
         return operator;
     }
 
     /**
-     * Gets value.
+     * Gets text in the valueLabel.
      *
      * @return the value
      */
@@ -444,13 +466,18 @@ public class ConditionBlock implements CustomNode, Serializable {
         return valueLabel.getText();
     }
 
+    /**
+     * Gets block type (ConditionBlock).
+     *
+     * @return Types.ConditionBlock
+     */
     @Override
     public Types getType() {
         return Types.ConditionBlock;
     }
 
     /**
-     * Evaluate boolean.
+     * Evaluate the condition defined by user, comparing the rule value with the value in the param.
      *
      * @param value the value
      * @return the boolean
@@ -473,9 +500,12 @@ public class ConditionBlock implements CustomNode, Serializable {
         return false;
     }
 
+    /**
+     * Gets a copy of this condition block.
+     */
     @Override
     public ConditionBlock getCopy() {
-        return new ConditionBlock(getOperator(), getRuleBlock(), getValue(), oQueEstaASerDragged);
+        return new ConditionBlock(getOperator(), getRuleBlock(), getValue(), whatIsBeingDragged);
     }
 
     @Override
@@ -486,12 +516,6 @@ public class ConditionBlock implements CustomNode, Serializable {
         object.put("ruleLabel", ruleLabel.getText());
         object.put("valueLabel", valueLabel.getText());
         return object.toJSONString();
-//        return "ConditionBlock [ " +
-//                "operator: " + operator.label +
-//                "; ruleLabel: " + ruleLabel.getText() +
-//                "; valueLabel: " + valueLabel.getText() +
-//                " ]";
-
     }
 
 

@@ -2,7 +2,6 @@ package RuleEditor;
 
 import code_smell_detection.RuleOperator;
 import g1.ISCTE.AppStyle;
-import g1.ISCTE.FontType;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -21,21 +20,30 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.json.simple.JSONObject;
 
+/**
+ * The type Logic block.
+ */
 public class LogicBlock implements CustomNode  {
 
     private final Node graphicalRepresentationNode;
-
     public Label andLabel;
     public RuleOperator label;
     private VBox rightLabelVBox;
     private VBox leftLabelVBox;
     private VBox andLabelVBox;
-    private DraggingObject oQueEstaASerDragged = null;
+    private DraggingObject whatIsBeingDragged = null;
     private String boxColor = null;
 
-    public LogicBlock(DraggingObject oQueEstaASerDragged, RuleOperator label, String boxColor) {
+    /**
+     * Instantiates a new Logic block.
+     *
+     * @param whatIsBeingDragged o que esta a ser dragged
+     * @param label               the label
+     * @param boxColor            the box color
+     */
+    public LogicBlock(DraggingObject whatIsBeingDragged, RuleOperator label, String boxColor) {
         this.label = label;
-        this.oQueEstaASerDragged = oQueEstaASerDragged;
+        this.whatIsBeingDragged = whatIsBeingDragged;
         this.boxColor = boxColor;
 
         andLabel = new Label(label.label);
@@ -43,9 +51,14 @@ public class LogicBlock implements CustomNode  {
         graphicalRepresentationNode = getHBox();
     }
 
+    /**
+     * Instantiates a new Logic block.
+     *
+     * @param logicBlock the logic block
+     */
     public LogicBlock(LogicBlock logicBlock){
         this.label = logicBlock.label;
-        this.oQueEstaASerDragged = logicBlock.oQueEstaASerDragged;
+        this.whatIsBeingDragged = logicBlock.whatIsBeingDragged;
         this.boxColor = logicBlock.boxColor;
         andLabel = logicBlock.andLabel;
         this.graphicalRepresentationNode = logicBlock.graphicalRepresentationNode;
@@ -54,22 +67,38 @@ public class LogicBlock implements CustomNode  {
         this.andLabelVBox = logicBlock.andLabelVBox;
     }
 
+    /**
+     * Instantiates a new Logic block.
+     *
+     * @param label the label
+     */
     public LogicBlock(RuleOperator label) {
         this.label = label;
-
         andLabel = new Label(label.label);
-
         graphicalRepresentationNode = getHBox();
     }
 
+    /**
+     * Gets left label v box.
+     *
+     * @return the left label v box
+     */
     public VBox getLeftLabelVBox() {
         return leftLabelVBox;
     }
 
+    /**
+     * Gets right label v box.
+     *
+     * @return the right label v box
+     */
     public VBox getRightLabelVBox() {
         return rightLabelVBox;
     }
 
+    /**
+     * Define what happens when something is dragged.
+     */
     private void setDrag(VBox vBox) {
 
         vBox.setOnDragOver(event -> {
@@ -88,11 +117,9 @@ public class LogicBlock implements CustomNode  {
             if (db.hasContent(FinalMain.customFormat)) {
                 success = true;
 
-                if(oQueEstaASerDragged.getNode().getType() != Types.MetricBlock){
-                    addCustomNodeOnDrag(vBox, oQueEstaASerDragged.getNode().getCopy());
-
+                if(whatIsBeingDragged.getNode().getType() != Types.MetricBlock){
+                    addCustomNodeOnDrag(vBox, whatIsBeingDragged.getNode().getCopy());
                 }
-
             }
 
             event.setDropCompleted(success);
@@ -101,35 +128,34 @@ public class LogicBlock implements CustomNode  {
         });
     }
 
+    /**
+     * Updates the right/left label of the LogicBlock.
+     */
     private void setLabelListener(VBox vBox, Label label) {
         ObservableList<Node> children = vBox.getChildren();
 
-
         children.addListener((ListChangeListener<Node>) change -> {
-
 
             while (change.next()) {
                 if (change.wasRemoved()) {
-
                     if(!change.getRemoved().contains(label)){
                         if (!vBox.getChildren().contains(label)) {
                             vBox.getChildren().add(label);
                         }
                     }
-
                 }
-
             }
 
             if(vBox.getChildren().size() == 2){
                 Platform.runLater(() -> vBox.getChildren().remove(label));
             }
-
         });
-
     }
 
-    private void setAndLabelVBoxDelete() {
+    /**
+     * Set the LogicBlock delete menu, that allows the user to delete a LogicBlock when creating/editing a rule.
+     */
+    private void setLogicBlockVBoxDelete() {
         ContextMenu menu = new ContextMenu();
         andLabelVBox.setOnContextMenuRequested(contextMenuEvent -> menu.show(andLabelVBox.getScene().getWindow(), contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY()));
 
@@ -144,6 +170,11 @@ public class LogicBlock implements CustomNode  {
 
     }
 
+    /**
+     * Set up the HBox and its components.
+     *
+     * @return HBox
+     */
     private VBox getHBox() {
         VBox box = new VBox();
 
@@ -154,11 +185,9 @@ public class LogicBlock implements CustomNode  {
         leftLabelVBox.setAlignment(Pos.CENTER);
         setLabelListener(leftLabelVBox, leftLabel);
 
-
         rightLabelVBox = new VBox(rightLabel);
         rightLabelVBox.setAlignment(Pos.CENTER);
         setLabelListener(rightLabelVBox, rightLabel);
-
 
         setDrag(leftLabelVBox);
         setDrag(rightLabelVBox);
@@ -172,11 +201,9 @@ public class LogicBlock implements CustomNode  {
                 "    -fx-border-radius: 7 7 0 0;\n" +
                 "    -fx-background-color: " + color);
 
-
         andLabelVBox = new VBox(andLabel);
 
-        setAndLabelVBoxDelete();
-
+        setLogicBlockVBoxDelete();
 
         andLabelVBox.setAlignment(Pos.CENTER);
 
@@ -200,13 +227,17 @@ public class LogicBlock implements CustomNode  {
         return box;
     }
 
+    /**
+     * Add custom node on drag.
+     *
+     * @param vBox       the v box
+     * @param customNode the custom node
+     */
     public void addCustomNodeOnDrag(VBox vBox, CustomNode customNode ){
         Platform.runLater(() -> vBox.getChildren().clear());
         Platform.runLater(() -> vBox.getChildren().add(customNode.getGraphicalRepresentation()));
 
-
         FinalMain.ruleNodes.add(customNode);
-
 
         customNode.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
             Dragboard new_DB = customNode.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -217,53 +248,89 @@ public class LogicBlock implements CustomNode  {
 
             ClipboardContent content = new ClipboardContent();
             content.put(FinalMain.customFormat, 1);
-            oQueEstaASerDragged.setNode(customNode);
+            whatIsBeingDragged.setNode(customNode);
 
-            //System.out.println(oQueEstaASerDragged);
             new_DB.setContent(content);
 
             vBox.getChildren().clear();
 
             newEvent.consume();
         });
-
     }
 
-
+    /**
+     * Add to the right side of CustomNode.
+     *
+     * @param customNode the custom node
+     */
     public void addToRight(CustomNode customNode){
         addCustomNodeOnDrag(rightLabelVBox, customNode);
     }
 
+    /**
+     * Add to the left side of CustomNode.
+     *
+     * @param customNode the custom node
+     */
     public void addToLeft(CustomNode customNode){
             addCustomNodeOnDrag(leftLabelVBox, customNode);
     }
 
 
-
+    /**
+     * Gets box color.
+     *
+     * @return the box color
+     */
     public String getBoxColor() {
         return boxColor;
     }
 
+    /**
+     * Gets graphical representation of Node.
+     *
+     * @return graphicalRepresentationNode
+     */
     @Override
     public Node getGraphicalRepresentation() {
         return graphicalRepresentationNode;
     }
 
+    /**
+     * Gets the block type (LogicBlock).
+     *
+     * @return Type.LogicBlock
+     */
     @Override
     public Types getType() {
         return Types.LogicBlock;
     }
 
+    /**
+     * Gets the widgets graphical representation.
+     *
+     * @return Node
+     */
     @Override
     public Node getWidgetGraphicalRepresentation() {
         return CustomNode.getDefaultWidgetGraphicalRepresentation(andLabel.getText(), boxColor);
     }
 
+    /**
+     * Gets the operator label.
+     *
+     * @return operator label
+     */
     @Override
     public RuleOperator getOperator() {
         return label;
     }
 
+    /**
+     * Gets a copy of this block.
+     *
+     * @return copy of block
+     */
     public LogicBlock getCopy() {
         return new LogicBlock(this);
     }
