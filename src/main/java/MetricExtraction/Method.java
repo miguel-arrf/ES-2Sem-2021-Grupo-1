@@ -1,5 +1,7 @@
 package MetricExtraction;
 
+import com.github.javaparser.metamodel.LiteralExprMetaModel;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -38,19 +40,42 @@ public class Method {
      */
     private int calculateCyclo_Method() {
         Scanner scanner = new Scanner(method);
-        int counter = 1;
+        int node = 1;
+        int edge = 0;
+        boolean info = false;
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             line = line.replaceAll("\\s+","");
-            if(line.startsWith("if") || line.startsWith("case") || line.startsWith("for") || line.startsWith("while"))
-                counter++;
+            System.out.println(line);
+            if(line.startsWith("if")) {
+                String conditions[] = line.split("[&|]+");
+                for (String condition : conditions) {
+                    System.out.println(condition + " node+1 e edge+2");
+                    node++;
+                    edge += 2;
+                }
+                continue;
+            }
+            if(!line.equals("{") && !line.equals("}")) {
+                if(!info) {
+                    System.out.println(line + " node+1 e edge+1");
+                    node++;
+                    edge++;
+                    info = true;
+                }else {
+                    info = false;
+                }
+            }
         }
         scanner.close();
-        return counter;
+        System.out.println("");
+        System.out.println("edge: " + edge + " node: " + node);
+        System.out.println(edge - node + 2);
+        return edge - node + 2;
     }
 
     /**
-     * Calculates the total number of the method's lines of code
+     * Calculates the total number oF the method's lines of code
      * @return The total number of the method's lines of code as int
      */
     private int calculateLoc_Method() {
