@@ -1,6 +1,6 @@
 package RuleEditor;
 
-import code_smell_detection.RuleOperator;
+import CodeSmellDetection.RuleOperator;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

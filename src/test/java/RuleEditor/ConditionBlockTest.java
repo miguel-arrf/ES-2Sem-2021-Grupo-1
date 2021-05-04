@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import code_smell_detection.RuleOperator;
+import CodeSmellDetection.RuleOperator;
 import javafx.embed.swing.JFXPanel;
 
 class ConditionBlockTest {

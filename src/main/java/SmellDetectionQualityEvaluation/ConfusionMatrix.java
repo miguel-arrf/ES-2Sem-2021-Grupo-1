@@ -1,4 +1,4 @@
-package smell_detection_quality_evaluation;
+package SmellDetectionQualityEvaluation;
 
 /**
  * Abstract data structure to represent the confusion matrix resultant of the quality assessment made from the detection of code smells

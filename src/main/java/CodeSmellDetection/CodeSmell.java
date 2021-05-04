@@ -1,4 +1,4 @@
-package code_smell_detection;
+package CodeSmellDetection;
 
 /**
  * Abstract data structure to represent a code smell, consisting of it's name, the rule that's used for detection of the smell on source code, and a boolean that indicates whether the smell is detected on classes or on methods

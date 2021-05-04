@@ -1,11 +1,9 @@
 package RuleEditor;
 
-import code_smell_detection.CodeSmell;
-import code_smell_detection.CodeSmellDetector;
-import code_smell_detection.RuleApplier;
+import CodeSmellDetection.CodeSmell;
+import CodeSmellDetection.CodeSmellDetector;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
-import g1.ISCTE.MyTree;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -24,7 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import metric_extraction.MetricExtractor;
+import MetricExtraction.MetricExtractor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 

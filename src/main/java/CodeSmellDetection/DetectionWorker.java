@@ -1,8 +1,8 @@
-package code_smell_detection;
+package CodeSmellDetection;
 
 import RuleEditor.ConditionBlock;
-import metric_extraction.ClassMetrics;
-import metric_extraction.Method;
+import MetricExtraction.ClassMetrics;
+import MetricExtraction.Method;
 
 import java.util.ArrayList;
 import java.util.HashMap;

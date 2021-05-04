@@ -1,7 +1,7 @@
 package g1.ISCTE;
 
 import RuleEditor.RulesManager;
-import code_smell_detection.RuleApplier;
+import CodeSmellDetection.RuleApplier;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -26,9 +26,9 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import metric_extraction.MetricExtractor;
-import smell_detection_quality_evaluation.QualityEvaluator;
-import smell_detection_quality_evaluation.QualityEvaluatorApp;
+import MetricExtraction.MetricExtractor;
+import SmellDetectionQualityEvaluation.QualityEvaluator;
+import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 
 import java.io.File;
 import java.io.IOException;

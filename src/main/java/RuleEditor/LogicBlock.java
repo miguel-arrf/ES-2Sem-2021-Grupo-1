@@ -1,6 +1,6 @@
 package RuleEditor;
 
-import code_smell_detection.RuleOperator;
+import CodeSmellDetection.RuleOperator;
 import g1.ISCTE.AppStyle;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;

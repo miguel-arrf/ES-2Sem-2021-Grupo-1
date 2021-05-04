@@ -1,7 +1,7 @@
 package RuleEditor;
 
-import code_smell_detection.CodeSmell;
-import code_smell_detection.RuleOperator;
+import CodeSmellDetection.CodeSmell;
+import CodeSmellDetection.RuleOperator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;

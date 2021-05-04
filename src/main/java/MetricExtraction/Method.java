@@ -1,4 +1,4 @@
-package metric_extraction;
+package MetricExtraction;
 
 import java.util.HashMap;
 import java.util.Scanner;
