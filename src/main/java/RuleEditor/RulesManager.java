@@ -71,16 +71,11 @@ public class RulesManager extends Application {
     public ObservableList<JSONObject> getRules() {
         return rules;
     }
-
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    
+    public void setFile(File file) {
+    	this.rulesFile = file;
     }
+
 
     /**
      * Gets a File Chooser for rules files.
@@ -147,6 +142,8 @@ public class RulesManager extends Application {
         }
 
     }
+
+
 
     /**
      * Creates the filechooser for the .rule files creation and the button that displays it (and how it will react when pressed).
@@ -357,8 +354,9 @@ public class RulesManager extends Application {
             rulesPanel.getChildren().add(rulePane);
         }
 
-        rulesPanel.getScene();
-        rulesPanel.getScene().getWindow().sizeToScene();
+        if(rulesPanel.getScene() != null)
+            rulesPanel.getScene().getWindow().sizeToScene();
+
 
     }
 
@@ -443,6 +441,7 @@ public class RulesManager extends Application {
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
+        	System.out.println("ENTRÁAAAAMOS AQUI: " + rules.size());
             if (rules.size() == 0) {
                 if(!rulesPanel.getChildren().contains(numberOfRules))
                     rulesPanel.getChildren().add(numberOfRules);
@@ -535,7 +534,7 @@ public class RulesManager extends Application {
     /**
      * Creates the Code Smells for each rule and detects them.
      */
-    public void createCodeSmells( )   {
+    public ArrayList<CodeSmell> createCodeSmells( )   {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
         for(JSONObject entry: rules){
@@ -555,6 +554,8 @@ public class RulesManager extends Application {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        return smells;
 
     }
 
@@ -566,9 +567,7 @@ public class RulesManager extends Application {
      */
     @Override
     public void start(Stage stage) {
-        resetEverything();
-
-        setUpMainPane();
+        setUpGUI();
 
         Scene scene = new Scene(mainPane);
         mainPane.setPrefSize(500, 500);
@@ -587,6 +586,14 @@ public class RulesManager extends Application {
         }
 
     }
+
+    private void setUpGUI(){
+        resetEverything();
+        setUpMainPane();
+        
+    }
+
+
 
     public File getRulesFile() {
         return rulesFile;

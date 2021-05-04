@@ -36,7 +36,6 @@ public class MyTree {
         File[] files = file.listFiles();
 
         for(int i = 0; i < files.length ; i++){
-            //for(File filename: files){
             File filename = files[i];
 
             System.out.println("file: "  + filename.toString());
@@ -102,9 +101,6 @@ public class MyTree {
         }
 
     }
-
-
-
 
     public ScrollPane getScrollPane(File file){
         VBox rootItem = new VBox();
