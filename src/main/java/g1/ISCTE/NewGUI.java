@@ -324,9 +324,9 @@ public class NewGUI extends Application {
             event.consume();
         });
 
-     /*   dragAndDropVBox.getChildren().add(
+       dragAndDropVBox.getChildren().add(
                 AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
-        );*/
+        );
 
 
         Button selectFolder = new Button("Select Folder");
@@ -506,6 +506,9 @@ public class NewGUI extends Application {
                     });
             table.getColumns().add(column);
         }
+
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
 
 
 

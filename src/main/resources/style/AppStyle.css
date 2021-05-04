@@ -150,6 +150,9 @@
     -fx-background-color: #3d3c40;
 }
 
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
 
 .table-view .corner {
     -fx-background-color: transparent;
@@ -174,6 +177,7 @@
 
 .table-view .table-cell{
     -fx-border-color: transparent;
+
 }
 .table-row-cell :hover {
     -fx-background-color: #93f9b911;
@@ -188,6 +192,7 @@
     -fx-background-color: #4e4e4e;
 }
 /* problema até aqui */
+
 /* FIXED :`DDD */
 
 
