@@ -41,9 +41,9 @@ public class RulesManager extends Application {
 
     private static final String FILE_EXTENSION = "rule";
 
-    private  VBox mainPane;
-    private  VBox rulesPanel;
-    private Label numberOfRules;
+    private  VBox mainPane = new VBox();
+    private  VBox rulesPanel = new VBox();
+    private Label numberOfRules = new Label("No Rules");
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
@@ -202,19 +202,19 @@ public class RulesManager extends Application {
 
         updateButton.setOnAction(actionEvent -> {
 
-                if(ruleFileManager.isNameValid(textField.getText())) {
-                    label.setText(textField.getText());
+            if(ruleFileManager.isNameValid(textField.getText())) {
+                label.setText(textField.getText());
 
-                    JSONObject outerName = (JSONObject) jsonObject.get("outerName");
-                    outerName.replace("innerName", textField.getText());
+                JSONObject outerName = (JSONObject) jsonObject.get("outerName");
+                outerName.replace("innerName", textField.getText());
 
-                    jsonObject.replace("outerName", outerName);
+                jsonObject.replace("outerName", outerName);
 
-                    ruleFileManager.saveJSONListToFile(rules);
-                    Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
-                } else {
-                    System.out.println("Nome inválido");
-                }
+                ruleFileManager.saveJSONListToFile(rules);
+                Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+            } else {
+                System.out.println("Nome inválido");
+            }
 
         });
 
@@ -348,11 +348,9 @@ public class RulesManager extends Application {
      */
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
-        
+
         if(rules.size() == 0)
             rulesPanel.getChildren().add(numberOfRules);
-
-        rulesPanel.getChildren().add(numberOfRules);
 
         for (JSONObject entry : rules) {
             Node rulePane = getRulePane(entry);
@@ -445,7 +443,6 @@ public class RulesManager extends Application {
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
-            System.out.println("rules size: "  + rules.size());
             if (rules.size() == 0) {
                 if(!rulesPanel.getChildren().contains(numberOfRules))
                     rulesPanel.getChildren().add(numberOfRules);
@@ -584,10 +581,10 @@ public class RulesManager extends Application {
         stage.setScene(scene);
         stage.show();
 
-      if(rulesFile != null){
-          loadFile();
-          ruleFileManager.setRules(rules);
-      }
+        if(rulesFile != null){
+            loadFile();
+            ruleFileManager.setRules(rules);
+        }
 
     }
 
