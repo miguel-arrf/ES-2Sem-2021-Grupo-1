@@ -41,9 +41,9 @@ public class RulesManager extends Application {
 
     private static final String FILE_EXTENSION = "rule";
 
-    private  VBox mainPane = new VBox();
-    private  VBox rulesPanel = new VBox();
-    private Label numberOfRules = new Label("No Rules");
+    private  VBox mainPane;
+    private  VBox rulesPanel;
+    private Label numberOfRules;
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
     private Button addNewRuleButton;
@@ -349,6 +349,8 @@ public class RulesManager extends Application {
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
 
+        rulesPanel.getChildren().add(numberOfRules);
+
         for (JSONObject entry : rules) {
             Node rulePane = getRulePane(entry);
             rulesPanel.getChildren().add(rulePane);
@@ -434,13 +436,13 @@ public class RulesManager extends Application {
      * Sets up the main pane and deals with the initiation of the GUI.
      */
     private void setUpMainPane() {
-
         mainPane.setSpacing(20);
         mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
+            System.out.println("rules size: "  + rules.size());
             if (rules.size() == 0) {
                 numberOfRules.setText("No Rules");
                 numberOfRules.setGraphic(getIcon("bird.png"));
