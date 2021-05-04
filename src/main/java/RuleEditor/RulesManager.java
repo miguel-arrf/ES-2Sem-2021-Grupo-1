@@ -350,6 +350,9 @@ public class RulesManager extends Application {
      */
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
+        
+        if(rules.size() == 0)
+            rulesPanel.getChildren().add(numberOfRules);
 
         for (JSONObject entry : rules) {
             Node rulePane = getRulePane(entry);
@@ -444,11 +447,12 @@ public class RulesManager extends Application {
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
             if (rules.size() == 0) {
+                if(!rulesPanel.getChildren().contains(numberOfRules))
+                    rulesPanel.getChildren().add(numberOfRules);
                 numberOfRules.setText("No Rules");
                 numberOfRules.setGraphic(getIcon("bird.png"));
             } else {
-                numberOfRules.setText(rules.size() + " rules");
-                numberOfRules.setGraphic(null);
+                rulesPanel.getChildren().remove(numberOfRules);
             }
         });
 

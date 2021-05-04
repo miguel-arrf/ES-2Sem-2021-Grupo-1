@@ -52,6 +52,7 @@ public class NewGUI extends Application {
     private VBox leftUnderVBox;
     private VBox leftPane;
     private VBox buttonsBox;
+    private Button processRulesButton = setUpProcessRulesButton();
 
     //SavedRules
     private RulesManager rulesManager = new RulesManager();
@@ -107,7 +108,7 @@ public class NewGUI extends Application {
         rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-        //  rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+        //rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
@@ -120,6 +121,11 @@ public class NewGUI extends Application {
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
                 System.out.println("REGRAS: " + rulesManager.getRules().size());
+                if(rulesManager.getRules().size() == 0) {
+                    processRulesButton.setDisable(true);
+                } else {
+                    processRulesButton.setDisable(false);
+                }
             });
 
 
@@ -152,7 +158,7 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox, setUpProcessRulesButton());
+        emptyLeftPane.getChildren().addAll(buttonsBox, processRulesButton);
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
@@ -167,17 +173,18 @@ public class NewGUI extends Application {
         processRulesButton.setMaxWidth(Double.MAX_VALUE);
         processRulesButton.getStyleClass().add("selectShowMetricsButton");
         // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+        processRulesButton.setDisable(true);
 
         processRulesButton.setOnMouseClicked(mouseEvent -> {
 
             try {
-                if (rulesManager.getRulesFile() != null) {
+                if (rulesManager.getRulesFile() != null && rulesManager.getRules().size() > 0) {
                     rulesManager.loadFile();
                     rulesManager.createCodeSmells();
                     RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
                     ra.mandar();
+                    updateCenterPane();
                 }
-                updateCenterPane();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -509,15 +516,6 @@ public class NewGUI extends Application {
 
         stage.setScene(scene);
         stage.show();
-
-        //APAGAR
-        /*HashMap<String, ArrayList<String>> map = new HashMap<>();
-        ArrayList<String> s =  new ArrayList<>();
-        s.add("toString");
-        map.put("isFrog",s);
-        RuleApplier ra = new RuleApplier(map,"C");
-        ra.mandar();*/
-
     }
 
     private void fillTable(String[] cols, String[][] dataSource) {
