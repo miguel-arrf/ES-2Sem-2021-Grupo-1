@@ -47,7 +47,7 @@ public class CodeSmellDetector {
      */
     public void runDetection() throws InterruptedException {
         ArrayList<DetectionWorker> workers = new ArrayList<>();
-        ExecutorService threadPool = Executors.newFixedThreadPool(codeSmells.size());
+        ExecutorService threadPool = Executors.newFixedThreadPool(codeSmells.size() + 1);
         for(CodeSmell codeSmell: codeSmells) {
             DetectionWorker worker = new DetectionWorker(codeSmell, metrics);
             threadPool.execute(worker);
@@ -67,12 +67,14 @@ public class CodeSmellDetector {
      */
     private void printResults() {
         for(String codeSmell : results.keySet()) {
-            ArrayList<String> values = results.get(codeSmell);
-            if(values.isEmpty()) {
-                System.out.println("The code smell " + codeSmell + " was not detected in the code");
-            } else {
-                System.out.println("The code smell " + codeSmell + " was found in:");
-                for(String value : values) System.out.println(value);
+            if(!codeSmell.equals("NoCodeSmellDetected")) {
+                ArrayList<String> values = results.get(codeSmell);
+                if (values.isEmpty()) {
+                    System.out.println("The code smell " + codeSmell + " was not detected in the code");
+                } else {
+                    System.out.println("The code smell " + codeSmell + " was found in:");
+                    for (String value : values) System.out.println(value);
+                }
             }
         }
     }

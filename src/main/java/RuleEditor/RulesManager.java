@@ -545,7 +545,7 @@ public class RulesManager extends Application {
 
         }
 
-        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getMetrics(), smells);
+        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
         try {
             detector.runDetection();
             results = detector.getResults();

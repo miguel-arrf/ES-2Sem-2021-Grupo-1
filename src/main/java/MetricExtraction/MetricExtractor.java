@@ -48,13 +48,9 @@ public class MetricExtractor {
     }
 
     /**
-     * Gets the extracted metrics from the source code
-     * @return An ArrayList of ClassMetrics instances
+     * Gets the directory on which to save the extraction results
+     * @return The destination directory for the extraction results
      */
-    public ArrayList<ClassMetrics> getMetrics() {
-        return metrics;
-    }
-  
     public String getFinalPath() { return destination_directory + "/" + exported_file_name ; }
 
     /**
@@ -179,6 +175,10 @@ public class MetricExtractor {
         }
     }
 
+    /**
+     * Gets the extracted metrics from the source code
+     * @return An ArrayList of ClassMetrics instances
+     */
     public ArrayList<ClassMetrics> getResults() {
         return metrics;
 

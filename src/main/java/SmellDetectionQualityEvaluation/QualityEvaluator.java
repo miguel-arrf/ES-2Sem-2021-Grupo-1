@@ -123,7 +123,7 @@ public class QualityEvaluator {
         extractor.executeExtraction();
 
         ArrayList<CodeSmell> smells = initializeCodeSmells();
-        CodeSmellDetector detector = new CodeSmellDetector(extractor.getMetrics(), smells);
+        CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
         detector.runDetection();
 
         return detector.getResults();
