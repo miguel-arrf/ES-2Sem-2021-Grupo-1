@@ -4,7 +4,9 @@ import org.apache.poi.xssf.usermodel.*;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,10 +85,6 @@ public class MetricExtractor {
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
             XSSFSheet mySheet = workBook.createSheet("Code Smells");
-//            Investigar:
-//            https://poi.apache.org/apidocs/4.0/org/apache/poi/hslf/usermodel/HSLFTextShape.html
-//            TextShape.setTextAutofit(TextAutofit.SHAPE);
-
             XSSFFont boldFont = workBook.createFont();
             boldFont.setBold(true);
             String[] metricName = new String[11];
@@ -129,32 +127,10 @@ public class MetricExtractor {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z-1]);
 
-                        //Adicionei aqui este código para que, caso seja um valor numérico, assim seja interpretado.
-                        /*if(z == 8){
-                            //myCell.setCellValue(Integer.parseInt(oneMethod[z-1]));
-                            //System.out.print("antes: " + myCell.getStringCellValue());
-
-                            //myCell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
-                            //System.out.print(" depois: " + myCell.getNumericCellValue());
-                            //System.out.println();
-                        }*/
-
-
                     }
                 }
             }
 
-            //Adicionar lista 'results' que contém as métricas de cada ficheiro .java
-
-
-
-
-
-
-
-
-
-            //
             File file = new File(destination_directory);
 
             if (!file.exists()) {
@@ -170,7 +146,7 @@ public class MetricExtractor {
             workBook.write(excelCreator);
             excelCreator.close();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
