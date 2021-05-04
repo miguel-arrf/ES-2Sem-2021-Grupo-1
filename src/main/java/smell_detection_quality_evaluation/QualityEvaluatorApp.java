@@ -51,12 +51,7 @@ public class QualityEvaluatorApp extends Application {
         stage.show();
     }
 
-    /**
-     * Method in charge of initializing the GUI.
-     *
-     * @return the scene containing the interface
-     */
-    private Scene initializeGUI() {
+    public VBox initializeMainPane(){
 
         mainBox = new VBox(createMatrix());
         mainBox.setSpacing(20);
@@ -82,6 +77,8 @@ public class QualityEvaluatorApp extends Application {
         progressBar.setMinHeight(15);
 
         choiceBox.setValue("All");
+        choiceBox.setMaxWidth(Double.MAX_VALUE);
+
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
             System.out.println("selected: "  + possibleValues[t1.intValue()]);
 
@@ -97,6 +94,17 @@ public class QualityEvaluatorApp extends Application {
 
 
         });
+
+        return mainBox;
+    }
+
+    /**
+     * Method in charge of initializing the GUI.
+     *
+     * @return the scene containing the interface
+     */
+    private Scene initializeGUI() {
+        initializeMainPane();
 
         Scene scene = new Scene(mainBox);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
@@ -173,11 +181,12 @@ public class QualityEvaluatorApp extends Application {
 
         progressBar.progressProperty().addListener((observableValue, number, t1) -> {
             if(t1.doubleValue() == 1){
-                addButtonVBox.getChildren().remove(progressBar);
+                //addButtonVBox.getChildren().remove(progressBar);
+                mainBox.getChildren().remove(addButtonVBox);
                 progressBar.setProgress(0.0);
                 updateLabelValues(evaluator.getEvaluation().getConfusionMatrix());
                 if(!mainBox.getChildren().contains(choiceBox)){
-                    mainBox.getChildren().add(2,choiceBox);
+                    mainBox.getChildren().add(1,choiceBox);
                 }
 
             }

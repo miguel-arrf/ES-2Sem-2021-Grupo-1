@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import metric_extraction.MetricExtractor;
+import smell_detection_quality_evaluation.QualityEvaluator;
+import smell_detection_quality_evaluation.QualityEvaluatorApp;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,33 +38,49 @@ import java.util.TimerTask;
 
 public class NewGUI extends Application {
 
-    private Stage stage;
-    private File selectedFile = null;
-    private String docPath = "";
-
     //Right Side
     private final VBox centerPane = new VBox();
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
-    public TableView table = new TableView();
-    private VBox centerPaneVBox;
-
     //Left Side
     private final VBox filePane = new VBox();
+    public TableView table = new TableView();
+    private Stage stage;
+    private File selectedFile = null;
+    private String docPath = "";
+    private VBox centerPaneVBox;
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
     private VBox leftPane;
+    private VBox buttonsBox;
 
     //SavedRules
     private RulesManager rulesManager = new RulesManager();
     private MetricExtractor metricExtractor;
 
 
-
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
         launch(args);
     }
 
-    private VBox getLeft(){
+    public static void blurBackground(double startValue, double endValue, double duration, Node pane) {
+        GaussianBlur gaussianBlur = new GaussianBlur(startValue);
+        SimpleDoubleProperty value = new SimpleDoubleProperty(startValue);
+
+        pane.setEffect(gaussianBlur);
+
+        value.addListener((observableValue, number, t1) -> {
+            gaussianBlur.setRadius(t1.doubleValue());
+        });
+
+        Timeline timeline = new Timeline();
+        KeyValue kv = new KeyValue(value, endValue);
+        KeyFrame kf = new KeyFrame(Duration.millis(duration), kv);
+
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
+    }
+
+    private VBox getLeft() {
         VBox leftVBox = new VBox();
 
         leftVBox.setPrefWidth(250);
@@ -79,17 +97,17 @@ public class NewGUI extends Application {
 
         filePane.setSpacing(15);
 
-        leftVBox.setPadding(new Insets(15,15,15,15));
+        leftVBox.setPadding(new Insets(15, 15, 15, 15));
 
         return leftVBox;
     }
 
-    private VBox getButtonsLeft(){
+    private VBox getButtonsLeft() {
         Button rulesEditor = new Button("Editor De Regras");
         rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-      //  rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+        //  rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
@@ -111,7 +129,7 @@ public class NewGUI extends Application {
         showMetrics.setTextFill(Color.BLACK);
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
-       // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+        // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
 
@@ -132,7 +150,7 @@ public class NewGUI extends Application {
         HBox.setHgrow(rulesEditor, Priority.ALWAYS);
         HBox.setHgrow(showMetrics, Priority.ALWAYS);
 
-        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+        emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
         emptyLeftPane.getChildren().addAll(buttonsBox, setUpProcessRulesButton());
 
@@ -153,10 +171,10 @@ public class NewGUI extends Application {
         processRulesButton.setOnMouseClicked(mouseEvent -> {
 
             try {
-                if(rulesManager.getRulesFile() != null){
+                if (rulesManager.getRulesFile() != null) {
                     rulesManager.loadFile();
                     rulesManager.createCodeSmells();
-                    RuleApplier ra = new RuleApplier(rulesManager.getResults(),docPath);
+                    RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
                     ra.mandar();
                 }
                 updateCenterPane();
@@ -168,20 +186,20 @@ public class NewGUI extends Application {
         return processRulesButton;
     }
 
-    private void updateFilePane(){
-        if (selectedFile != null){
+    private void updateFilePane() {
+        if (selectedFile != null) {
 
             filePane.getChildren().clear();
 
-            filePane.setPadding(new Insets(15,0,0,0));
+            filePane.setPadding(new Insets(15, 0, 0, 0));
 
             filePane.getChildren().addAll(getButtonsLeft());
             filePane.setSpacing(15);
 
-            if(selectedFile.isDirectory()){
+            if (selectedFile.isDirectory()) {
 
 
-                 MyTree myTree = new MyTree();
+                MyTree myTree = new MyTree();
 
                 ScrollPane scrollPane = myTree.getScrollPane(selectedFile);
                 VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -203,29 +221,20 @@ public class NewGUI extends Application {
         }
     }
 
-    private Pane getSpacer(){
+    private Pane getSpacer() {
         Pane pane = new Pane();
         pane.setPrefHeight(5);
 
         return pane;
     }
 
+    private Button getProcessProjectButton() {
+        Button processProjectButton = getGrowingButtonWithCSSClass("Processar Projeto", "processProjectButton");
 
-    private VBox getEmptyLeftPane(){
-
-        VBox emptyLeftPane = new VBox();
-        emptyLeftPane.setSpacing(10);
-
-        Button calcMetrics = new Button("Processar Projeto");
-        calcMetrics.setTextFill(Color.WHITE);
-        calcMetrics.setMaxWidth(Double.MAX_VALUE);
-        calcMetrics.getStyleClass().add("selectFolderButton");
-      //  calcMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
-
-        calcMetrics.setOnMouseClicked(event -> {
+        processProjectButton.setOnMouseClicked(event -> {
             blurBackground(0, 30, 500, leftPane);
 
-            new Thread(){
+            new Thread() {
                 @Override
                 public void run() {
                     super.run();
@@ -239,16 +248,90 @@ public class NewGUI extends Application {
                     }
 
 
-                    Platform.runLater(() ->{
+                    Platform.runLater(() -> {
                         updateFilePane();
                         blurBackground(30, 0, 500, leftPane);
-                    } );
+                    });
                 }
             }.start();
 
         });
 
-        calcMetrics.setDisable(true);
+        processProjectButton.setDisable(true);
+
+        return processProjectButton;
+    }
+
+    private Button getSelectFolderButton(Button processProjectButton) {
+        Button selectFolder = getGrowingButtonWithCSSClass("Select Folder", "selectFolderButton");
+
+        selectFolder.setOnMouseClicked(event -> {
+            final DirectoryChooser directoryChooser =
+                    new DirectoryChooser();
+            final File selectedDirectory =
+                    directoryChooser.showDialog(selectFolder.getScene().getWindow());
+            if (selectedDirectory != null) {
+                selectedFile = selectedDirectory;
+                processProjectButton.setDisable(false);
+            } else {
+                processProjectButton.setDisable(true);
+            }
+        });
+
+        return selectFolder;
+    }
+
+    private Button getGrowingButtonWithCSSClass(String label, String css) {
+        Button selectFolder = new Button(label);
+        selectFolder.setTextFill(Color.WHITE);
+        selectFolder.setMaxWidth(Double.MAX_VALUE);
+        selectFolder.getStyleClass().add(css);
+        HBox.setHgrow(selectFolder, Priority.ALWAYS);
+
+        return selectFolder;
+    }
+
+    private Button getDefaultProjectButton(Button processProjectButton) {
+        Button selectFolder = getGrowingButtonWithCSSClass("Load JASML Project", "loadJASMLButton");
+
+        selectFolder.setOnMouseClicked(event -> {
+
+            QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
+            VBox mainpane = qualityEvaluatorApp.initializeMainPane();
+
+            selectedFile = QualityEvaluator.getDefaultProject();
+            processProjectButton.setDisable(false);
+            selectFolder.setDisable(true);
+
+            Button showConfusionMatrix = getGrowingButtonWithCSSClass("Show confusion matrix", "showConfusionMatrixButton");
+            if (!buttonsBox.getChildren().contains(showConfusionMatrix)) {
+                buttonsBox.getChildren().add(showConfusionMatrix);
+            }
+
+            showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
+
+
+                mainpane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.darkGrayBoxColor));
+                centerPane.getChildren().clear();
+                centerPane.getChildren().add(mainpane);
+                mainpane.setMaxWidth(Double.MAX_VALUE);
+                mainpane.setMaxHeight(Double.MAX_VALUE);
+                VBox.setVgrow(mainpane, Priority.ALWAYS);
+
+            });
+
+
+        });
+
+        return selectFolder;
+    }
+
+    private VBox getEmptyLeftPane() {
+
+        VBox emptyLeftPane = new VBox();
+        emptyLeftPane.setSpacing(10);
+
+        Button processProjectButton = getProcessProjectButton();
 
         VBox dragAndDropVBox = new VBox();
         dragAndDropVBox.setPrefHeight(50);
@@ -270,24 +353,23 @@ public class NewGUI extends Application {
             if (db.hasFiles()) {
                 File file = db.getFiles().get(0);
 
-                if(file.isDirectory()){
+                if (file.isDirectory()) {
                     stage.setTitle(file.getName());
 
                     String name = file.getName();
                     //webEngine.executeScript("changeFirstBox("+"'"+ name +"'"+ ")");
 
                     selectedFile = file;
-                    calcMetrics.setDisable(false);
+                    processProjectButton.setDisable(false);
                     success = true;
-                }else{
-                    calcMetrics.setDisable(true);
+                } else {
+                    processProjectButton.setDisable(true);
                     blurBackground(0, 30, 500, leftUnderVBox);
 
                     Label selectFolder = new Label("Drag a folder, not a file!");
                     selectFolder.setTextFill(Color.WHITE);
                     selectFolder.setMaxWidth(Double.MAX_VALUE);
                     selectFolder.getStyleClass().add("errorLabel");
-             //       selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 15));
                     selectFolder.setWrapText(true);
                     selectFolder.setAlignment(Pos.CENTER);
                     selectFolder.setPadding(new Insets(10));
@@ -295,7 +377,7 @@ public class NewGUI extends Application {
                     VBox overlayVBox = new VBox();
                     overlayVBox.getChildren().add(selectFolder);
                     overlayVBox.setAlignment(Pos.CENTER);
-                    overlayVBox.setPadding(new Insets(10,10,10,10));
+                    overlayVBox.setPadding(new Insets(10, 10, 10, 10));
 
                     overlayVBox.setMinHeight(190);
 
@@ -324,38 +406,25 @@ public class NewGUI extends Application {
             event.consume();
         });
 
-       dragAndDropVBox.getChildren().add(
+        dragAndDropVBox.getChildren().add(
                 AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
         );
 
 
-        Button selectFolder = new Button("Select Folder");
-        selectFolder.setTextFill(Color.WHITE);
-        selectFolder.setMaxWidth(Double.MAX_VALUE);
-        selectFolder.getStyleClass().add("selectFolderButton");
-       // selectFolder.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
+        HBox selectFolderANDLoadDefaulProjectHBOX = new HBox();
+        Button selectFolder = getSelectFolderButton(processProjectButton);
+        selectFolderANDLoadDefaulProjectHBOX.setSpacing(10);
 
-        selectFolder.setOnMouseClicked(event -> {
-            final DirectoryChooser directoryChooser =
-                    new DirectoryChooser();
-            final File selectedDirectory =
-                    directoryChooser.showDialog(selectFolder.getScene().getWindow());
-            if (selectedDirectory != null) {
-                selectedFile = selectedDirectory;
-                calcMetrics.setDisable(false);
-            } else {  calcMetrics.setDisable(true); }
-        });
+        selectFolderANDLoadDefaulProjectHBOX.getChildren().addAll(selectFolder, getDefaultProjectButton(processProjectButton));
 
-
-        VBox buttonsBox = new VBox(selectFolder, calcMetrics);
+        buttonsBox = new VBox(selectFolderANDLoadDefaulProjectHBOX, processProjectButton);
         buttonsBox.setSpacing(10);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(selectFolder, Priority.ALWAYS);
 
-        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+        emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
-        emptyLeftPane.getChildren().addAll(AppStyle.getTitleLabel("Select you Java Project!"), AppStyle.getSubTitleLabel("Folder should have a java project"),getSpacer(), dragAndDropVBox,getSpacer(), buttonsBox);
+        emptyLeftPane.getChildren().addAll(AppStyle.getTitleLabel("Select you Java Project!"), AppStyle.getSubTitleLabel("Folder should have a java project"), getSpacer(), dragAndDropVBox, getSpacer(), buttonsBox);
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
@@ -367,27 +436,27 @@ public class NewGUI extends Application {
     private void updateCenterPane() throws IOException {
         //Passar isto para classe separada e arranjar ordenação
 
-        ProjectInfo pi = new ProjectInfo(ProjectInfo.createWorkbook(docPath));
-        String[] metrics = pi.getMainMetricsInfo();
-        ArrayList<ArrayList<String>> tableData = pi.getMetricsTable();
+        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(docPath));
+        String[] metrics = projectInfo.getMainMetricsInfo();
+        ArrayList<ArrayList<String>> tableData = projectInfo.getMetricsTable();
 
         String[][] sdata = new String[tableData.size()][tableData.get(0).size()];
         String[] cols = new String[tableData.size()];
         int j = 0;
-        for(int a = 1; a!=tableData.size()-1; a++) {
+        for (int a = 1; a != tableData.size() - 1; a++) {
             ArrayList<String> al = tableData.get(a);
-            for(String s : al) {
-                sdata[a-1][j] = s;
+            for (String s : al) {
+                sdata[a - 1][j] = s;
                 j++;
             }
             j = 0;
         }
         int i = 0;
-        for(String s : tableData.get(0))
+        for (String s : tableData.get(0))
             cols[i++] = s;
-        fillTable(cols,sdata);
+        fillTable(cols, sdata);
 
-        for(int a = 0; a < metrics.length && a <metricBoxes.size(); a++){
+        for (int a = 0; a < metrics.length && a < metricBoxes.size(); a++) {
             metricBoxes.get(a).setText(metrics[a]);
         }
 
@@ -400,9 +469,7 @@ public class NewGUI extends Application {
 
     }
 
-
-
-    private VBox centerPane(){
+    private VBox centerPane() {
         centerPaneVBox = new VBox();
         centerPaneVBox.setSpacing(15);
 
@@ -410,7 +477,7 @@ public class NewGUI extends Application {
         centerPane.setAlignment(Pos.CENTER);
 
         VBox.setVgrow(centerPane, Priority.ALWAYS);
-        centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/,centerPane);
+        centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/, centerPane);
 
         centerPaneVBox.setPadding(new Insets(15));
 
@@ -435,7 +502,7 @@ public class NewGUI extends Application {
 
         splitPane.getItems().addAll(leftPane, centerPane());
 
-        Scene scene = new Scene(splitPane,1000,800);
+        Scene scene = new Scene(splitPane, 1000, 800);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         stage.setMinWidth(1000);
         stage.setMinHeight(400);
@@ -453,7 +520,7 @@ public class NewGUI extends Application {
 
     }
 
-    private void fillTable(String[] cols,String[][] dataSource) {
+    private void fillTable(String[] cols, String[][] dataSource) {
         //table.setPadding(new Insets(5,0,0,0));
 
         table.getColumns().clear();
@@ -463,7 +530,7 @@ public class NewGUI extends Application {
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
 
-      //  Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
+        //  Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
 
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
@@ -479,18 +546,15 @@ public class NewGUI extends Application {
 
                 @Override
                 public TableCell call(Object param) {
-                    return new TableCell<String, String>(){
+                    return new TableCell<String, String>() {
                         public void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
 
-                            if(isEmpty())
-                            {
+                            if (isEmpty()) {
                                 setText("");
-                            }
-                            else
-                            {
+                            } else {
                                 setTextFill(Color.web("#d1d1d1"));
-         //                       setFont(AppStyle.getFont(FontType.REGULAR, 14));
+                                //                       setFont(AppStyle.getFont(FontType.REGULAR, 14));
                                 setText(item);
                             }
                         }
@@ -510,33 +574,12 @@ public class NewGUI extends Application {
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 
-
-
-
     }
 
-    public static void blurBackground(double startValue, double endValue, double duration, Node pane){
-        GaussianBlur gaussianBlur = new GaussianBlur(startValue);
-        SimpleDoubleProperty value = new SimpleDoubleProperty(startValue);
-
-        pane.setEffect(gaussianBlur);
-
-        value.addListener((observableValue, number, t1) -> {
-            gaussianBlur.setRadius(t1.doubleValue());
-        });
-
-        Timeline timeline = new Timeline();
-        KeyValue kv = new KeyValue(value, endValue);
-        KeyFrame kf = new KeyFrame(Duration.millis(duration), kv);
-
-        timeline.getKeyFrames().add(kf);
-        timeline.play();
-    }
-
-    private HBox getInfoBoxes(){
+    private HBox getInfoBoxes() {
         VBox infoBox = getSquareInfoBox("Número total de packages", "?");
         VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
-        VBox infoBox2  = getSquareInfoBox("Número total de métodos", "?");
+        VBox infoBox2 = getSquareInfoBox("Número total de métodos", "?");
         VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", "?");
 
         AppStyle.addFadingInGroup(1000, 500, infoBox, infoBox1, infoBox2, infoBox3);
@@ -555,13 +598,13 @@ public class NewGUI extends Application {
         return infoBoxes;
     }
 
-    private VBox getSquareInfoBox(String typeOfInfo, String number){
+    private VBox getSquareInfoBox(String typeOfInfo, String number) {
         VBox emptyLeftPane = new VBox();
 
         emptyLeftPane.setSpacing(10);
-        emptyLeftPane.setPadding(new Insets(10,10,10,10));
+        emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
-        emptyLeftPane.setPrefSize(150,120);
+        emptyLeftPane.setPrefSize(150, 120);
         emptyLeftPane.setMinHeight(120);
         emptyLeftPane.setMinWidth(150);
 
@@ -570,9 +613,9 @@ public class NewGUI extends Application {
         typeOfInfoLabel.setWrapText(true);
 
         Label numberLabel = new Label(number);
-      //  numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
+        //  numberLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         numberLabel.setTextFill(Color.BLACK);
-        numberLabel.setPadding(new Insets(2,2,2,2));
+        numberLabel.setPadding(new Insets(2, 2, 2, 2));
         numberLabel.setMinWidth(20);
         numberLabel.setAlignment(Pos.CENTER);
 
@@ -589,7 +632,6 @@ public class NewGUI extends Application {
 
         return emptyLeftPane;
     }
-
 
 
 }
