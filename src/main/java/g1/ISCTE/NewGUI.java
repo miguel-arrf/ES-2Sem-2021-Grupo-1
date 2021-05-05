@@ -493,22 +493,11 @@ public class NewGUI extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        this.stage = stage;
+    	this.stage = stage;
+        SplitPane splitPane = initializeGUI(stage);
 
         stage.setTitle("CodeSmells Detector");
-
-        SplitPane splitPane = new SplitPane();
-        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
-
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
-
-        leftPane = getLeft();
-        leftPane.setMinWidth(300);
-
-        splitPane.setDividerPositions(0.20);
-
-        splitPane.getItems().addAll(leftPane, centerPane());
-
         Scene scene = new Scene(splitPane, 1000, 800);
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         stage.setMinWidth(1000);
@@ -516,6 +505,22 @@ public class NewGUI extends Application {
 
         stage.setScene(scene);
         stage.show();
+    }
+    
+    public SplitPane initializeGUI(Stage stage) {
+    	System.out.println("im here");
+        SplitPane splitPane = new SplitPane();
+        splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
+
+
+        leftPane = getLeft();
+        leftPane.setMinWidth(300);
+
+        splitPane.setDividerPositions(0.20);
+
+        splitPane.getItems().addAll(leftPane, centerPane());
+        
+        return splitPane;
     }
 
     private void fillTable(String[] cols, String[][] dataSource) {

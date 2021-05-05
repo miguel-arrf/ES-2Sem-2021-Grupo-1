@@ -1,6 +1,9 @@
 package g1.ISCTE;
 
 
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,13 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 
 class MyTreeTest {
 	

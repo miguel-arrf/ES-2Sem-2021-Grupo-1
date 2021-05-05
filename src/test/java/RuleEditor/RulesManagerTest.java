@@ -1,6 +1,12 @@
 package RuleEditor;
 
 import static org.junit.jupiter.api.Assertions.*;
+import MetricExtraction.MetricExtractor;
+import g1.ISCTE.MyTree;
+import javafx.embed.swing.JFXPanel;
+import javafx.scene.control.Label;
+import org.json.simple.JSONObject;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -9,17 +15,8 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.dom4j.rule.RuleManager;
-import org.json.simple.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import MetricExtraction.MetricExtractor;
-import g1.ISCTE.MyTree;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RulesManagerTest {
 
