@@ -1,7 +1,5 @@
 package RuleEditor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -40,7 +38,7 @@ class RulesManagerTest {
 		field.setAccessible(true);
 		
 		MetricExtractor metricExtractorInRulesManager = (MetricExtractor) field.get(rulesManager);
-		assertEquals("Fields didn't match", metricExtractorInRulesManager, metricExtractor);		
+		assertEquals(metricExtractorInRulesManager, metricExtractor);
 	}
 
 	@Test

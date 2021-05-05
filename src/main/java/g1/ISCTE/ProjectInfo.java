@@ -1,6 +1,5 @@
 package g1.ISCTE;
 
-import com.github.javaparser.UnicodeEscapeProcessingProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,11 +12,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * The type Project info.
+ */
 public class ProjectInfo {
 
     private XSSFSheet sheet;
-    private int NUM_OF_COLUMNS = 11;
+    private final int NUM_OF_COLUMNS = 11;
 
+    /**
+     * Create an excel workbook.
+     *
+     * @param path the path
+     * @return the xssf workbook
+     * @throws IOException the io exception
+     */
     public static XSSFWorkbook createWorkbook(String path) throws IOException {
         File file = new File(path);
         FileInputStream fip = new FileInputStream(file);
@@ -25,10 +34,20 @@ public class ProjectInfo {
         return workbook;
     }
 
+    /**
+     * Instantiates a new Project info.
+     *
+     * @param workbook the workbook
+     */
     public ProjectInfo(XSSFWorkbook workbook) {
         this.sheet = workbook.getSheetAt(0);
     }
 
+    /**
+     * Count the different number of packages represented in the excel sheet.
+     *
+     * @return int number of packages
+     */
     public int packageCounter() {
         Iterator<Row> itr = sheet.iterator();
         ArrayList<String> packageList = new ArrayList<>();
@@ -43,6 +62,11 @@ public class ProjectInfo {
         return packageList.size();
     }
 
+    /**
+     * Count the different number of classes represented in the excel sheet.
+     *
+     * @return the int
+     */
     public int classCounter() {
         Iterator<Row> itr = sheet.iterator();
         ArrayList<String> classList = new ArrayList<>();
@@ -57,6 +81,11 @@ public class ProjectInfo {
         return classList.size();
     }
 
+    /**
+     * Count the different number of methods represented in the excel sheet.
+     *
+     * @return the int
+     */
     public int methodCounter() {
         Iterator<Row> itr = sheet.iterator();
         ArrayList<String> methodList = new ArrayList<>();
@@ -71,6 +100,11 @@ public class ProjectInfo {
         return methodList.size();
     }
 
+    /**
+     * Count the number of project total lines of code, using the information given in the excel sheet.
+     *
+     * @return int number of lines of code
+     */
     public int lineCounter() {
         Iterator<Row> itr = sheet.iterator();
         int counter = 0;
@@ -78,22 +112,22 @@ public class ProjectInfo {
         while (itr.hasNext()) {
             Row row = itr.next();
             Cell cell = row.getCell(8, Row.CREATE_NULL_AS_BLANK);
-            //if(cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
             try{
                 counter += Integer.parseInt(cell.getStringCellValue());
             }catch (NumberFormatException numberFormatException){
                 System.err.println("There was a problem while extracting data from metrics.");
             }
-            //System.out.println(cell.getStringCellValue());
-                //counter += cell.getNumericCellValue();
-
-            //}
         }
         return counter;
     }
 
-    //tirar o printArray quando for implementado na GUI
-    //Nota: os espaços em branco devolve como String = ""
+    /**
+     * Given the table represented in excel, process the info to an ArrayList.
+     *
+     * Note: blank cells are returned as a String = ""
+     *
+     * @return the metrics table
+     */
     public ArrayList<ArrayList<String>> getMetricsTable() {
         ArrayList<ArrayList<String>> table = new ArrayList<>();
         DataFormatter dataFormatter = new DataFormatter();
@@ -104,20 +138,17 @@ public class ProjectInfo {
                 String cellValue = dataFormatter.formatCellValue(cell);
                 line.add(cellValue);
             }
-            printArray(line);
             table.add(line);
         }
         return table;
     }
 
-    private void printArray(ArrayList<String> list) {
-        for (String cell : list) {
-            //System.out.println(cell);
-        }
-    }
-
-
-    String[] getMainMetricsInfo(){
+    /**
+     * Get main metrics info string [ ].
+     *
+     * @return the string [ ]
+     */
+    public String[] getMainMetricsInfo() {
 
         String[] metrics = new String[4];
         metrics[0] = Integer.toString(packageCounter());
@@ -128,22 +159,6 @@ public class ProjectInfo {
         return metrics;
     }
 
-
-    //apenas para testar
-    public static void main(String[] args) throws IOException {
-
-        File file = new File("C:\\Users\\Antonio Martins\\Downloads\\Code_Smells.xlsx");
-
-        FileInputStream fip = new FileInputStream(file);
-        XSSFWorkbook workbook = new XSSFWorkbook(fip);
-        ProjectInfo metricsinfo = new ProjectInfo(workbook);
-        metricsinfo.getMetricsTable();
-        //System.out.println(metricsinfo.packageCounter());
-        //System.out.println(metricsinfo.classCounter());
-        //System.out.println(metricsinfo.methodCounter());
-        //System.out.println(metricsinfo.lineCounter());
-
-    }
 
 }
 
