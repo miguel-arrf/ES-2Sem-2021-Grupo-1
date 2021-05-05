@@ -62,21 +62,25 @@ public class QualityEvaluator {
                 ArrayList<String> detected = detection_results.get(key);
                 ArrayList<String> reference = comparison_data.get(key);
                 for (String value : detected) {
+                    String aux = value;
+                    if(value.contains("/")) aux = value.split("/")[0];
                     if (reference.contains(value)) {
                         confusionMatrix.incrementTruePositives();
-                        consoleOutputs.add(value + " | " + key + " | True Positive");
+                        consoleOutputs.add(aux + " | " + key + " | True Positive");
                     } else {
                         confusionMatrix.incrementFalsePositives();
-                        consoleOutputs.add(value + " | " + key + " | False Positive");
+                        consoleOutputs.add(aux + " | " + key + " | False Positive");
                     }
                 }
                 for (String value : undetected) {
+                    String aux = value;
+                    if(value.contains("/")) aux = value.split("/")[0];
                     if (reference.contains(value)) {
                         confusionMatrix.incrementFalseNegatives();
-                        consoleOutputs.add(value + " | " + key + " | False Negative");
+                        consoleOutputs.add(aux + " | " + key + " | False Negative");
                     } else {
                         confusionMatrix.incrementTrueNegatives();
-                        consoleOutputs.add(value + " | " + key + " | True Negative");
+                        consoleOutputs.add(aux + " | " + key + " | True Negative");
                     }
                 }
             }
