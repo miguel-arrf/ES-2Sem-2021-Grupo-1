@@ -109,10 +109,6 @@ public class AppStyleTest {
         assertNotNull(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("red"));
     }
 
-    @Test
-    void testGetFont() {
-        assertNotNull(AppStyle.getFont(FontType.BOLD, 10));
-    }
 
 
     @Test

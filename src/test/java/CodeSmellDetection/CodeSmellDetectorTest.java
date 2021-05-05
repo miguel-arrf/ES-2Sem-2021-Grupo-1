@@ -4,6 +4,7 @@ import MetricExtraction.MetricExtractor;
 import RuleEditor.ConditionBlock;
 import RuleEditor.LogicBlock;
 import RuleEditor.MetricBlock;
+import javafx.embed.swing.JFXPanel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +29,8 @@ public class CodeSmellDetectorTest {
 
     @BeforeAll
     static void setUp() throws InterruptedException {
+        JFXPanel jfxPanel = new JFXPanel();
+
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
         File file = new File(directory_src);
         MetricExtractor extractor = new MetricExtractor(file, file.getName());

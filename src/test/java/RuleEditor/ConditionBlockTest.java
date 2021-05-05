@@ -53,7 +53,7 @@ class ConditionBlockTest {
 
     @Test
     void getGraphicalRepresentation() {
-    	ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.AND, new MetricBlock("testMetric"), "testValue");
+    	ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.AND, "NOM_Class", new DraggingObject());
 		assertNotNull(conditionBlock.getGraphicalRepresentation());
     }
 

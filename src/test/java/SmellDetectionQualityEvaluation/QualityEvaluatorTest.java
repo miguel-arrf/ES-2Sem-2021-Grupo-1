@@ -1,5 +1,6 @@
 package SmellDetectionQualityEvaluation;
 
+import javafx.embed.swing.JFXPanel;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,7 @@ class QualityEvaluatorTest {
 
     @Test
     void run() {
+        JFXPanel jfxPanel = new JFXPanel();
         qualityEvaluator.run();
         assertNotNull(qualityEvaluator.getEvaluation());
     }

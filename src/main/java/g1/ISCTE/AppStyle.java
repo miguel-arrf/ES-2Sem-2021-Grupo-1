@@ -24,6 +24,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class AppStyle {
@@ -48,15 +51,6 @@ public class AppStyle {
                 "    -fx-background-color: " + color;
     }
 
-    /**
-     * @param fontType font style to be applied
-     * @param size the display size of the font
-     * @return the font with the specified style and size
-     */
-    public static Font getFont(FontType fontType, int size){
-//        TODO Add fonts back!
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
-    }
 
 
     /**
