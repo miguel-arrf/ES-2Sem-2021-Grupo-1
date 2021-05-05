@@ -13,6 +13,7 @@ public class Method {
     private int cyclo_method;
     private final String method_name;
     private final String method;
+    private String class_name;
 
     /**
      * Constructs an instance of Method
@@ -22,6 +23,7 @@ public class Method {
     public Method(String method, String method_name) {
         this.method = method;
         this.method_name = method_name;
+        this.class_name = "";
     }
 
     /**
@@ -94,6 +96,22 @@ public class Method {
      */
     public String getMethod() {
         return method;
+    }
+
+    /**
+     * Gets the name of the method's class
+     * @return Method's class name as String
+     */
+    public String getClass_name() {
+        return class_name;
+    }
+
+    /**
+     * Sets the name of the method's class
+     * @param class_name The name of the class the method belongs to
+     */
+    public void setClass_name(String class_name) {
+        this.class_name = class_name;
     }
 
     /**

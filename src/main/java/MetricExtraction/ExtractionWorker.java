@@ -3,6 +3,7 @@ package MetricExtraction;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ExtractionWorker implements Runnable {
             for(ClassOrInterfaceDeclaration c : classes) {
                 String class_name = c.getName().asString();
                 int loc_class = extractLOC_Class();
-                ArrayList<Method> class_methods = extractClassMethods(c);
+                ArrayList<Method> class_methods = extractClassMethods(c, class_name);
                 int nom_class = class_methods.size();
                 int wmc_class = 0;
                 if(nom_class != 0) {
@@ -57,11 +58,15 @@ public class ExtractionWorker implements Runnable {
     /**
      * Extracts a Java class's methods as instances of Method and stores them in a list
      * @param parser
+     * @param class_name
      * @return An ArrayList of Method instances
      */
-    private ArrayList<Method> extractClassMethods(ClassOrInterfaceDeclaration parser) {
+    private ArrayList<Method> extractClassMethods(ClassOrInterfaceDeclaration parser, String class_name) {
         MethodVisitor visitor = new MethodVisitor();
         visitor.visit(parser, null);
+        for(Method m : visitor.getMethods()) {
+            m.setClass_name(class_name);
+        }
         return visitor.getMethods();
     }
 
