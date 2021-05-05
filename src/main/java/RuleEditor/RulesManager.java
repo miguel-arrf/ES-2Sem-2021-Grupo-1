@@ -71,16 +71,11 @@ public class RulesManager extends Application {
     public ObservableList<JSONObject> getRules() {
         return rules;
     }
-
-
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    
+    public void setFile(File file) {
+    	this.rulesFile = file;
     }
+
 
     /**
      * Gets a File Chooser for rules files.
@@ -148,6 +143,8 @@ public class RulesManager extends Application {
 
     }
 
+
+
     /**
      * Creates the filechooser for the .rule files creation and the button that displays it (and how it will react when pressed).
      *
@@ -202,19 +199,19 @@ public class RulesManager extends Application {
 
         updateButton.setOnAction(actionEvent -> {
 
-                if(ruleFileManager.isNameValid(textField.getText())) {
-                    label.setText(textField.getText());
+            if(ruleFileManager.isNameValid(textField.getText())) {
+                label.setText(textField.getText());
 
-                    JSONObject outerName = (JSONObject) jsonObject.get("outerName");
-                    outerName.replace("innerName", textField.getText());
+                JSONObject outerName = (JSONObject) jsonObject.get("outerName");
+                outerName.replace("innerName", textField.getText());
 
-                    jsonObject.replace("outerName", outerName);
+                jsonObject.replace("outerName", outerName);
 
-                    ruleFileManager.saveJSONListToFile(rules);
-                    Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
-                } else {
-                    System.out.println("Nome inválido");
-                }
+                ruleFileManager.saveJSONListToFile(rules);
+                Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+            } else {
+                System.out.println("Nome inválido");
+            }
 
         });
 
@@ -349,13 +346,17 @@ public class RulesManager extends Application {
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
 
+        if(rules.size() == 0)
+            rulesPanel.getChildren().add(numberOfRules);
+
         for (JSONObject entry : rules) {
             Node rulePane = getRulePane(entry);
             rulesPanel.getChildren().add(rulePane);
         }
 
-        rulesPanel.getScene();
-        rulesPanel.getScene().getWindow().sizeToScene();
+        if(rulesPanel.getScene() != null)
+            rulesPanel.getScene().getWindow().sizeToScene();
+
 
     }
 
@@ -434,19 +435,20 @@ public class RulesManager extends Application {
      * Sets up the main pane and deals with the initiation of the GUI.
      */
     private void setUpMainPane() {
-
         mainPane.setSpacing(20);
         mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
+        	System.out.println("ENTRÁAAAAMOS AQUI: " + rules.size());
             if (rules.size() == 0) {
+                if(!rulesPanel.getChildren().contains(numberOfRules))
+                    rulesPanel.getChildren().add(numberOfRules);
                 numberOfRules.setText("No Rules");
                 numberOfRules.setGraphic(getIcon("bird.png"));
             } else {
-                numberOfRules.setText(rules.size() + " rules");
-                numberOfRules.setGraphic(null);
+                rulesPanel.getChildren().remove(numberOfRules);
             }
         });
 
@@ -532,7 +534,7 @@ public class RulesManager extends Application {
     /**
      * Creates the Code Smells for each rule and detects them.
      */
-    public void createCodeSmells( )   {
+    public ArrayList<CodeSmell> createCodeSmells( )   {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
         for(JSONObject entry: rules){
@@ -552,6 +554,8 @@ public class RulesManager extends Application {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        return smells;
 
     }
 
@@ -563,9 +567,7 @@ public class RulesManager extends Application {
      */
     @Override
     public void start(Stage stage) {
-        resetEverything();
-
-        setUpMainPane();
+        setUpGUI();
 
         Scene scene = new Scene(mainPane);
         mainPane.setPrefSize(500, 500);
@@ -578,12 +580,20 @@ public class RulesManager extends Application {
         stage.setScene(scene);
         stage.show();
 
-      if(rulesFile != null){
-          loadFile();
-          ruleFileManager.setRules(rules);
-      }
+        if(rulesFile != null){
+            loadFile();
+            ruleFileManager.setRules(rules);
+        }
 
     }
+
+    private void setUpGUI(){
+        resetEverything();
+        setUpMainPane();
+        
+    }
+
+
 
     public File getRulesFile() {
         return rulesFile;

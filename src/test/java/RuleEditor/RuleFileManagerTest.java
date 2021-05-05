@@ -18,16 +18,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class RuleFileManagerTest {
 
-    private static RuleFileManager manager;
+    private final JFXPanel panel = new JFXPanel();
+
+   /* private static RuleFileManager manager;
     private static File testFile;
 
-    private final JFXPanel panel = new JFXPanel();
 
     @BeforeAll
     private static void setUP() {
@@ -36,10 +39,21 @@ class RuleFileManagerTest {
         URL url = RuleFileManagerTest.class.getResource("/testRule.rule");
         testFile = new File(url.getFile());
         manager.setFile(testFile);
-    }
+    }*/
 
+    private RuleFileManager createRuleFileManagerAndSetFile() {
+    	RuleFileManager manager = new RuleFileManager();
+    	URL url = RuleFileManagerTest.class.getResource("/testRule.rule");
+        File testFile = new File(url.getFile());
+        manager.setFile(testFile);
+        
+        return manager;
+    }
+    
     @Test
     void testLoading() {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         Assertions.assertNotNull(manager.getFile());
 
         ArrayList<JSONObject> arrayListJson;
@@ -48,9 +62,6 @@ class RuleFileManagerTest {
             Assertions.assertEquals(arrayListJson.size(), 2);
 
 
-            jsonObjectToCodeSmell(arrayListJson.get(0));
-
-            jsonObjectToCodeSmell(arrayListJson.get(1));
         } catch (IOException | ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -59,9 +70,33 @@ class RuleFileManagerTest {
 
     }
 
+    
+    @Test
+    void jsonObjectToCodeSmell( ) {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
+    	 ArrayList<JSONObject> arrayListJson;
+         try {
+             arrayListJson = manager.loadJSONRuleFile();
+ 
+             CodeSmell codeSmell = manager.jsonObjectToCodeSmell(arrayListJson.get(0), new DraggingObject(), "codeSmell", true);
+             Assertions.assertNotNull(codeSmell);
+             
+             CodeSmell codeSmell1 = manager.jsonObjectToCodeSmell(arrayListJson.get(1), new DraggingObject(), "codeSmell", true);
+             Assertions.assertNotNull(codeSmell1);
+
+         } catch (IOException | ParseException e) {
+             // TODO Auto-generated catch block
+             e.printStackTrace();
+         }
+    	
+    }
+    
 
     @Test
     void testSaveFile() {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         assertAll(() -> {
             ArrayList<JSONObject> customNodes;
             customNodes = manager.loadJSONRuleFile();
@@ -71,16 +106,27 @@ class RuleFileManagerTest {
 
     }
 
-    void jsonObjectToCodeSmell(JSONObject object) {
-        System.out.println(object.toJSONString());
-        CodeSmell codeSmell = manager.jsonObjectToCodeSmell(object, new DraggingObject(), "codeSmell", true);
 
-        Assertions.assertNotNull(codeSmell);
+    @Test
+    void testIsNameValid() throws IOException, ParseException {
+    	
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
+    	  ArrayList<JSONObject> arrayListJson = manager.loadJSONRuleFile();
+    	  
+    	  ObservableList<JSONObject> observableList = FXCollections.observableArrayList(arrayListJson);
+    	  manager.setRules(observableList);
+
+    	assertTrue(manager.isNameValid("newRuleName"));
+    	
+    	assertFalse(manager.isNameValid("regra2"));
+    	
     }
-
 
     @Test
     void testRuleOperator() {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         String greater = ">";
         String greaterEqual = ">=";
         String equal = "=";
@@ -100,6 +146,8 @@ class RuleFileManagerTest {
 
     @Test
     void testJsonToGUI() {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         try {
             CustomNode firstNode = manager.jsonToGUI(manager.loadJSONRuleFile().get(0), new DraggingObject());
             assertEquals(firstNode.getOperator(), RuleOperator.LESSER);
@@ -144,6 +192,8 @@ class RuleFileManagerTest {
 
     @Test
     void testJsonObjectToCustomNode() throws ParseException{
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         String jsonNode = "{\"children\":[{\"children\":[],\"rule\":{\"ruleLabel\":\"NOM_Class\",\"valueLabel\":\"1\",\"operator\":\"<=\"}},{\"children\":[],\"rule\":{\"ruleLabel\":\"LOC_Class\",\"valueLabel\":\"2\",\"operator\":\">=\"}}],\"rule\":{\"operator\":\"OR\"},\"outerName\":{\"innerName\":\"regra2\",\"isClassSmell\":true,\"uniqueIdentifier\":\"67052887-d0ee-4803-940d-366cde54c7b6\"}}";
 
         JSONParser parser = new JSONParser();
@@ -160,6 +210,8 @@ class RuleFileManagerTest {
 
     @Test
     void testGetChild() {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         DraggingObject draggingObject = new DraggingObject();
 
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.EQUAL, new MetricBlock("class_test_rule"), "test_value", draggingObject);
@@ -175,6 +227,8 @@ class RuleFileManagerTest {
 
         allBlocks.add(andBlock);
 
+        System.out.println("tamanho: "  + manager.getChild(andBlock, allBlocks).size());
+        
         Assertions.assertEquals(1, manager.getChild(andBlock, allBlocks).size());
 
 
@@ -191,6 +245,8 @@ class RuleFileManagerTest {
 
 
     void testGuiToJSONObject(ArrayList<CustomNode> customNodeArrayList, int childrenSize) {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
         String ruleName = "testRule";
         boolean isClassSmell = true;
         JSONObject json = manager.guiToJSONObject(customNodeArrayList, ruleName, isClassSmell);

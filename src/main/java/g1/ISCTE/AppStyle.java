@@ -181,7 +181,10 @@ public class AppStyle {
         content.setPadding(new Insets(10));
 
         Scene scene = new Scene(content);
-        scene.getStylesheets().add(styleSheet);
+
+        if(styleSheet != null) {
+        	scene.getStylesheets().add(styleSheet);
+        }
 
         popupStage.setScene(scene);
     }

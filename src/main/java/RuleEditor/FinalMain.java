@@ -372,10 +372,8 @@ public class FinalMain extends Application {
         MetricBlock locClassBlock = new MetricBlock("LOC_Class");
         MetricBlock nomClassBlock = new MetricBlock("NOM_Class");
         MetricBlock WMC_Class = new MetricBlock("WMC_Class");
-        MetricBlock is_God_Class = new MetricBlock("is_God_Class");
         MetricBlock LOC_method = new MetricBlock("LOC_Method");
         MetricBlock CYCLO_method = new MetricBlock("CYCLO_Method");
-        MetricBlock is_Long_Method = new MetricBlock("is_Long_Method");
 
 
         LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
@@ -385,11 +383,9 @@ public class FinalMain extends Application {
             rectanglesTypes.add(locClassBlock);
             rectanglesTypes.add(nomClassBlock);
             rectanglesTypes.add(WMC_Class);
-            rectanglesTypes.add(is_God_Class);
         }else{
             rectanglesTypes.add(LOC_method);
             rectanglesTypes.add(CYCLO_method);
-            rectanglesTypes.add(is_Long_Method);
         }
 
         rectanglesTypes.add(logicBlock);
