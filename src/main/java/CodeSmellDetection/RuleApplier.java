@@ -45,7 +45,7 @@ public class RuleApplier {
     }
 
     private void addColumn(String title, int nColumn){
-        int nLinhas =  mySheet.getLastRowNum();
+        int nLinhas = mySheet.getLastRowNum();
 
         XSSFRow currentRow = mySheet.getRow(0);
         System.out.println("currentRow.getLastCellNum()= " + currentRow.getLastCellNum());
@@ -58,25 +58,41 @@ public class RuleApplier {
             currentRow =  mySheet.getRow(y);
             myCell = currentRow.createCell(nColumn);
 
-            if(isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)){
-                myCell.setCellValue("TRUE");
-            }else{
+            if (!rules.get(title).isEmpty() && isMethodSmell(rules.get(title).get(0))) {
+                if (isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)) {
+                    myCell.setCellValue("TRUE");
+                } else {
+                    myCell.setCellValue("FALSE");
+                }
+            } else if (!rules.get(title).isEmpty() && !isMethodSmell(rules.get(title).get(0))) {
+                if (isCodeSmell(currentRow.getCell(2).getStringCellValue(), title)) {
+                    myCell.setCellValue("TRUE");
+                } else {
+                    myCell.setCellValue("FALSE");
+                }
+            } else {
                 myCell.setCellValue("FALSE");
             }
         }
     }
 
-    private Boolean isCodeSmell(String methodName, String codeSmell){
-        for(String methodCodeSmell : rules.get(codeSmell)){
-            if(methodName.equals(methodCodeSmell)) {
-                System.out.println("foi true no iscodesmell uhuhuuu");
+    private Boolean isCodeSmell(String smellTarget, String codeSmell){
+        for(String stringWithBar : rules.get(codeSmell)){
+            String name = stringWithBar.split("/")[0];
+            System.out.println(name);
+            if(smellTarget.equals(name)) {
                 return true;
             }
         }
-
-        //System.out.println("False: TITLE:" + codeSmell + "\n NAME " + methodName );
-
         return false;
+    }
+
+    private Boolean isMethodSmell(String stringWithBar) {
+        if(stringWithBar.split("/").length > 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
