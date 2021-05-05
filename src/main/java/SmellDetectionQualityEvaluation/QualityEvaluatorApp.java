@@ -38,6 +38,8 @@ public class QualityEvaluatorApp  {
     private final ArrayList<String> consoleOutputs = new ArrayList<>();
 
     private RulesManager rulesManager;
+    private QualityEvaluator qualityEvaluator;
+    //Needs to be here, otherwise the labels will not update correctly.
 
     public VBox initializeMainPane(RulesManager rulesManager){
         this.rulesManager = rulesManager;
@@ -69,8 +71,6 @@ public class QualityEvaluatorApp  {
         choiceBox.setMaxWidth(Double.MAX_VALUE);
 
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-            System.out.println("selected: "  + possibleValues[t1.intValue()]);
-
 
             if(possibleValues[t1.intValue()].equalsIgnoreCase("ALL")){
                 setupScrollPane(consoleOutputs, false);
@@ -142,15 +142,13 @@ public class QualityEvaluatorApp  {
      */
     private void detectOnClick() {
 
-
-
         resetLabelValues();
-        QualityEvaluator evaluator = new QualityEvaluator();
-        evaluator.setCodeSmells(rulesManager.createCodeSmells());
-        evaluator.run();
+        qualityEvaluator = new QualityEvaluator();
+        qualityEvaluator.setCodeSmells(rulesManager.createCodeSmells());
+        qualityEvaluator.run();
 
 
-        if(evaluator.getEvaluation().getConsoleOutputs().size() > 0){
+        if(qualityEvaluator.getEvaluation().getConsoleOutputs().size() > 0){
             if(!addButtonVBox.getChildren().contains(progressBar))
                 addButtonVBox.getChildren().add(progressBar);
 
@@ -163,22 +161,21 @@ public class QualityEvaluatorApp  {
                 }
             }
 
-
             consoleOutputs.clear() ;
-            consoleOutputs.addAll(evaluator.getEvaluation().getConsoleOutputs());
+            consoleOutputs.addAll(qualityEvaluator.getEvaluation().getConsoleOutputs());
 
             setupScrollPane(consoleOutputs, true );
 
+
             progressBar.progressProperty().addListener((observableValue, number, t1) -> {
                 if(t1.doubleValue() == 1){
-                    //addButtonVBox.getChildren().remove(progressBar);
-                    //mainBox.getChildren().remove(addButtonVBox);
 
                     detectionButton.setText("Re-Calculate");
                     addButtonVBox.getChildren().remove(progressBar);
                     progressBar.setProgress(0.0);
 
-                    updateLabelValues(evaluator.getEvaluation().getConfusionMatrix());
+                    updateLabelValues(qualityEvaluator.getEvaluation().getConfusionMatrix());
+
                     if(!mainBox.getChildren().contains(choiceBox)){
                         mainBox.getChildren().add(1,choiceBox);
                     }

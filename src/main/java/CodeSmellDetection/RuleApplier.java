@@ -13,10 +13,10 @@ import java.util.HashMap;
 
 public class RuleApplier {
 
-    private  XSSFSheet mySheet;
-    private XSSFWorkbook myWorkbook;
-    private String path;
-    private HashMap<String, ArrayList<String>> rules;
+    private final XSSFSheet mySheet;
+    private final XSSFWorkbook myWorkbook;
+    private final String path;
+    private final HashMap<String, ArrayList<String>> rules;
     private String[] rulesKeys;
 
     public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
@@ -38,11 +38,17 @@ public class RuleApplier {
         resetMetricsTable();
         XSSFRow titleRow = mySheet.getRow(0);
         int lastcell = titleRow.getLastCellNum();
-        System.out.println(lastcell);
         rulesKeys = rules.keySet().toArray(new String[rules.size()]);
 
+        int offset = 0;
+
         for (int x = lastcell;x < lastcell + rulesKeys.length; x++) {
-            addColumn(rulesKeys[x - lastcell], x);
+            if(!rulesKeys[x-lastcell].equals("NoCodeSmellDetected")){
+                addColumn(rulesKeys[x - lastcell], x - offset);
+            }else{
+                offset = 1;
+            }
+
         }
         FileOutputStream excelCreator = new FileOutputStream(path);
         myWorkbook.write(excelCreator);
@@ -50,14 +56,13 @@ public class RuleApplier {
     }
 
     private void addColumn(String title, int nColumn){
+
         int nLinhas = mySheet.getLastRowNum();
 
         XSSFRow currentRow = mySheet.getRow(0);
-        System.out.println("currentRow.getLastCellNum()= " + currentRow.getLastCellNum());
 
         XSSFCell myCell = currentRow.createCell(nColumn);
         myCell.setCellValue(title);
-        System.out.println("titulo: " + title);
 
         for(int y= 1; y != nLinhas; y++){
             currentRow =  mySheet.getRow(y);
@@ -97,7 +102,6 @@ public class RuleApplier {
     private Boolean isCodeSmell(String smellTarget, String codeSmell){
         for(String stringWithBar : rules.get(codeSmell)){
             String name = stringWithBar.split("/")[0];
-            System.out.println(name);
             if(smellTarget.equals(name)) {
                 return true;
             }
@@ -106,11 +110,7 @@ public class RuleApplier {
     }
 
     private Boolean isMethodSmell(String stringWithBar) {
-        if(stringWithBar.split("/").length > 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return stringWithBar.split("/").length > 1;
     }
 
 

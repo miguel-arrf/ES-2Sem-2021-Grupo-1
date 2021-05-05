@@ -39,6 +39,8 @@ public class AppStyle {
     public static final String lightYellowColor = "#ded7b1";
     public static final String lightPurpleColor = "#a29bfe";
 
+    public static final String lightGrayTextColor = "#d1d1d1";
+
     /**
      * Gets the default style for rounded nodes in the App.
      *

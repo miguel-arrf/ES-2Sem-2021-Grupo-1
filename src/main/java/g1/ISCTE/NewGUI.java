@@ -1,7 +1,10 @@
 package g1.ISCTE;
 
-import RuleEditor.RulesManager;
 import CodeSmellDetection.RuleApplier;
+import MetricExtraction.MetricExtractor;
+import RuleEditor.RulesManager;
+import SmellDetectionQualityEvaluation.QualityEvaluator;
+import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -26,9 +29,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import MetricExtraction.MetricExtractor;
-import SmellDetectionQualityEvaluation.QualityEvaluator;
-import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,10 +52,9 @@ public class NewGUI extends Application {
     private VBox leftUnderVBox;
     private VBox leftPane;
     private VBox buttonsBox;
-    private Button processRulesButton = setUpProcessRulesButton();
-
     //SavedRules
-    private RulesManager rulesManager = new RulesManager();
+    private final RulesManager rulesManager = new RulesManager();
+    private final Button processRulesButton = setUpProcessRulesButton();
     private MetricExtractor metricExtractor;
 
 
@@ -120,12 +119,7 @@ public class NewGUI extends Application {
 
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
-                System.out.println("REGRAS: " + rulesManager.getRules().size());
-                if(rulesManager.getRules().size() == 0) {
-                    processRulesButton.setDisable(true);
-                } else {
-                    processRulesButton.setDisable(false);
-                }
+                processRulesButton.setDisable(rulesManager.getRules().size() == 0);
             });
 
 
@@ -304,7 +298,6 @@ public class NewGUI extends Application {
         selectFolder.setOnMouseClicked(event -> {
 
 
-
             selectedFile = QualityEvaluator.getDefaultProject();
             processProjectButton.setDisable(false);
             selectFolder.setDisable(true);
@@ -315,6 +308,8 @@ public class NewGUI extends Application {
             }
 
             showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
+
+                //TODO verifcar o que está no center pane, se for o coiso, então nao faz rload!!!!
                 QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
                 VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager);
 
@@ -493,7 +488,7 @@ public class NewGUI extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-    	this.stage = stage;
+        this.stage = stage;
         SplitPane splitPane = initializeGUI(stage);
 
         stage.setTitle("CodeSmells Detector");
@@ -506,9 +501,8 @@ public class NewGUI extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    
+
     public SplitPane initializeGUI(Stage stage) {
-    	System.out.println("im here");
         SplitPane splitPane = new SplitPane();
         splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
 
@@ -519,7 +513,7 @@ public class NewGUI extends Application {
         splitPane.setDividerPositions(0.20);
 
         splitPane.getItems().addAll(leftPane, centerPane());
-        
+
         return splitPane;
     }
 
@@ -533,8 +527,6 @@ public class NewGUI extends Application {
             data.add(FXCollections.observableArrayList(row));
         table.setItems(data);
 
-        //  Font.loadFont(getClass().getResourceAsStream("/resources/fonts/SF-Pro-Rounded-Semibold.ttf"), 14);
-
         for (int i = 0; i < dataSource[0].length; i++) {
             final int currentColumn = i;
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
@@ -542,8 +534,6 @@ public class NewGUI extends Application {
             column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
 
             column.setEditable(false);
-
-            //column.setCellFactory(TextFieldTableCell.forTableColumn());
 
             column.setCellFactory(new Callback() {
 
@@ -556,9 +546,26 @@ public class NewGUI extends Application {
                             if (isEmpty()) {
                                 setText("");
                             } else {
-                                setTextFill(Color.web("#d1d1d1"));
-                                //                       setFont(AppStyle.getFont(FontType.REGULAR, 14));
-                                setText(item);
+
+                                if (item != null) {
+
+                                    if (currentColumn > 8) {
+
+                                        if (item.equals("FALSE")) {
+                                            setTextFill(Color.web("#ff7675"));
+                                            setStyle("-fx-background-color: rgb(75,12,12)");
+                                           // setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("red"));
+                                        } else if(item.equals("TRUE")){
+                                            setTextFill(Color.web("#55efc4"));
+                                            setStyle("-fx-background-color: rgb(32, 64, 44)");
+                                        }
+                                    } else {
+                                        setTextFill(Color.web(AppStyle.lightGrayTextColor));
+                                    }
+                                    setText(item);
+                                }
+
+
                             }
                         }
                     };
