@@ -69,9 +69,9 @@ public class DetectionWorker implements Runnable {
         HashMap<String, Integer> metrics = getMetricsMap(values);
         boolean result = evaluateNode(metrics, codeSmell.getRule());
         if(result && values instanceof ClassMetrics) results.add( ((ClassMetrics)values).getClass_name() );
-        else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() );
+        else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() + "/" + ((Method)values).getClass_name());
         else if(!result && values instanceof ClassMetrics) undetectedSmells.add( ((ClassMetrics)values).getClass_name() );
-        else if (!result && values instanceof Method) undetectedSmells.add( ((Method)values).getMethod_name() );
+        else if (!result && values instanceof Method) undetectedSmells.add( ((Method)values).getMethod_name() + "/" + ((Method)values).getClass_name());
     }
 
     /**

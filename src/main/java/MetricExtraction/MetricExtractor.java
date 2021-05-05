@@ -2,9 +2,9 @@ package MetricExtraction;
 
 import org.apache.poi.xssf.usermodel.*;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,13 +48,9 @@ public class MetricExtractor {
     }
 
     /**
-     * Gets the extracted metrics from the source code
-     * @return An ArrayList of ClassMetrics instances
+     * Gets the directory on which to save the extraction results
+     * @return The destination directory for the extraction results
      */
-    public ArrayList<ClassMetrics> getMetrics() {
-        return metrics;
-    }
-  
     public String getFinalPath() { return destination_directory + "/" + exported_file_name ; }
 
     /**
@@ -87,10 +83,6 @@ public class MetricExtractor {
         try {
             XSSFWorkbook workBook = new XSSFWorkbook();
             XSSFSheet mySheet = workBook.createSheet("Code Smells");
-//            Investigar:
-//            https://poi.apache.org/apidocs/4.0/org/apache/poi/hslf/usermodel/HSLFTextShape.html
-//            TextShape.setTextAutofit(TextAutofit.SHAPE);
-
             XSSFFont boldFont = workBook.createFont();
             boldFont.setBold(true);
             String[] metricName = new String[11];
@@ -101,14 +93,12 @@ public class MetricExtractor {
             metricName[4] = "NOM_Class";
             metricName[5] = "LOC_Class";
             metricName[6] = "WMC_Class";
-            metricName[7] = "is_God_Class";
-            metricName[8] = "LOC_method";
-            metricName[9] = "CYCLO_method";
-            metricName[10] = "is_Long_Method";
+            metricName[7] = "LOC_method";
+            metricName[8] = "CYCLO_method";
 
             XSSFRow currentRow = mySheet.createRow(0);
 
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < 9; j++) {
                 XSSFCell myCell = currentRow.createCell(j);
                 myCell.setCellValue(metricName[j]);
             }
@@ -129,36 +119,14 @@ public class MetricExtractor {
                     XSSFCell myCell = currentRow.createCell(0);
                     myCell.setCellValue(sumID);
 
-                    for(int z=1; z < 11; z++) {
+                    for(int z=1; z < 9; z++) {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z-1]);
-
-                        //Adicionei aqui este código para que, caso seja um valor numérico, assim seja interpretado.
-                        /*if(z == 8){
-                            //myCell.setCellValue(Integer.parseInt(oneMethod[z-1]));
-                            //System.out.print("antes: " + myCell.getStringCellValue());
-
-                            //myCell.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
-                            //System.out.print(" depois: " + myCell.getNumericCellValue());
-                            //System.out.println();
-                        }*/
-
 
                     }
                 }
             }
 
-            //Adicionar lista 'results' que contém as métricas de cada ficheiro .java
-
-
-
-
-
-
-
-
-
-            //
             File file = new File(destination_directory);
 
             if (!file.exists()) {
@@ -174,11 +142,15 @@ public class MetricExtractor {
             workBook.write(excelCreator);
             excelCreator.close();
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Gets the extracted metrics from the source code
+     * @return An ArrayList of ClassMetrics instances
+     */
     public ArrayList<ClassMetrics> getResults() {
         return metrics;
 

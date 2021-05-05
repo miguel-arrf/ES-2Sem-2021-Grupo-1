@@ -24,6 +24,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class AppStyle {
@@ -35,6 +38,8 @@ public class AppStyle {
     public static final String lightGrayColor = "#ece2e1";
     public static final String lightYellowColor = "#ded7b1";
     public static final String lightPurpleColor = "#a29bfe";
+
+    public static final String lightGrayTextColor = "#d1d1d1";
 
     /**
      * Gets the default style for rounded nodes in the App.
@@ -48,15 +53,6 @@ public class AppStyle {
                 "    -fx-background-color: " + color;
     }
 
-    /**
-     * @param fontType font style to be applied
-     * @param size the display size of the font
-     * @return the font with the specified style and size
-     */
-    public static Font getFont(FontType fontType, int size){
-//        TODO Add fonts back!
-        return Font.loadFont(AppStyle.class.getResource("/fonts/" + fontType.font).toExternalForm(), size);
-    }
 
 
     /**
@@ -181,7 +177,10 @@ public class AppStyle {
         content.setPadding(new Insets(10));
 
         Scene scene = new Scene(content);
-        scene.getStylesheets().add(styleSheet);
+
+        if(styleSheet != null) {
+        	scene.getStylesheets().add(styleSheet);
+        }
 
         popupStage.setScene(scene);
     }
@@ -308,22 +307,28 @@ public class AppStyle {
     public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent, ProgressBar progressBar){
         double currentMoment = 0;
 
-        for(Label label: nodes){
-            label.setOpacity(0);
-
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
-            fadeTransition.setFromValue(0);
-            fadeTransition.setToValue(1);
-            fadeTransition.setDelay(Duration.millis(currentMoment));
-            fadeTransition.play();
-
-            double indexOfNode = nodes.indexOf(label);
-            double completed = ( indexOfNode) / (nodes.size()-1);
-            addAfterDelay(label, parent, currentMoment , progressBar, completed);
-
-            currentMoment += delayDuration;
-
+        if(nodes.size() == 0){
+            progressBar.setProgress(1);
         }
+        else{
+            for(Label label: nodes){
+                label.setOpacity(0);
+
+                FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
+                fadeTransition.setFromValue(0);
+                fadeTransition.setToValue(1);
+                fadeTransition.setDelay(Duration.millis(currentMoment));
+                fadeTransition.play();
+
+                double indexOfNode = nodes.indexOf(label);
+                double completed = ( indexOfNode) / (nodes.size()-1);
+                addAfterDelay(label, parent, currentMoment , progressBar, completed);
+
+                currentMoment += delayDuration;
+
+            }
+        }
+
 
     }
 

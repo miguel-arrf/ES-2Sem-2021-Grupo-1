@@ -1,11 +1,14 @@
 package SmellDetectionQualityEvaluation;
 
+import CodeSmellDetection.CodeSmell;
+import RuleEditor.RulesManager;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.FontType;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -19,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Interface displaying the confusion matrix and all the code smells detected with the appropriate tag.
  */
-public class QualityEvaluatorApp extends Application {
+public class QualityEvaluatorApp  {
 
     private final Label truePositivesLabel = new Label("0");
     private final Label falsePositivesLabel = new Label("0");
@@ -34,24 +37,12 @@ public class QualityEvaluatorApp extends Application {
     private final ChoiceBox<String> choiceBox = new ChoiceBox<>(FXCollections.observableArrayList("All", "True Positive", "False Positive", "False Negative", "True Negative"));
     private final ArrayList<String> consoleOutputs = new ArrayList<>();
 
-    /**
-     * The entry point of application.
-     *
-     * @param args the input arguments (shall be none).
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private RulesManager rulesManager;
+    private QualityEvaluator qualityEvaluator;
+    //Needs to be here, otherwise the labels will not update correctly.
 
-    @Override
-    public void start(Stage stage) {
-        Scene mainScene = initializeGUI();
-        stage.setScene(mainScene);
-        mainScene.getWindow().sizeToScene();
-        stage.show();
-    }
-
-    public VBox initializeMainPane(){
+    public VBox initializeMainPane(RulesManager rulesManager){
+        this.rulesManager = rulesManager;
 
         mainBox = new VBox(createMatrix());
         mainBox.setSpacing(20);
@@ -80,8 +71,6 @@ public class QualityEvaluatorApp extends Application {
         choiceBox.setMaxWidth(Double.MAX_VALUE);
 
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-            System.out.println("selected: "  + possibleValues[t1.intValue()]);
-
 
             if(possibleValues[t1.intValue()].equalsIgnoreCase("ALL")){
                 setupScrollPane(consoleOutputs, false);
@@ -96,19 +85,6 @@ public class QualityEvaluatorApp extends Application {
         });
 
         return mainBox;
-    }
-
-    /**
-     * Method in charge of initializing the GUI.
-     *
-     * @return the scene containing the interface
-     */
-    private Scene initializeGUI() {
-        initializeMainPane();
-
-        Scene scene = new Scene(mainBox);
-        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
-        return scene;
     }
 
     /**
@@ -165,33 +141,61 @@ public class QualityEvaluatorApp extends Application {
      * Also creates a listener for the progress property of the progress bar, removing it from the detect button when the progress is complete.
      */
     private void detectOnClick() {
-        //mainBox.getChildren().add(progressBar);
-        //todo miguel fixed pls my dear ...
-        addButtonVBox.getChildren().add(progressBar);
+
 
         resetLabelValues();
-        changeButtonState("Pressed");
-        QualityEvaluator evaluator = new QualityEvaluator();
-        evaluator.run();
-        changeButtonState("Normal");
+        qualityEvaluator = new QualityEvaluator();
+        qualityEvaluator.setCodeSmells(rulesManager.createCodeSmells());
+        qualityEvaluator.run();
 
-        consoleOutputs.clear() ;
-        consoleOutputs.addAll(evaluator.getEvaluation().getConsoleOutputs());
 
-        setupScrollPane(consoleOutputs, true );
+        if(qualityEvaluator.getEvaluation().getConsoleOutputs().size() > 0){
+            if(!addButtonVBox.getChildren().contains(progressBar))
+                addButtonVBox.getChildren().add(progressBar);
 
-        progressBar.progressProperty().addListener((observableValue, number, t1) -> {
-            if(t1.doubleValue() == 1){
-                //addButtonVBox.getChildren().remove(progressBar);
-                mainBox.getChildren().remove(addButtonVBox);
-                progressBar.setProgress(0.0);
-                updateLabelValues(evaluator.getEvaluation().getConfusionMatrix());
-                if(!mainBox.getChildren().contains(choiceBox)){
-                    mainBox.getChildren().add(1,choiceBox);
+            detectionButton.setText("Running...");
+
+            for(Node node : mainBox.getChildren()){
+                if(node instanceof Label){
+                    mainBox.getChildren().remove(node);
+                    break;
                 }
+            }
+
+            consoleOutputs.clear() ;
+            consoleOutputs.addAll(qualityEvaluator.getEvaluation().getConsoleOutputs());
+
+            setupScrollPane(consoleOutputs, true );
+
+
+            progressBar.progressProperty().addListener((observableValue, number, t1) -> {
+                if(t1.doubleValue() == 1){
+
+                    detectionButton.setText("Re-Calculate");
+                    addButtonVBox.getChildren().remove(progressBar);
+                    progressBar.setProgress(0.0);
+
+                    updateLabelValues(qualityEvaluator.getEvaluation().getConfusionMatrix());
+
+                    if(!mainBox.getChildren().contains(choiceBox)){
+                        mainBox.getChildren().add(1,choiceBox);
+                    }
+
+                }
+            });
+        }else{
+            if(mainBox.getChildren().stream().noneMatch(p -> p instanceof Label)){
+                Label emptyLabel = new Label("You have to creat at least a isGodClass or a isLongMethod rule");
+                emptyLabel.setTextFill(Color.WHITE);
+
+                mainBox.setAlignment(Pos.TOP_CENTER);
+
+                mainBox.getChildren().add(emptyLabel);
 
             }
-        });
+        }
+
+
 
     }
 
@@ -214,7 +218,6 @@ public class QualityEvaluatorApp extends Application {
             label.getStyleClass().add("treeLabel");
             label.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(label, Priority.ALWAYS);
-            label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
             labels.add(label);
             if(!animation)
                 textBox.getChildren().add(label);
@@ -232,25 +235,6 @@ public class QualityEvaluatorApp extends Application {
         mainBox.getChildren().add(stackPane);
     }
 
-    /**
-     * Helper method that changes the text on a button and the respective color.
-     *
-     * @param pressed text to be displayed in the button.
-     */
-    private void changeButtonState(String pressed) {
-        if(pressed.equals("Pressed")) {
-            detectionButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                    "    -fx-border-radius: 7 7 7 7;\n" +
-                    "    -fx-background-color: #cd6133");
-            detectionButton.setText("Running...");
-
-        } else {
-            detectionButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                    "    -fx-border-radius: 7 7 7 7;\n" +
-                    "    -fx-background-color: ORANGE");
-            detectionButton.setText("Detect");
-        }
-    }
 
     /**
      * Every label in the confusion matrix is setted to 0.
@@ -283,7 +267,6 @@ public class QualityEvaluatorApp extends Application {
      */
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
-        button.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
 
         button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
@@ -368,10 +351,8 @@ public class QualityEvaluatorApp extends Application {
     private Pane createMatrixPanel(String cellName, Label label) {
         Label cellNameLabel = new Label(cellName);
         cellNameLabel.setTextFill(Color.WHITE);
-        cellNameLabel.setFont(AppStyle.getFont(FontType.BOLD,14));
 
         label.setTextFill(Color.WHITE);
-        label.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD,12));
 
         VBox box = new VBox(cellNameLabel, label);
         box.setSpacing(20);

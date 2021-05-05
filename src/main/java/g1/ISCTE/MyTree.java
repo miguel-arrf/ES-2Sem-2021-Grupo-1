@@ -16,37 +16,41 @@ public class MyTree {
 
     private final ScrollPane scrollPane = new ScrollPane();
 
+    private ImageView getImage(){
+
+        Image image = new Image(MyTree.class.getResource("/icons/icons8-folder-48.png").toExternalForm());
+        ImageView imageView = new ImageView(image);
+
+        setImageViewStyle(imageView);
+
+        return  imageView;
+    }
+
+    private void setImageViewStyle(ImageView imageView){
+        imageView.setFitHeight(15);
+        imageView.setPreserveRatio(true);
+    }
+
     private void percolateFolder(VBox rootItem, File file){
 
         File[] files = file.listFiles();
 
         for(int i = 0; i < files.length ; i++){
-            //for(File filename: files){
             File filename = files[i];
 
+            System.out.println("file: "  + filename.toString());
             if(filename.isDirectory()){
 
                 Label label = new Label(filename.getName());
                 label.setTextFill(Color.WHITE);
-                //label.setFont(AppStyle.getFont(FontType.ROUNDED_BOLD, 12));
                 label.setPadding(new Insets(4, 10, 4, 10));
-
-
-                Image image = new Image(MyTree.class.getResource("/icons/icons8-folder-48.png").toExternalForm());
-                ImageView imageView = new ImageView(image);
-
-                imageView.setFitHeight(15);
-                imageView.setPreserveRatio(true);
-                label.setGraphic(imageView);
-
+                label.setGraphic(getImage());
                 label.getStyleClass().add("treeLabel");
 
                 VBox newRootItem = new VBox(label);
                 newRootItem.setPadding(new Insets(5,0,0, 20));
 
                 AppStyle.customFadingIn(newRootItem, rootItem, i);
-
-                //rootItem.getChildren().add(newRootItem);
 
                 final boolean[] isShowing = {false};
 
@@ -83,27 +87,20 @@ public class MyTree {
                 }
 
                 imageView = new ImageView(image);
+                setImageViewStyle(imageView);
 
-                imageView.setFitHeight(15);
-                imageView.setPreserveRatio(true);
                 label.setGraphic(imageView);
-
                 label.setPadding(new Insets(4,10, 4, 10));
 
                 VBox item = new VBox(label);
-
                 item.setPadding(new Insets(5,0,0,20));
 
                 AppStyle.customFadingIn(item, rootItem, i);
 
-                //rootItem.getChildren().add(item);
             }
         }
 
     }
-
-
-
 
     public ScrollPane getScrollPane(File file){
         VBox rootItem = new VBox();
