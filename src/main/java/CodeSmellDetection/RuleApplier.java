@@ -17,24 +17,29 @@ public class RuleApplier {
     private XSSFWorkbook myWorkbook;
     private String path;
     private HashMap<String, ArrayList<String>> rules;
+    private String[] rulesKeys;
 
     public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
         this.rules = rules;
         myWorkbook = ProjectInfo.createWorkbook(path);
         mySheet = myWorkbook.getSheetAt(0);
         this.path = path;
-
     }
 
-    public void mandar() throws IOException {
+    private void resetMetricsTable() {
+        int lastcell = mySheet.getRow(0).getLastCellNum();
+
+        for (int x = lastcell; x > 8; x--) {
+            removeColumn(x);
+        }
+    }
+
+    public void processRules() throws IOException {
+        resetMetricsTable();
         XSSFRow titleRow = mySheet.getRow(0);
         int lastcell = titleRow.getLastCellNum();
-
-        for(int i =0; i!=rules.keySet().toArray().length; i++){
-            System.out.println("rulekeys:" + rules.keySet().toArray()[i]);
-        }
-
-        String[] rulesKeys = rules.keySet().toArray(new String[rules.size()]);
+        System.out.println(lastcell);
+        rulesKeys = rules.keySet().toArray(new String[rules.size()]);
 
         for (int x = lastcell;x < lastcell + rulesKeys.length; x++) {
             addColumn(rulesKeys[x - lastcell], x);
@@ -75,6 +80,19 @@ public class RuleApplier {
             }
         }
     }
+
+    private void removeColumn(int nColumn){
+        int nLinhas = mySheet.getLastRowNum();
+        XSSFRow currentRow;
+
+        for(int y = 0; y != nLinhas; y++){
+            currentRow = mySheet.getRow(y);
+            XSSFCell oldCell = currentRow.getCell(nColumn);
+            if (oldCell != null)
+                currentRow.removeCell( oldCell );
+        }
+    }
+
 
     private Boolean isCodeSmell(String smellTarget, String codeSmell){
         for(String stringWithBar : rules.get(codeSmell)){
