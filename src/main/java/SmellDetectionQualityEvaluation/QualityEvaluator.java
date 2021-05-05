@@ -117,7 +117,7 @@ public class QualityEvaluator {
      * @return A HashMap mapping the name of the code smell to a list of where it was detected
      * @throws InterruptedException
      */
-    public HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
+    private HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
        File java_project = getDefaultProject();
         MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
         extractor.executeExtraction();
@@ -134,7 +134,7 @@ public class QualityEvaluator {
      *
      * @return the file for the default project's folder.
      */
-    static public File getDefaultProject(){
+    public static File getDefaultProject(){
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
         return new File(directory_src);
     }
