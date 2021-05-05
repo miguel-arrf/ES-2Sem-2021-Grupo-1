@@ -142,6 +142,7 @@ public class QualityEvaluatorApp  {
      */
     private void detectOnClick() {
 
+
         resetLabelValues();
         qualityEvaluator = new QualityEvaluator();
         qualityEvaluator.setCodeSmells(rulesManager.createCodeSmells());
