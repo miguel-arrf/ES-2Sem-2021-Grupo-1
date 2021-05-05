@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -26,6 +27,8 @@ import java.util.HashMap;
 public class QualityEvaluator {
 
     private QualityEvaluation evaluation;
+
+    private ArrayList<CodeSmell> codeSmells;
 
     /**
      * Runs the quality evaluation process
@@ -57,27 +60,43 @@ public class QualityEvaluator {
         ConfusionMatrix confusionMatrix = new ConfusionMatrix();
         ArrayList<String> consoleOutputs = new ArrayList<>();
         ArrayList<String> undetected = detection_results.get("NoCodeSmellDetected");
+
+        System.out.println("detection results: "  + detection_results.keySet());
+
+        ArrayList<String> allowedMethods = new ArrayList<>();
+        allowedMethods.add("isLongMethod");
+        allowedMethods.add("isGodClass");
+
         for(String key : detection_results.keySet()) {
-            if(!key.equals("NoCodeSmellDetected")) {
+            if(!key.equals("NoCodeSmellDetected") && allowedMethods.contains(key)) {
                 ArrayList<String> detected = detection_results.get(key);
+
                 ArrayList<String> reference = comparison_data.get(key);
+
                 for (String value : detected) {
                     String aux = value;
                     if(value.contains("/")) aux = value.split("/")[0];
+
                     if (reference.contains(value)) {
                         confusionMatrix.incrementTruePositives();
                         consoleOutputs.add(aux + " | " + key + " | True Positive");
+
                     } else {
                         confusionMatrix.incrementFalsePositives();
                         consoleOutputs.add(aux + " | " + key + " | False Positive");
                     }
                 }
+
                 for (String value : undetected) {
+
                     String aux = value;
+
                     if(value.contains("/")) aux = value.split("/")[0];
+
                     if (reference.contains(value)) {
                         confusionMatrix.incrementFalseNegatives();
                         consoleOutputs.add(aux + " | " + key + " | False Negative");
+
                     } else {
                         confusionMatrix.incrementTrueNegatives();
                         consoleOutputs.add(aux + " | " + key + " | True Negative");
@@ -126,7 +145,7 @@ public class QualityEvaluator {
         MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
         extractor.executeExtraction();
 
-        ArrayList<CodeSmell> smells = initializeCodeSmells();
+        ArrayList<CodeSmell> smells = codeSmells;
         CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
         detector.runDetection();
 
@@ -143,26 +162,37 @@ public class QualityEvaluator {
         return new File(directory_src);
     }
 
-    /**
-     * Instantiates the code smells present in the reference data to be detected by the application, and returns a list containing them
-     * @return A list of code smells
-     */
-    private static ArrayList<CodeSmell> initializeCodeSmells() {
-        ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
+    public void setCodeSmells(ArrayList<CodeSmell> codeSmells) {
 
-        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
-        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));
-        RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
-        CodeSmell god_class = new CodeSmell("isGodClass", rule, true);
-        smells.add(god_class);
+        System.out.println("CODE SMEEEELS");
+        for(CodeSmell codeSmell: codeSmells){
+            System.out.println(codeSmell.getName());
+        }
+        System.out.println("END CODE SMEEEELS");
 
-        left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "50"));
-        right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("CYCLO_Method"), "10", null));
-        rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
-        CodeSmell long_method = new CodeSmell("isLongMethod", rule, false);
-        smells.add(long_method);
-
-        return smells;
+        this.codeSmells = codeSmells;
     }
+
+//    /**
+//     * Instantiates the code smells present in the reference data to be detected by the application, and returns a list containing them
+//     * @return A list of code smells
+//     */
+//    private static ArrayList<CodeSmell> initializeCodeSmells() {
+//        ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
+//
+//        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
+//        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));
+//        RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
+//        CodeSmell god_class = new CodeSmell("piripi", rule, true);
+//        smells.add(god_class);
+//
+//        left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "50"));
+//        right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("CYCLO_Method"), "10", null));
+//        rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
+//        CodeSmell long_method = new CodeSmell("isLonasasagMethod", rule, false);
+//        smells.add(long_method);
+//
+//        return smells;
+//    }
 
 }

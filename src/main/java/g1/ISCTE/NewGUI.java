@@ -303,8 +303,7 @@ public class NewGUI extends Application {
 
         selectFolder.setOnMouseClicked(event -> {
 
-            QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
-            VBox mainpane = qualityEvaluatorApp.initializeMainPane();
+
 
             selectedFile = QualityEvaluator.getDefaultProject();
             processProjectButton.setDisable(false);
@@ -316,7 +315,8 @@ public class NewGUI extends Application {
             }
 
             showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
-
+                QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
+                VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager);
 
                 mainpane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.darkGrayBoxColor));
                 centerPane.getChildren().clear();

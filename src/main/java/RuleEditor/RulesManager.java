@@ -544,15 +544,20 @@ public class RulesManager extends Application {
 
         }
 
-        CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
-        try {
-            detector.runDetection();
-            results = detector.getResults();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if(metricExtractor != null && metricExtractor.getResults() != null){
+            CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
+            try {
+                detector.runDetection();
+                results = detector.getResults();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return smells;
+        }else{
+            return new ArrayList<>();
         }
-        
-        return smells;
+
 
     }
 

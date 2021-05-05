@@ -305,22 +305,28 @@ public class AppStyle {
     public static void addFadingInGroup(double duration, double delayDuration, ArrayList<Label> nodes, VBox parent, ProgressBar progressBar){
         double currentMoment = 0;
 
-        for(Label label: nodes){
-            label.setOpacity(0);
-
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
-            fadeTransition.setFromValue(0);
-            fadeTransition.setToValue(1);
-            fadeTransition.setDelay(Duration.millis(currentMoment));
-            fadeTransition.play();
-
-            double indexOfNode = nodes.indexOf(label);
-            double completed = ( indexOfNode) / (nodes.size()-1);
-            addAfterDelay(label, parent, currentMoment , progressBar, completed);
-
-            currentMoment += delayDuration;
-
+        if(nodes.size() == 0){
+            progressBar.setProgress(1);
         }
+        else{
+            for(Label label: nodes){
+                label.setOpacity(0);
+
+                FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
+                fadeTransition.setFromValue(0);
+                fadeTransition.setToValue(1);
+                fadeTransition.setDelay(Duration.millis(currentMoment));
+                fadeTransition.play();
+
+                double indexOfNode = nodes.indexOf(label);
+                double completed = ( indexOfNode) / (nodes.size()-1);
+                addAfterDelay(label, parent, currentMoment , progressBar, completed);
+
+                currentMoment += delayDuration;
+
+            }
+        }
+
 
     }
 
