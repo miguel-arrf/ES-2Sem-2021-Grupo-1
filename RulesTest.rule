@@ -1,1 +1,1 @@
-[{"children":[],"rule":{"ruleLabel":"No Rule Block","valueLabel":"Value","operator":"Operator"},"outerName":{"innerName":"Nomeee","isClassSmell":true,"uniqueIdentifier":"c09f42f7-a094-4dcd-9a18-ed6af5392445"}}]
+[{"children":[],"rule":{"ruleLabel":"NOM_Class","valueLabel":"123","operator":"<="},"outerName":{"innerName":"Rule Name","isClassSmell":true,"uniqueIdentifier":"d4c0703c-c5af-49c7-87c5-39eb8a026056"}}]

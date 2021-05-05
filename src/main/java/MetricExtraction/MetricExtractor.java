@@ -93,14 +93,12 @@ public class MetricExtractor {
             metricName[4] = "NOM_Class";
             metricName[5] = "LOC_Class";
             metricName[6] = "WMC_Class";
-            metricName[7] = "is_God_Class";
-            metricName[8] = "LOC_method";
-            metricName[9] = "CYCLO_method";
-            metricName[10] = "is_Long_Method";
+            metricName[7] = "LOC_method";
+            metricName[8] = "CYCLO_method";
 
             XSSFRow currentRow = mySheet.createRow(0);
 
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < 9; j++) {
                 XSSFCell myCell = currentRow.createCell(j);
                 myCell.setCellValue(metricName[j]);
             }
@@ -121,7 +119,7 @@ public class MetricExtractor {
                     XSSFCell myCell = currentRow.createCell(0);
                     myCell.setCellValue(sumID);
 
-                    for(int z=1; z < 11; z++) {
+                    for(int z=1; z < 9; z++) {
                         myCell = currentRow.createCell(z);
                         myCell.setCellValue(oneMethod[z-1]);
 

@@ -182,7 +182,7 @@ public class NewGUI extends Application {
                     rulesManager.loadFile();
                     rulesManager.createCodeSmells();
                     RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
-                    ra.mandar();
+                    ra.processRules();
                     updateCenterPane();
                 }
             } catch (IOException e) {

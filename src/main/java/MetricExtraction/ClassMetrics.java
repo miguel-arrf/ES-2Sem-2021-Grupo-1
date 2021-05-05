@@ -86,12 +86,12 @@ public class ClassMetrics {
      * @return A matrix of String associating the class's metrics to each method
      */
     public String[][] getMetrics_by_method() {
-        String[][] values = new String[class_methods.size()][10];
+        String[][] values = new String[class_methods.size()][8];
         for (int i = 0; i < class_methods.size(); i++) {
-            for (int j = 0; j < 10; j++) {
+            for (int j = 0; j < 8; j++) {
                 values[i] = new String[]{class_package, class_name, class_methods.get(i).getMethod_name(),
-                        String.valueOf(nom_class), String.valueOf(loc_class), String.valueOf(wmc_class), "-", String.valueOf(class_methods.get(i).getLoc_method()),
-                        String.valueOf(class_methods.get(i).getCyclo_method()), "-"};
+                        String.valueOf(nom_class), String.valueOf(loc_class), String.valueOf(wmc_class), String.valueOf(class_methods.get(i).getLoc_method()),
+                        String.valueOf(class_methods.get(i).getCyclo_method())};
             }
         }
         return values;

@@ -17,24 +17,29 @@ public class RuleApplier {
     private XSSFWorkbook myWorkbook;
     private String path;
     private HashMap<String, ArrayList<String>> rules;
+    private String[] rulesKeys;
 
     public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
         this.rules = rules;
         myWorkbook = ProjectInfo.createWorkbook(path);
         mySheet = myWorkbook.getSheetAt(0);
         this.path = path;
-
     }
 
-    public void mandar() throws IOException {
+    private void resetMetricsTable() {
+        int lastcell = mySheet.getRow(0).getLastCellNum();
+
+        for (int x = lastcell; x > 8; x--) {
+            removeColumn(x);
+        }
+    }
+
+    public void processRules() throws IOException {
+        resetMetricsTable();
         XSSFRow titleRow = mySheet.getRow(0);
         int lastcell = titleRow.getLastCellNum();
-
-        for(int i =0; i!=rules.keySet().toArray().length; i++){
-            System.out.println("rulekeys:" + rules.keySet().toArray()[i]);
-        }
-
-        String[] rulesKeys = rules.keySet().toArray(new String[rules.size()]);
+        System.out.println(lastcell);
+        rulesKeys = rules.keySet().toArray(new String[rules.size()]);
 
         for (int x = lastcell;x < lastcell + rulesKeys.length; x++) {
             addColumn(rulesKeys[x - lastcell], x);
@@ -45,7 +50,7 @@ public class RuleApplier {
     }
 
     private void addColumn(String title, int nColumn){
-        int nLinhas =  mySheet.getLastRowNum();
+        int nLinhas = mySheet.getLastRowNum();
 
         XSSFRow currentRow = mySheet.getRow(0);
         System.out.println("currentRow.getLastCellNum()= " + currentRow.getLastCellNum());
@@ -58,25 +63,54 @@ public class RuleApplier {
             currentRow =  mySheet.getRow(y);
             myCell = currentRow.createCell(nColumn);
 
-            if(isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)){
-                myCell.setCellValue("TRUE");
-            }else{
+            if (!rules.get(title).isEmpty() && isMethodSmell(rules.get(title).get(0))) {
+                if (isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)) {
+                    myCell.setCellValue("TRUE");
+                } else {
+                    myCell.setCellValue("FALSE");
+                }
+            } else if (!rules.get(title).isEmpty() && !isMethodSmell(rules.get(title).get(0))) {
+                if (isCodeSmell(currentRow.getCell(2).getStringCellValue(), title)) {
+                    myCell.setCellValue("TRUE");
+                } else {
+                    myCell.setCellValue("FALSE");
+                }
+            } else {
                 myCell.setCellValue("FALSE");
             }
         }
     }
 
-    private Boolean isCodeSmell(String methodName, String codeSmell){
-        for(String methodCodeSmell : rules.get(codeSmell)){
-            if(methodName.equals(methodCodeSmell)) {
-                System.out.println("foi true no iscodesmell uhuhuuu");
+    private void removeColumn(int nColumn){
+        int nLinhas = mySheet.getLastRowNum();
+        XSSFRow currentRow;
+
+        for(int y = 0; y != nLinhas; y++){
+            currentRow = mySheet.getRow(y);
+            XSSFCell oldCell = currentRow.getCell(nColumn);
+            if (oldCell != null)
+                currentRow.removeCell( oldCell );
+        }
+    }
+
+
+    private Boolean isCodeSmell(String smellTarget, String codeSmell){
+        for(String stringWithBar : rules.get(codeSmell)){
+            String name = stringWithBar.split("/")[0];
+            System.out.println(name);
+            if(smellTarget.equals(name)) {
                 return true;
             }
         }
-
-        //System.out.println("False: TITLE:" + codeSmell + "\n NAME " + methodName );
-
         return false;
+    }
+
+    private Boolean isMethodSmell(String stringWithBar) {
+        if(stringWithBar.split("/").length > 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
