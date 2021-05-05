@@ -23,6 +23,8 @@ class RulesManagerTest {
 
 	@Test
 	void testSetMetricExtractor() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, URISyntaxException {
+		JFXPanel jfxPanel = new JFXPanel();
+
 		RulesManager rulesManager = new RulesManager();
 		
 		URL sqlScriptUrl = MyTree.class.getClassLoader().getResource("forTestPurposes");

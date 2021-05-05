@@ -245,7 +245,6 @@ public class RulesManager extends Application {
         pane.setSpacing(20);
 
         Label label = new Label((String) ((JSONObject) nodeJSON.get("outerName")).get("innerName"));
-        label.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
         label.setAlignment(Pos.CENTER);
 
@@ -453,7 +452,6 @@ public class RulesManager extends Application {
         });
 
         numberOfRules.setTextFill(Color.WHITE);
-        numberOfRules.setFont(AppStyle.getFont(FontType.BOLD, 12));
         numberOfRules.setGraphic(getIcon("bird.png"));
 
         rulesPanel.getChildren().add(numberOfRules);
@@ -499,7 +497,6 @@ public class RulesManager extends Application {
      */
     private Button styledButton(String text, String color) {
         Button button = new Button(text);
-        button.setFont(AppStyle.getFont(FontType.BOLD, 12));
 
         button.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
 
