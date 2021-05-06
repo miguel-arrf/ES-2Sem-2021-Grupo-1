@@ -9,7 +9,7 @@ public class CodeSmellTest {
     private static CodeSmell testSmell;
 
     @BeforeAll
-    private static void setUp() {
+    static void setUp() {
         testSmell = new CodeSmell("TestSmell", null, true);
     }
 
@@ -33,7 +33,7 @@ public class CodeSmellTest {
 
     @Test
     void getRule() {
-        assertNotNull(testSmell.getRule());
+        assertNull(testSmell.getRule());
     }
 
     @Test
@@ -45,8 +45,7 @@ public class CodeSmellTest {
 
     @Test
     void setRule() {
-        RuleNode rule = null;
-        testSmell.setRule(rule);
-        assertNotEquals(rule, testSmell.getRule());
+        testSmell.setRule(null);
+        assertNull(testSmell.getRule());
     }
 }

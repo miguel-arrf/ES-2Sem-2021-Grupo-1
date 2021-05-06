@@ -2,7 +2,6 @@ package CodeSmellDetection;
 
 import RuleEditor.ConditionBlock;
 import RuleEditor.MetricBlock;
-import javafx.embed.swing.JFXPanel;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,6 @@ class RuleNodeTest {
 
     @BeforeAll
     static void setUp() {
-        JFXPanel jfxPanel = new JFXPanel();
-
         ruleNode = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
     }
 
@@ -25,12 +22,12 @@ class RuleNodeTest {
 
     @Test
     void getLeft_node() {
-        assertNotNull(ruleNode.getLeft_node());
+        assertNull(ruleNode.getLeft_node());
     }
 
     @Test
     void getRight_node() {
-        assertNotNull(ruleNode.getRight_node());
+        assertNull(ruleNode.getRight_node());
     }
 
     @Test

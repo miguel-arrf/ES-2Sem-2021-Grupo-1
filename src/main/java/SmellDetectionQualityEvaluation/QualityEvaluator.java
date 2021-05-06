@@ -28,7 +28,7 @@ public class QualityEvaluator {
 
     private QualityEvaluation evaluation;
 
-    private ArrayList<CodeSmell> codeSmells;
+    private ArrayList<CodeSmell> codeSmells = new ArrayList<>();
 
     /**
      * Runs the quality evaluation process

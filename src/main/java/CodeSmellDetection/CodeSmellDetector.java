@@ -59,7 +59,7 @@ public class CodeSmellDetector {
             results.get(worker.getCodeSmell().getName()).addAll(worker.getResults());
             results.get("NoCodeSmellDetected").addAll(worker.getUndetectedSmells());
         }
-        //printResults();
+        printResults();
     }
 
     /**

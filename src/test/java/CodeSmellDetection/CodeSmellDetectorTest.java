@@ -36,7 +36,7 @@ public class CodeSmellDetectorTest {
         MetricExtractor extractor = new MetricExtractor(file, file.getName());
         extractor.executeExtraction();
 
-        ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
+        ArrayList<CodeSmell> smells = new ArrayList<>();
 
         RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
         RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));

@@ -44,4 +44,9 @@ class MethodTest {
         assertNotNull(method.getMetricsForDetection());
     }
 
+    @Test
+    void getClass_name() {
+        assertEquals(method.getClass_name(), "");
+    }
+
 }
