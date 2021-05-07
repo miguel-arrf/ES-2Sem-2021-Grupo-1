@@ -1,12 +1,7 @@
 package SmellDetectionQualityEvaluation;
 
-import RuleEditor.ConditionBlock;
-import RuleEditor.LogicBlock;
-import RuleEditor.MetricBlock;
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
-import CodeSmellDetection.RuleNode;
-import CodeSmellDetection.RuleOperator;
 import MetricExtraction.MetricExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -17,7 +12,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -162,37 +156,12 @@ public class QualityEvaluator {
         return new File(directory_src);
     }
 
+    /**
+     * Sets the list of code smells to the given one
+     * @param codeSmells List of code smells
+     */
     public void setCodeSmells(ArrayList<CodeSmell> codeSmells) {
-
-        System.out.println("CODE SMEEEELS");
-        for(CodeSmell codeSmell: codeSmells){
-            System.out.println(codeSmell.getName());
-        }
-        System.out.println("END CODE SMEEEELS");
-
         this.codeSmells = codeSmells;
     }
-
-//    /**
-//     * Instantiates the code smells present in the reference data to be detected by the application, and returns a list containing them
-//     * @return A list of code smells
-//     */
-//    private static ArrayList<CodeSmell> initializeCodeSmells() {
-//        ArrayList<CodeSmell> smells = new ArrayList<CodeSmell>();
-//
-//        RuleNode left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("WMC_Class"), "50"));
-//        RuleNode right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("NOM_Class"), "10", null));
-//        RuleNode rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
-//        CodeSmell god_class = new CodeSmell("piripi", rule, true);
-//        smells.add(god_class);
-//
-//        left_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "50"));
-//        right_node = new RuleNode(new ConditionBlock(RuleOperator.GREATER, new MetricBlock("CYCLO_Method"), "10", null));
-//        rule = new RuleNode(new LogicBlock(RuleOperator.OR), left_node, right_node);
-//        CodeSmell long_method = new CodeSmell("isLonasasagMethod", rule, false);
-//        smells.add(long_method);
-//
-//        return smells;
-//    }
 
 }
