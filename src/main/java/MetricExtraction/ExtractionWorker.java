@@ -37,22 +37,32 @@ public class ExtractionWorker implements Runnable {
                 class_package = parser.getPackageDeclaration().get().toString().substring(8).replace(";","").trim();
             List<ClassOrInterfaceDeclaration> classes = parser.findAll(ClassOrInterfaceDeclaration.class);
             for(ClassOrInterfaceDeclaration c : classes) {
-                String class_name = c.getName().asString();
-                int loc_class = extractLOC_Class();
-                ArrayList<Method> class_methods = extractClassMethods(c, class_name);
-                int nom_class = class_methods.size();
-                int wmc_class = 0;
-                if(nom_class != 0) {
-                    for(Method method : class_methods) {
-                        method.calculateMethodMetrics();
-                        wmc_class += method.getCyclo_method();
-                    }
-                }
-                metrics.add(new ClassMetrics(class_name, class_package, loc_class, nom_class, wmc_class, class_methods));
+                extractClassMetrics(c, class_package);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Given a Java class declaration, extracts its information and metrics
+     * @param classOrInterfaceDeclaration The class declaration
+     * @param class_package The class's package
+     * @throws FileNotFoundException FileNotFoundException
+     */
+    private void extractClassMetrics(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, String class_package) throws FileNotFoundException {
+        String class_name = classOrInterfaceDeclaration.getName().asString();
+        int loc_class = extractLOC_Class();
+        ArrayList<Method> class_methods = extractClassMethods(classOrInterfaceDeclaration, class_name);
+        int nom_class = class_methods.size();
+        int wmc_class = 0;
+        if(nom_class != 0) {
+            for(Method method : class_methods) {
+                method.calculateMethodMetrics();
+                wmc_class += method.getCyclo_method();
+            }
+        }
+        metrics.add(new ClassMetrics(class_name, class_package, loc_class, nom_class, wmc_class, class_methods));
     }
 
     /**

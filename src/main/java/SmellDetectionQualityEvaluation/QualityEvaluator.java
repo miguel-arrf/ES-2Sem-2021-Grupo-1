@@ -53,7 +53,7 @@ public class QualityEvaluator {
     private void performEvaluation(HashMap<String, ArrayList<String>> detection_results, HashMap<String, ArrayList<String>> comparison_data) {
         ConfusionMatrix confusionMatrix = new ConfusionMatrix();
         ArrayList<String> consoleOutputs = new ArrayList<>();
-        ArrayList<String> undetected = detection_results.get("NoCodeSmellDetected");
+        ArrayList<String> undetectedCodeSmells = detection_results.get("NoCodeSmellDetected");
 
         System.out.println("detection results: "  + detection_results.keySet());
 
@@ -61,11 +61,10 @@ public class QualityEvaluator {
         allowedMethods.add("isLongMethod");
         allowedMethods.add("isGodClass");
 
-        for(String key : detection_results.keySet()) {
-            if(!key.equals("NoCodeSmellDetected") && allowedMethods.contains(key)) {
-                ArrayList<String> detected = detection_results.get(key);
-
-                ArrayList<String> reference = comparison_data.get(key);
+        for(String codeSmell : detection_results.keySet()) {
+            if(!codeSmell.equals("NoCodeSmellDetected") && allowedMethods.contains(codeSmell)) {
+                ArrayList<String> detected = detection_results.get(codeSmell);
+                ArrayList<String> reference = comparison_data.get(codeSmell);
 
                 for (String value : detected) {
                     String aux = value;
@@ -73,27 +72,25 @@ public class QualityEvaluator {
 
                     if (reference.contains(value)) {
                         confusionMatrix.incrementTruePositives();
-                        consoleOutputs.add(aux + " | " + key + " | True Positive");
+                        consoleOutputs.add(aux + " | " + codeSmell + " | True Positive");
 
                     } else {
                         confusionMatrix.incrementFalsePositives();
-                        consoleOutputs.add(aux + " | " + key + " | False Positive");
+                        consoleOutputs.add(aux + " | " + codeSmell + " | False Positive");
                     }
                 }
 
-                for (String value : undetected) {
-
+                for (String value : undetectedCodeSmells) {
                     String aux = value;
-
                     if(value.contains("/")) aux = value.split("/")[0];
 
                     if (reference.contains(value)) {
                         confusionMatrix.incrementFalseNegatives();
-                        consoleOutputs.add(aux + " | " + key + " | False Negative");
+                        consoleOutputs.add(aux + " | " + codeSmell + " | False Negative");
 
                     } else {
                         confusionMatrix.incrementTrueNegatives();
-                        consoleOutputs.add(aux + " | " + key + " | True Negative");
+                        consoleOutputs.add(aux + " | " + codeSmell + " | True Negative");
                     }
                 }
             }

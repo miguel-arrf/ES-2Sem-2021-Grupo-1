@@ -1,0 +1,2 @@
+Refactoring Type	Source Entity	Target Class	Source/Target accessed members	Rate it!
+Move Method	CodeSmellDetection.DetectionWorker::evaluateCondition(RuleEditor.ConditionBlock, java.util.HashMap<java.lang.String,java.lang.Integer>):boolean	RuleEditor.ConditionBlock	0/2	
