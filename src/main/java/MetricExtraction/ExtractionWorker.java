@@ -19,7 +19,7 @@ public class ExtractionWorker implements Runnable {
 
     /**
      * Constructs an instance of ExtractionWorker
-     * @param class_file
+     * @param class_file Java source code file on which to perform extraction
      */
     public ExtractionWorker(File class_file) {
         this.class_file = class_file;
@@ -57,8 +57,8 @@ public class ExtractionWorker implements Runnable {
 
     /**
      * Extracts a Java class's methods as instances of Method and stores them in a list
-     * @param parser
-     * @param class_name
+     * @param parser A Java parser associated with the class declaration
+     * @param class_name The name of the class
      * @return An ArrayList of Method instances
      */
     private ArrayList<Method> extractClassMethods(ClassOrInterfaceDeclaration parser, String class_name) {
@@ -72,7 +72,7 @@ public class ExtractionWorker implements Runnable {
 
     /**
      * Creates a code parser for parsing a given Java class file
-     * @param class_file
+     * @param class_file The Java source code file to be parsed
      * @return A code parser associated with the given Java class file
      */
     private CompilationUnit getCodeParser(File class_file) {
@@ -96,7 +96,7 @@ public class ExtractionWorker implements Runnable {
     /**
      * Scans the Java class file and counts the total number of lines of code
      * @return Number of lines of the class as int
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     private int extractLOC_Class() throws FileNotFoundException {
         Scanner scanner = new Scanner(class_file);
