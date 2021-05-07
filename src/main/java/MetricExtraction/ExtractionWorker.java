@@ -19,7 +19,7 @@ public class ExtractionWorker implements Runnable {
 
     /**
      * Constructs an instance of ExtractionWorker
-     * @param class_file
+     * @param class_file Java source code file on which to perform extraction
      */
     public ExtractionWorker(File class_file) {
         this.class_file = class_file;
@@ -37,18 +37,7 @@ public class ExtractionWorker implements Runnable {
                 class_package = parser.getPackageDeclaration().get().toString().substring(8).replace(";","").trim();
             List<ClassOrInterfaceDeclaration> classes = parser.findAll(ClassOrInterfaceDeclaration.class);
             for(ClassOrInterfaceDeclaration c : classes) {
-                String class_name = c.getName().asString();
-                int loc_class = extractLOC_Class();
-                ArrayList<Method> class_methods = extractClassMethods(c, class_name);
-                int nom_class = class_methods.size();
-                int wmc_class = 0;
-                if(nom_class != 0) {
-                    for(Method method : class_methods) {
-                        method.calculateMethodMetrics();
-                        wmc_class += method.getCyclo_method();
-                    }
-                }
-                metrics.add(new ClassMetrics(class_name, class_package, loc_class, nom_class, wmc_class, class_methods));
+                extractClassMetrics(c, class_package);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -56,9 +45,30 @@ public class ExtractionWorker implements Runnable {
     }
 
     /**
+     * Given a Java class declaration, extracts its information and metrics
+     * @param classOrInterfaceDeclaration The class declaration
+     * @param class_package The class's package
+     * @throws FileNotFoundException FileNotFoundException
+     */
+    private void extractClassMetrics(ClassOrInterfaceDeclaration classOrInterfaceDeclaration, String class_package) throws FileNotFoundException {
+        String class_name = classOrInterfaceDeclaration.getName().asString();
+        int loc_class = extractLOC_Class();
+        ArrayList<Method> class_methods = extractClassMethods(classOrInterfaceDeclaration, class_name);
+        int nom_class = class_methods.size();
+        int wmc_class = 0;
+        if(nom_class != 0) {
+            for(Method method : class_methods) {
+                method.calculateMethodMetrics();
+                wmc_class += method.getCyclo_method();
+            }
+        }
+        metrics.add(new ClassMetrics(class_name, class_package, loc_class, nom_class, wmc_class, class_methods));
+    }
+
+    /**
      * Extracts a Java class's methods as instances of Method and stores them in a list
-     * @param parser
-     * @param class_name
+     * @param parser A Java parser associated with the class declaration
+     * @param class_name The name of the class
      * @return An ArrayList of Method instances
      */
     private ArrayList<Method> extractClassMethods(ClassOrInterfaceDeclaration parser, String class_name) {
@@ -72,7 +82,7 @@ public class ExtractionWorker implements Runnable {
 
     /**
      * Creates a code parser for parsing a given Java class file
-     * @param class_file
+     * @param class_file The Java source code file to be parsed
      * @return A code parser associated with the given Java class file
      */
     private CompilationUnit getCodeParser(File class_file) {
@@ -96,7 +106,7 @@ public class ExtractionWorker implements Runnable {
     /**
      * Scans the Java class file and counts the total number of lines of code
      * @return Number of lines of the class as int
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     private int extractLOC_Class() throws FileNotFoundException {
         Scanner scanner = new Scanner(class_file);

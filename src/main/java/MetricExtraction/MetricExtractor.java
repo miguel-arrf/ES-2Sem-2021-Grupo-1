@@ -23,8 +23,8 @@ public class MetricExtractor {
 
     /**
      * Constructs an instance of MetricExtractor
-     * @param project_directory
-     * @param destination_directory
+     * @param project_directory The source code project's directory
+     * @param destination_directory The directory on which to export the .xlsx file to
      */
     public MetricExtractor(File project_directory, String destination_directory) {
         getFilesFromProjectDirectory(project_directory);
@@ -35,7 +35,7 @@ public class MetricExtractor {
 
     /**
      * Given a project directory, extracts all its Java class files for metric extraction, storing them in the designated attribute
-     * @param project
+     * @param project The directory of the source code project
      */
     private void getFilesFromProjectDirectory(File project) {
         for (File file : project.listFiles()) {

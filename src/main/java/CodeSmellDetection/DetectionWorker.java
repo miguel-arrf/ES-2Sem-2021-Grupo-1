@@ -68,10 +68,10 @@ public class DetectionWorker implements Runnable {
     private void detect(Object values) {
         HashMap<String, Integer> metrics = getMetricsMap(values);
         boolean result = evaluateNode(metrics, codeSmell.getRule());
-        if(result && values instanceof ClassMetrics) results.add( ((ClassMetrics)values).getClass_name() );
-        else if (result && values instanceof Method) results.add( ((Method)values).getMethod_name() + "/" + ((Method)values).getClass_name());
-        else if(!result && values instanceof ClassMetrics) undetectedSmells.add( ((ClassMetrics)values).getClass_name() );
-        else if (!result && values instanceof Method) undetectedSmells.add( ((Method)values).getMethod_name() + "/" + ((Method)values).getClass_name());
+        ArrayList<String> listToAddTo;
+        if(result) listToAddTo = results; else listToAddTo = undetectedSmells;
+        if(values instanceof ClassMetrics) listToAddTo.add( ((ClassMetrics)values).getClass_name() );
+        else if (values instanceof Method) listToAddTo.add( ((Method)values).getMethod_name() + "/" + ((Method)values).getClass_name());
     }
 
     /**
@@ -94,7 +94,7 @@ public class DetectionWorker implements Runnable {
      * @return The boolean value of the rule's node evaluation
      */
     private boolean evaluateNode(HashMap<String, Integer> metrics, RuleNode node) {
-        boolean result = false;
+        boolean result;
         if(node.isLeafNode()) {//Nó representa uma condição
             ConditionBlock condition = (ConditionBlock)node.getElement();
             result = evaluateCondition(condition, metrics);
@@ -114,11 +114,6 @@ public class DetectionWorker implements Runnable {
      * @return The boolean value of the condition's evaluation
      */
     private boolean evaluateCondition(ConditionBlock condition, HashMap<String, Integer> metrics) {
-        //TODO Remove:
-        //System.out.println("metrics " + metrics);
-        //System.out.println("condition " + condition);
-        //System.out.println("condition.getRule " + condition.getRule());
-
         int value = metrics.get(condition.getRule());
         return condition.evaluate(value);
     }

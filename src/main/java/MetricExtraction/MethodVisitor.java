@@ -13,15 +13,15 @@ public class MethodVisitor extends VoidVisitorAdapter {
 
     /**
      * Visits the Java class's method declarations using the parser, and for each declaration visited, constructs an instance of Method
-     * @param n
-     * @param arg
+     * @param methodDeclaration The method's declaration
+     * @param arg Arguments (not used)
      */
-    public void visit(MethodDeclaration n, Object arg) {
+    public void visit(MethodDeclaration methodDeclaration, Object arg) {
         String body = "";
-        if(n.getBody().isPresent()){
-            body = n.getBody().get().toString();
+        if(methodDeclaration.getBody().isPresent()){
+            body = methodDeclaration.getBody().get().toString();
         }
-        Method method = new Method(body, n.getName().asString());
+        Method method = new Method(body, methodDeclaration.getName().asString());
         class_methods.add(method);
     }
 

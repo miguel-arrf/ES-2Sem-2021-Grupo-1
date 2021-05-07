@@ -17,12 +17,12 @@ public class ClassMetrics {
 
     /**
      * Constructs an instance of ClassMetrics
-     * @param class_name
-     * @param class_package
-     * @param loc_class
-     * @param nom_class
-     * @param wmc_class
-     * @param class_methods
+     * @param class_name Name of the class
+     * @param class_package Name of the class's package
+     * @param loc_class LOC_Class metric
+     * @param nom_class NOM_Class metric
+     * @param wmc_class WMC_Class metric
+     * @param class_methods List of the class's methods
      */
     public ClassMetrics(String class_name, String class_package, int loc_class, int nom_class, int wmc_class, ArrayList<Method> class_methods) {
         this.loc_class = loc_class;
