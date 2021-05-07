@@ -164,4 +164,12 @@ public class QualityEvaluator {
         this.codeSmells = codeSmells;
     }
 
+    /**
+     * Gets the list of code smells
+     * @return The list of code smells
+     */
+    public ArrayList<CodeSmell> getCodeSmells() {
+        return codeSmells;
+    }
+
 }
