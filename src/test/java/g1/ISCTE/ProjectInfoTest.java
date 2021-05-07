@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,8 +21,11 @@ class ProjectInfoTest {
 
     @Test
     void createWorkbook() throws IOException, URISyntaxException {
-        String path = "C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx";
-        File file = new File(path);
+        
+        URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+        File file = new File(url.getFile());
+
+        
         FileInputStream fip = new FileInputStream(file);
         XSSFWorkbook workbook = new XSSFWorkbook(fip);
         assertNotNull(workbook);
@@ -29,7 +33,12 @@ class ProjectInfoTest {
 
     @Test
     void packageCounter() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+        URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+        File file = new File(url.getFile());
+
+        String path = file.getAbsolutePath();
+    	
+        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
         int count = projectInfo.packageCounter();
         assertNotNull(count);
         assertEquals(10, count);
@@ -37,7 +46,12 @@ class ProjectInfoTest {
 
     @Test
     void classCounter() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+    	 URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+         File file = new File(url.getFile());
+
+         String path = file.getAbsolutePath();
+         
+        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
         int count = projectInfo.classCounter();
         assertNotNull(count);
         assertEquals(61, count);
@@ -45,7 +59,12 @@ class ProjectInfoTest {
 
     @Test
     void methodCounter() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+    	 URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+         File file = new File(url.getFile());
+
+         String path = file.getAbsolutePath();
+         
+         ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
         int count = projectInfo.methodCounter();
         assertNotNull(count);
         assertEquals(360, count);
@@ -53,7 +72,11 @@ class ProjectInfoTest {
 
     @Test
     void lineCounter() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+    	 URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+         File file = new File(url.getFile());
+         String path = file.getAbsolutePath();
+         
+         ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
         int count = projectInfo.lineCounter();
         assertNotNull(count);
         assertEquals(7223, count);
@@ -61,12 +84,17 @@ class ProjectInfoTest {
 
     @Test
     void getMetricsTable() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+    	URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+        File file = new File(url.getFile());
+        String path = file.getAbsolutePath();
+        
+        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
+        
         ArrayList<ArrayList<String>> table = projectInfo.getMetricsTable();
 
         ArrayList<ArrayList<String>> tableExpected = new ArrayList<>();
         DataFormatter dataFormatter = new DataFormatter();
-        XSSFSheet sheet = ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx").getSheetAt(0);
+        XSSFSheet sheet = ProjectInfo.createWorkbook(path).getSheetAt(0);
 
         for(Row row : sheet) {
             ArrayList<String> line = new ArrayList<>(11);
@@ -86,7 +114,11 @@ class ProjectInfoTest {
 
     @Test
     void getMainMetricsInfo() throws IOException {
-        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook("C:\\Users\\Chainz\\ProjetosGit\\ES-2Sem-2021-Grupo-1\\src\\main\\resources\\ProjectInfoTestFolder\\teste.xlsx"));
+    	URL url = ProjectInfoTest.class.getResource("/ProjectInfoTestFolder/teste.xlsx");
+        File file = new File(url.getFile());
+        String path = file.getAbsolutePath();
+        
+        ProjectInfo projectInfo = new ProjectInfo(ProjectInfo.createWorkbook(path));
 
         String[] metricsExpected = new String[4];
         metricsExpected[0] = Integer.toString(projectInfo.packageCounter());

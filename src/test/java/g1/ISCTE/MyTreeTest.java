@@ -30,7 +30,7 @@ class MyTreeTest {
 		
 		VBox firstItem = (VBox)  scrollPaneContent.getChildren().get(1);
 	
-		assertEquals(firstItem.getChildren().size(),5);
+		assertEquals(firstItem.getChildren().size(),6);
 	}
 
 }
