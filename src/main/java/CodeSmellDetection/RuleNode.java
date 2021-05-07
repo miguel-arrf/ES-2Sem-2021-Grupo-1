@@ -90,12 +90,5 @@ public class RuleNode {
         return left_node == null && right_node == null;
     }
 
-    /**
-     * Huh??
-     */
-    public void saveRule(){
-        System.out.println("hehe");
-    }
-
 }
 
