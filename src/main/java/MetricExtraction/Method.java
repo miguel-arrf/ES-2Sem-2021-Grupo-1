@@ -17,8 +17,8 @@ public class Method {
 
     /**
      * Constructs an instance of Method
-     * @param method
-     * @param method_name
+     * @param method The method's body
+     * @param method_name The name of the method
      */
     public Method(String method, String method_name) {
         this.method = method;
