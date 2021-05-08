@@ -420,24 +420,20 @@ public class NewGUI extends Application {
 
     }
 
-    //TODO António 1
     private void loadMethod(ArrayList<ArrayList<String>> tableData,  String[] metrics) {
-    	String[][] sdata = new String[tableData.size()][tableData.get(0).size()];
-        String[] cols = new String[tableData.size()];
-        int j = 0;
-        for (int a = 1; a != tableData.size() - 1; a++) {
-            ArrayList<String> al = tableData.get(a);
-            for (String s : al) {
-                sdata[a - 1][j] = s;
-                j++;
-            }
-            j = 0;
-        }
-        int i = 0;
-        for (String s : tableData.get(0))
-            cols[i++] = s;
-        fillTable(cols, sdata);
 
+        String[][] columnData = new String[tableData.size()][tableData.get(0).size()];
+        String[] cols = tableData.get(0).toArray(new String[0]);
+
+        for(int rowNum=0; rowNum!=tableData.size(); rowNum++) {
+            tableData.remove(0);
+            ArrayList<String> column = tableData.get(rowNum);
+
+            for(int rowValue = 0; rowValue != column.size(); rowValue++) {
+                columnData[rowNum][rowValue] = column.get(rowValue);
+            }
+        }
+        fillTable(cols, columnData);
         for (int a = 0; a < metrics.length && a < metricBoxes.size(); a++) {
             metricBoxes.get(a).setText(metrics[a]);
         }
@@ -504,7 +500,7 @@ public class NewGUI extends Application {
             TableColumn<ObservableList<String>, String> column = new TableColumn<>(cols[i]);
 
             column.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().get(currentColumn)));
-
+            column.setSortable(false);
             column.setEditable(false);
 
             column.setCellFactory(new Callback() {

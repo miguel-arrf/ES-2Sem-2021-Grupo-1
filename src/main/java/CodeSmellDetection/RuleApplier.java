@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Used to apply rules created by the user to the selected xlsx file.
+ */
 public class RuleApplier {
 
     private final XSSFSheet mySheet;
@@ -18,6 +21,13 @@ public class RuleApplier {
     private final String path;
     private final HashMap<String, ArrayList<String>> rules;
 
+    /**
+     * Instantiates a new Rule applier.
+     *
+     * @param rules key - code smell name; set - method/class name in which the code smell is present
+     * @param path  path to the xlsx file
+     * @throws IOException the io exception
+     */
     public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
         this.rules = rules;
         myWorkbook = ProjectInfo.createWorkbook(path);
@@ -25,7 +35,10 @@ public class RuleApplier {
         this.path = path;
     }
 
-    private void resetMetricsTable() {
+    /**
+     * Resets the xlsx file to its original state prior to the detection of code smells
+     */
+    public void resetMetricsTable() {
         int lastcell = mySheet.getRow(0).getLastCellNum();
 
         for (int x = lastcell; x > 8; x--) {
@@ -33,6 +46,13 @@ public class RuleApplier {
         }
     }
 
+    /**
+     * After the code smell values had been calculated, this method resets the table and then adds one column for each
+     * code smell and sets the value for each method/class to true or false depending on the presence of the respective
+     * code smell
+     *
+     * @throws IOException the io exception
+     */
     public void processRules() throws IOException {
         resetMetricsTable();
         XSSFRow titleRow = mySheet.getRow(0);
