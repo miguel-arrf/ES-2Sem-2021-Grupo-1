@@ -3,6 +3,8 @@ package MetricExtraction;
 import g1.ISCTE.MyTree;
 import org.junit.jupiter.api.Test;
 
+import RuleEditor.RulesManager;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -13,14 +15,26 @@ class MetricExtractorTest {
 
     @Test
     void testGetFinalPath() {
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), "test");
-        String resultado = "test/jasml_0.10_metrics.xlsx";
+    	 URL url = RulesManager.class.getResource("/forTestPurposes/testFolder");
+         File testFile = new File(url.getFile());
+         System.out.println(testFile.getPath());
+    	
+        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), testFile.getPath());
+        String resultado = testFile.getPath() + "/jasml_0.10_metrics.xlsx";
+        
         assertEquals(resultado, metricExtractor.getFinalPath());
     }
 
     @Test
     void testExecuteExtraction() throws URISyntaxException, InterruptedException {
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), "test");
+    	
+    	URL url = RulesManager.class.getResource("/forTestPurposes/testFolder");
+        File testFile = new File(url.getFile());
+        System.out.println(testFile.getPath());
+        
+        
+        
+        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), testFile.getPath());
         assertDoesNotThrow(() -> {
             metricExtractor.executeExtraction();
         });
@@ -33,9 +47,14 @@ class MetricExtractorTest {
 
     @Test
     void testGetResults() throws InterruptedException {
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), "test");
+    	URL url = RulesManager.class.getResource("/forTestPurposes/testFolder");
+        File testFile = new File(url.getFile());
+        System.out.println(testFile.getPath());
+    	
+        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"), testFile.getPath());
         assertEquals(metricExtractor.getResults().size(),0);
         metricExtractor.executeExtraction();
-        assertTrue(metricExtractor.getResults().size() > 0);
+        
+        assertEquals(metricExtractor.getResults().size(), 50);
     }
 }

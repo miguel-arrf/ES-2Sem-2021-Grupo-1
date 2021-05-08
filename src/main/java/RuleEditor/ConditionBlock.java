@@ -297,21 +297,6 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         DecimalFormat format = new DecimalFormat("-#.0;#.0");
 
-        /*textField.setTextFormatter(new TextFormatter<>(c ->
-        {
-            if (c.getControlNewText().isEmpty()) {
-                return c;
-            }
-
-            ParsePosition parsePosition = new ParsePosition(0);
-            Object object = format.parse(c.getControlNewText(), parsePosition);
-
-            if (object == null || parsePosition.getIndex() < c.getControlNewText().length()) {
-                return null;
-            } else {
-                return c;
-            }
-        }));*/
         textField.setMaxWidth(150);
 
         hBox.getChildren().addAll(textField, updateButton, cancelButton);

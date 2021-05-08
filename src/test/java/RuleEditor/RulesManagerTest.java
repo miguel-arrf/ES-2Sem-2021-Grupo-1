@@ -3,9 +3,13 @@ package RuleEditor;
 import static org.junit.jupiter.api.Assertions.*;
 import MetricExtraction.MetricExtractor;
 import g1.ISCTE.MyTree;
+import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
 import org.json.simple.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -15,11 +19,30 @@ import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 class RulesManagerTest {
 
+
+	@BeforeAll
+	public static void testOpenAddRuleEditor() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException {
+		JFXPanel panel = new JFXPanel();
+		RulesManager rulesManager = initialize();
+		
+		
+		Method privatesetUpGUI = RulesManager.class.getDeclaredMethod("openAddRuleEditor", boolean.class);
+		privatesetUpGUI.setAccessible(true);
+		
+
+        Thread.sleep(1000);
+		 Platform.runLater(() -> {
+			try {
+				privatesetUpGUI.invoke(rulesManager, false);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
+		
+	}
 
 	@Test
 	void testSetMetricExtractor() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, URISyntaxException {
@@ -58,7 +81,7 @@ class RulesManagerTest {
 		
 	}
 	
-	private RulesManager initialize() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private static RulesManager initialize() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		JFXPanel panel = new JFXPanel();
 		
 		RulesManager rulesManager = new RulesManager();
@@ -152,5 +175,18 @@ class RulesManagerTest {
         assertNotNull(rulesManager.getRulesFile());
         
 	}
+	
 
+	
+
+	
 }
+
+
+
+
+
+
+
+
+

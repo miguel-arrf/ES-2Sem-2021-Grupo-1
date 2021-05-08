@@ -7,10 +7,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 class LogicBlockTest {
 
     private static final JFXPanel panel = new JFXPanel();
 
+    @Test
+    void testConstructors() {
+    	LogicBlock lg = new LogicBlock(RuleOperator.AND);
+    	assertNotNull(lg.getGraphicalRepresentation());
+    	assertNotNull(lg.andLabel);
+    }
+    
     @Test
     void getLeftLabelVBox() {
         LogicBlock logicBlock = new LogicBlock(new DraggingObject(), RuleOperator.AND, "test");

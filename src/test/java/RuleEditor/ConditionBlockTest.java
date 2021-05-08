@@ -2,6 +2,9 @@ package RuleEditor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.junit.jupiter.api.Test;
 
 import CodeSmellDetection.RuleOperator;
@@ -12,6 +15,26 @@ class ConditionBlockTest {
     private final JFXPanel panel = new JFXPanel();
 
 
+
+    @Test 
+    void testvalueHBox() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.OR, new MetricBlock("testMetric"), "20", new DraggingObject());
+		Method privatesetUpGUI = ConditionBlock.class.getDeclaredMethod("valueHBox", null);
+		privatesetUpGUI.setAccessible(true);
+		
+		assertNotNull(privatesetUpGUI.invoke(conditionBlock, null));
+    }
+    
+    @Test 
+    void testoptionsHbox() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+        ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.OR, new MetricBlock("testMetric"), "20", new DraggingObject());
+		Method privatesetUpGUI = ConditionBlock.class.getDeclaredMethod("optionsHBox", null);
+		privatesetUpGUI.setAccessible(true);
+		
+		assertNotNull(privatesetUpGUI.invoke(conditionBlock, null));
+    }
+    
+    
     @Test
     void testConstructors(){
      ConditionBlock firstBuilder = new ConditionBlock(RuleOperator.OR, new MetricBlock("testMetric"), "20", new DraggingObject());

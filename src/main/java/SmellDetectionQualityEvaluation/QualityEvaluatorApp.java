@@ -161,12 +161,10 @@ public class QualityEvaluatorApp  {
                     break;
                 }
             }
-
             consoleOutputs.clear() ;
             consoleOutputs.addAll(qualityEvaluator.getEvaluation().getConsoleOutputs());
 
             setupScrollPane(consoleOutputs, true );
-
 
             progressBar.progressProperty().addListener((observableValue, number, t1) -> {
                 if(t1.doubleValue() == 1){
@@ -180,7 +178,6 @@ public class QualityEvaluatorApp  {
                     if(!mainBox.getChildren().contains(choiceBox)){
                         mainBox.getChildren().add(1,choiceBox);
                     }
-
                 }
             });
         }else{
@@ -194,8 +191,6 @@ public class QualityEvaluatorApp  {
 
             }
         }
-
-
 
     }
 

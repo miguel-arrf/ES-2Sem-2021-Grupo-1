@@ -116,7 +116,7 @@ class RuleFileManagerTest {
 
     	assertTrue(manager.isNameValid("newRuleName"));
     	
-    	assertFalse(manager.isNameValid("regra2"));
+    	assertFalse(manager.isNameValid("isGodClass"));
     	
     }
 

@@ -5,7 +5,6 @@
 		<testFolder url="file://$MODULE_DIR$/src/test/java"/>
 		<excludeFolder url="file://$MODULE_DIR$/target"/>
 	</contentEntry>
-	<lib name="Maven: org.junit.jupiter:junit-jupiter:5.8.0-M1" scope="TEST"/>
 	<lib name="Maven: org.junit.jupiter:junit-jupiter-api:5.6.2" scope="TEST"/>
 	<lib name="Maven: org.apiguardian:apiguardian-api:1.1.0" scope="TEST"/>
 	<lib name="Maven: org.opentest4j:opentest4j:1.2.0" scope="TEST"/>
@@ -13,8 +12,8 @@
 	<lib name="Maven: org.junit.jupiter:junit-jupiter-engine:5.6.2" scope="TEST"/>
 	<lib name="Maven: org.junit.platform:junit-platform-engine:1.6.2" scope="TEST"/>
 	<lib name="Maven: org.junit.jupiter:junit-jupiter-params:5.6.2" scope="TEST"/>
+	<lib name="Maven: org.junit.jupiter:junit-jupiter:5.8.0-M1" scope="TEST"/>
 	<levels>
-		<level name="Maven: org.junit.jupiter:junit-jupiter:5.8.0-M1" value="project"/>
 		<level name="Maven: org.junit.jupiter:junit-jupiter-api:5.6.2" value="project"/>
 		<level name="Maven: org.apiguardian:apiguardian-api:1.1.0" value="project"/>
 		<level name="Maven: org.opentest4j:opentest4j:1.2.0" value="project"/>
@@ -34,7 +33,6 @@
 		<level name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.3" value="project"/>
 		<level name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3" value="project"/>
 		<level name="Maven: com.googlecode.json-simple:json-simple:1.1.1" value="project"/>
-		<level name="Maven: junit:junit:4.10" value="project"/>
 		<level name="Maven: org.hamcrest:hamcrest-core:1.1" value="project"/>
 		<level name="Maven: org.openjfx:javafx-controls:15.0.1" value="project"/>
 		<level name="Maven: org.openjfx:javafx-controls:win:15.0.1" value="project"/>
@@ -49,5 +47,6 @@
 		<level name="Maven: org.openjfx:javafx-swing:11" value="project"/>
 		<level name="Maven: org.openjfx:javafx-swing:win:11" value="project"/>
 		<level name="Maven: com.github.javaparser:javaparser-core:3.20.0" value="project"/>
+		<level name="Maven: org.junit.jupiter:junit-jupiter:5.8.0-M1" value="project"/>
 	</levels>
 </component>
