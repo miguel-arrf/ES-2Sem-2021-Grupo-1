@@ -1,5 +1,5 @@
 .text-field {
-    -fx-background-color: white;
+    -fx-background-color: transparent;
     -fx-background-insets: 0, 0 0 1 0 ;
     -fx-background-radius: 0 ;
     -fx-accent: #20B2AA;
@@ -7,7 +7,7 @@
     -fx-font-size: 40px;
 }
 .text-field:focused {
-    -fx-background-color: white ;
+    -fx-background-color: transparent ;
     -fx-font-family: "SF UI Display";
     -fx-font-size: 40px;
 }

@@ -68,11 +68,6 @@ class ConditionBlockTest {
 		assertNotNull(conditionBlock.getWidgetGraphicalRepresentation());
     }
 
-    @Test
-    void getStyledButton() {
-		ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.AND, new MetricBlock("testMetric"), "testValue");
-		assertNotNull(conditionBlock.getStyledButton(">", "red"));
-    }
 
     @Test
     void getGraphicalRepresentation() {

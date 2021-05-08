@@ -102,7 +102,7 @@ public class LogicBlock implements CustomNode  {
     private void setDrag(VBox vBox) {
 
         vBox.setOnDragOver(event -> {
-            if (event.getDragboard().hasContent(FinalMain.customFormat)) {
+            if (event.getDragboard().hasContent(RuleEditor.customFormat)) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             event.consume();
@@ -114,7 +114,7 @@ public class LogicBlock implements CustomNode  {
             Dragboard db = event.getDragboard();
             boolean success = false;
 
-            if (db.hasContent(FinalMain.customFormat)) {
+            if (db.hasContent(RuleEditor.customFormat)) {
                 success = true;
 
                 if(whatIsBeingDragged.getNode().getType() != Types.MetricBlock){
@@ -165,7 +165,7 @@ public class LogicBlock implements CustomNode  {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) andLabelVBox.getParent().getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
-            FinalMain.ruleNodes.remove(this);
+            RuleEditor.ruleNodes.remove(this);
         });
 
     }
@@ -237,7 +237,7 @@ public class LogicBlock implements CustomNode  {
         Platform.runLater(() -> vBox.getChildren().clear());
         Platform.runLater(() -> vBox.getChildren().add(customNode.getGraphicalRepresentation()));
 
-        FinalMain.ruleNodes.add(customNode);
+        RuleEditor.ruleNodes.add(customNode);
 
         customNode.getGraphicalRepresentation().setOnDragDetected(newEvent -> {
             Dragboard new_DB = customNode.getGraphicalRepresentation().startDragAndDrop(TransferMode.ANY);
@@ -247,7 +247,7 @@ public class LogicBlock implements CustomNode  {
             new_DB.setDragView(customNode.getGraphicalRepresentation().snapshot(snapshotParameters, null));
 
             ClipboardContent content = new ClipboardContent();
-            content.put(FinalMain.customFormat, 1);
+            content.put(RuleEditor.customFormat, 1);
             whatIsBeingDragged.setNode(customNode);
 
             new_DB.setContent(content);

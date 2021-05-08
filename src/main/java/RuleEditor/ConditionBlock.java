@@ -142,7 +142,7 @@ public class ConditionBlock implements CustomNode, Serializable {
     private void setDrag(VBox vBox) {
 
         vBox.setOnDragOver(event -> {
-            if (event.getDragboard().hasContent(FinalMain.customFormat)) {
+            if (event.getDragboard().hasContent(RuleEditor.customFormat)) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
             event.consume();
@@ -152,7 +152,7 @@ public class ConditionBlock implements CustomNode, Serializable {
             Dragboard db = event.getDragboard();
             boolean success = false;
 
-            if (db.hasContent(FinalMain.customFormat)) {
+            if (db.hasContent(RuleEditor.customFormat)) {
                 success = true;
 
                 //System.out.println("conditionblock: " + whatIsBeingDragged);
@@ -216,29 +216,6 @@ public class ConditionBlock implements CustomNode, Serializable {
     }
 
     /**
-     * Gets styled button.
-     *
-     * @param operatorToPut the operator to put
-     * @param customColor   the custom color
-     * @return the styled button
-     */
-    public static Button getStyledButton(String operatorToPut, String customColor) {
-        Button button = new Button(operatorToPut);
-        button.getStyleClass().add("roundedAddButton");
-    //    button.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 13));
-        button.setTextFill(Color.WHITE);
-
-        button.setPadding(new Insets(10, 20, 10, 20));
-
-
-        if (customColor != null) {
-            button.setStyle("-fx-background-color: " + customColor);
-        }
-
-        return button;
-    }
-
-    /**
      * Returns HBox with operator options.
      *
      * @return hBox
@@ -278,8 +255,8 @@ public class ConditionBlock implements CustomNode, Serializable {
      */
     private HBox valueHBox() {
 
-        Button updateButton = getStyledButton("Update", "#a3ddcb");
-        Button cancelButton = getStyledButton("Cancel", "#d8345f");
+        Button updateButton = AppStyle.getBolderButton("Update", "#a3ddcb");
+        Button cancelButton = AppStyle.getBolderButton("Cancel", "#d8345f");
 
         cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST))));
 
@@ -333,10 +310,10 @@ public class ConditionBlock implements CustomNode, Serializable {
             Pane parent = (Pane) box.getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
             System.out.println(" ------- delete pressed");
-            System.out.println(" ----- contains: "  + FinalMain.ruleNodes.contains(this));
-            System.out.println(" --------- size here: " + FinalMain.ruleNodes.size());
-            FinalMain.ruleNodes.remove(this);
-            System.out.println(" --------- size now: " + FinalMain.ruleNodes.size());
+            System.out.println(" ----- contains: "  + RuleEditor.ruleNodes.contains(this));
+            System.out.println(" --------- size here: " + RuleEditor.ruleNodes.size());
+            RuleEditor.ruleNodes.remove(this);
+            System.out.println(" --------- size now: " + RuleEditor.ruleNodes.size());
 
         });
 

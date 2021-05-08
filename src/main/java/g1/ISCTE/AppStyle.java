@@ -202,6 +202,28 @@ public class AppStyle {
     }
 
     /**
+     * Gets bolder styled button.
+     *
+     * @param text the text to put
+     * @param color   the custom color
+     * @return the styled button
+     */
+    public static Button getBolderButton(String text, String color){
+        Button button = new Button(text);
+        button.getStyleClass().add("roundedAddButton");
+        button.setTextFill(Color.WHITE);
+
+        button.setPadding(new Insets(10, 20, 10, 20));
+
+
+        if (color != null) {
+            button.setStyle("-fx-background-color: " + color);
+        }
+
+        return button;
+    }
+
+    /**
      * Helper method to set the graphic of a button with a given icon.
      *
      * @param button the button to where the icon shall be added.

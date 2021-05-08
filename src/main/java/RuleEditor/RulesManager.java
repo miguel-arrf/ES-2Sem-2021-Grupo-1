@@ -3,7 +3,6 @@ package RuleEditor;
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
 import g1.ISCTE.AppStyle;
-import g1.ISCTE.FontType;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,8 +20,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import MetricExtraction.MetricExtractor;
+import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -188,18 +187,18 @@ public class RulesManager extends Application {
     @SuppressWarnings("unchecked")
     private HBox getRenameTextField(Label label, JSONObject jsonObject) {
         Button updateButton = styledButton("Update", lightGreenColor);
-        Button cancelButton = styledButton("Cancel", lightPinkColor);
 
-        cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST))));
+        String ruleName = (String) ((JSONObject)jsonObject.get("outerName")).get("innerName");
 
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: " + darkGrayBoxColor);
-        TextField textField = new TextField((String) ((JSONObject)jsonObject.get("outerName")).get("innerName"));
-        textField.setStyle("-fx-text-inner-color: white;");
+        TextField textField = new TextField(ruleName);
+        textField.setStyle("-fx-text-inner-color: white; -fx-background-color: #606060");
+
 
         updateButton.setOnAction(actionEvent -> {
 
-            if(ruleFileManager.isNameValid(textField.getText())) {
+            if(ruleFileManager.isValidName(textField.getText()) || textField.getText().equals(ruleName)) {
                 label.setText(textField.getText());
 
                 JSONObject outerName = (JSONObject) jsonObject.get("outerName");
@@ -208,16 +207,18 @@ public class RulesManager extends Application {
                 jsonObject.replace("outerName", outerName);
 
                 ruleFileManager.saveJSONListToFile(rules);
-                Platform.runLater(() -> cancelButton.getScene().getWindow().fireEvent(new WindowEvent(cancelButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
+
+                Platform.runLater(() -> updateButton.getScene().getWindow().fireEvent(new WindowEvent(updateButton.getScene().getWindow(), WindowEvent.WINDOW_CLOSE_REQUEST)));
             } else {
-                System.out.println("Nome inválido");
+                textField.setStyle("-fx-border-radius: 10; -fx-text-inner-color: white; -fx-background-color: #606060; -fx-border-color: red");
+
             }
 
         });
 
         textField.setMaxWidth(150);
 
-        hBox.getChildren().addAll(textField, updateButton, cancelButton);
+        hBox.getChildren().addAll(textField, updateButton);
 
         hBox.getStyleClass().add("ruleBuilderMenu");
 
@@ -278,10 +279,10 @@ public class RulesManager extends Application {
             boolean isClassSmell = (Boolean) ((JSONObject) nodeJSON.get("outerName")).get("isClassSmell");
 
 
-            FinalMain finalMain = new FinalMain(isClassSmell);
+            RuleEditor ruleEditor = new RuleEditor(isClassSmell);
             String ruleName = (String) ((JSONObject) nodeJSON.get("outerName")).get("innerName");
 
-            SplitPane content = finalMain.getEditRuleEditor(popupStage, ruleFileManager, nodeJSON, ruleName);
+            SplitPane content = ruleEditor.getEditRuleEditor(popupStage, ruleFileManager, nodeJSON, ruleName);
 
             VBox.setMargin(content, new Insets(20));
             content.setPadding(new Insets(10));
@@ -297,7 +298,7 @@ public class RulesManager extends Application {
             popupStage.setOnCloseRequest(windowEvent -> {
                 rules.remove(nodeJSON);
 
-                JSONObject ruleToADD = finalMain.getRule();
+                JSONObject ruleToADD = ruleEditor.getRule();
 
                 if (ruleToADD != null) {
 
@@ -399,8 +400,8 @@ public class RulesManager extends Application {
     private void openAddRuleEditor(boolean isClassSmell){
         Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
 
-        FinalMain finalMain = new FinalMain(isClassSmell);
-        SplitPane content = finalMain.getRuleEditor(popupStage, ruleFileManager);
+        RuleEditor ruleEditor = new RuleEditor(isClassSmell);
+        SplitPane content = ruleEditor.getRuleEditor(popupStage, ruleFileManager);
 
         VBox.setMargin(content, new Insets(20));
         content.setPadding(new Insets(10));
@@ -414,10 +415,10 @@ public class RulesManager extends Application {
         popupStage.setMinWidth(700);
 
         popupStage.setOnCloseRequest(windowEvent -> {
-            JSONObject ruleToADD = finalMain.getRule();
+            JSONObject ruleToADD = ruleEditor.getRule();
 
-            if (ruleToADD != null && (finalMain.getRuleName() != null)) {
-                rules.add(finalMain.getRule());
+            if (ruleToADD != null && (ruleEditor.getRuleName() != null)) {
+                rules.add(ruleEditor.getRule());
                 updateRulesEditorPanel();
 
                 ruleFileManager.saveJSONListToFile(rules);

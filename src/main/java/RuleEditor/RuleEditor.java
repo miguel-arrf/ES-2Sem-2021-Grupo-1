@@ -23,11 +23,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class FinalMain extends Application {
+public class RuleEditor extends Application {
 
     public static final DataFormat customFormat = new DataFormat("Node");
     public static ArrayList<CustomNode> ruleNodes = new ArrayList<>();
@@ -68,7 +67,7 @@ public class FinalMain extends Application {
         return json;
     }
 
-    public FinalMain(boolean isClassSmell){
+    public RuleEditor(boolean isClassSmell){
         this.isClassSmell = isClassSmell;
     }
 
@@ -292,13 +291,13 @@ public class FinalMain extends Application {
 
     private void textFieldStage(Stage stage){
 
-        Button closeWindow = ConditionBlock.getStyledButton("Save", "#a3ddcb");
+        Button saveButton = AppStyle.getBolderButton("Save", "#a3ddcb");
         TextField textField = new TextField(ruleName == null ? "Rule Name" : getRuleName());
-        textField.setStyle("-fx-text-inner-color: white;");
+        textField.setStyle("-fx-text-inner-color: white; -fx-background-color: #606060");
         textField.setMaxWidth(150);
 
 
-        HBox hBox = new HBox(textField, closeWindow );
+        HBox hBox = new HBox(textField, saveButton );
         hBox.setStyle("-fx-background-color: #3d3c40");
         hBox.getStyleClass().add("ruleBuilderMenu");
         hBox.setPadding(new Insets(10));
@@ -307,7 +306,6 @@ public class FinalMain extends Application {
         hBox.setMaxWidth(500);
         hBox.setEffect(AppStyle.getDropShadow());
         hBox.setAlignment(Pos.CENTER);
-
 
         Stage popupStage = AppStyle.setUpPopupStage("Rule name", "/RuleBuilderIcon.gif", true);
 
@@ -318,16 +316,15 @@ public class FinalMain extends Application {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
         scene.setFill(Color.web("#3d3c40"));
 
-
         popupStage.setScene(scene);
 
-        closeWindow.setOnAction(actionEvent -> {
-            ruleName = textField.getText();
-            if(ruleFileManager.isNameValid(ruleName)) {
+        saveButton.setOnAction(actionEvent -> {
+            if(ruleFileManager.isValidName(textField.getText()) || (ruleName != null && ruleName.equals(textField.getText()))) {
+                ruleName = textField.getText();
                 popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
                 primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             } else {
-
+                textField.setStyle("-fx-border-radius: 10; -fx-text-inner-color: white; -fx-background-color: #606060; -fx-border-color: red");
                 System.out.println("Nome invalido");
             }
         });
@@ -335,8 +332,7 @@ public class FinalMain extends Application {
         popupStage.show();
 
         popupStage.setOnCloseRequest(windowEvent -> {
-        	//TODO verificar se o nome novo ou atualizado já existe.
-            ruleName = textField.getText();
+            System.out.println("im here: " + getRuleName());
             stage.setTitle(ruleName);
             rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
         });

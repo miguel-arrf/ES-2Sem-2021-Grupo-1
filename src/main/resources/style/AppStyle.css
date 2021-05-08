@@ -105,15 +105,17 @@
 .text-field {
     -fx-border-radius: 10;
     -fx-background-radius: 10 ;
-    -fx-border-color: transparent;
+    -fx-border-color: #606060;
+    -fx-text-inner-color: white;
 }
 
 .text-field:focused {
     -fx-border-radius: 10 ;
     -fx-background-radius: 10;
-    -fx-background-color: transparent;
+    -fx-background-color: #606060;
     -fx-border-color: lightgray;
     -fx-border-width: 3;
+    -fx-text-inner-color: white;
 }
 
 .context-menu {

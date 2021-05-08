@@ -73,7 +73,7 @@ public class RuleFileManager {
      * @throws IOException
      * @throws ParseException
      */
-    public Boolean isNameValid(String ruleName) {
+    public Boolean isValidName(String ruleName) {
 
             ArrayList<JSONObject> ruleFileToArray = new ArrayList();
 
@@ -172,7 +172,6 @@ public class RuleFileManager {
         if (firstCustomNode.getType() == Types.LogicBlock) {
             RuleNode nodeToReturn = new RuleNode(firstCustomNode, null, null);
 
-            //addChildrenToRuleNode(nodeToReturn, jsonObject, draggingObject);
             addChildrenToObject(nodeToReturn, jsonObject, draggingObject,
                     (a,b) -> {
                         RuleNode ruleNode = new RuleNode(b);

@@ -9,7 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -114,9 +113,9 @@ class RuleFileManagerTest {
     	  ObservableList<JSONObject> observableList = FXCollections.observableArrayList(arrayListJson);
     	  manager.setRules(observableList);
 
-    	assertTrue(manager.isNameValid("newRuleName"));
+    	assertTrue(manager.isValidName("newRuleName"));
     	
-    	assertFalse(manager.isNameValid("isGodClass"));
+    	assertFalse(manager.isValidName("isGodClass"));
     	
     }
 
