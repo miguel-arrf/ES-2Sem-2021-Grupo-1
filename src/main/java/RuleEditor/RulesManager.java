@@ -2,6 +2,7 @@ package RuleEditor;
 
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
+import CodeSmellDetection.RuleOperator;
 import MetricExtraction.MetricExtractor;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.NewGUI;
@@ -15,6 +16,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -99,7 +101,7 @@ public class RulesManager extends Application {
     private Button setUpLoadRulesFileButton() {
         FileChooser fileChooser = getFileChooser("Select");
 
-        Button setDirectoryButton = styledButton("Load Rules", "#a3ddcb");
+        Button setDirectoryButton = AppStyle.getButtonWithDropShadow("Load Rules", "#a3ddcb");
         setButtonIcon(setDirectoryButton, "icons8-download-96.png");
 
         setDirectoryButton.setOnAction(actionEvent -> {
@@ -135,6 +137,7 @@ public class RulesManager extends Application {
 
             updateRulesEditorPanel();
             addNewRuleButton.setDisable(false);
+            setButtonIcon(addNewRuleButton, "add.png");
 
         } catch (ParseException | IOException e) {
             e.printStackTrace();
@@ -151,7 +154,7 @@ public class RulesManager extends Application {
     private Button setUpSetRulesFileButton() {
         FileChooser fileChooser = getFileChooser("Save");
 
-        Button setDirectoryButton = styledButton("Create Rules file", "#d5ecc2");
+        Button setDirectoryButton = AppStyle.getButtonWithDropShadow("Create Rules file", "#d5ecc2");
         setButtonIcon(setDirectoryButton, "add-file.png");
 
         setDirectoryButton.setOnAction(actionEvent -> {
@@ -166,6 +169,8 @@ public class RulesManager extends Application {
                     rules.clear();
 
                     addNewRuleButton.setDisable(false);
+                    setButtonIcon(addNewRuleButton, "add.png");
+
                 }
             }
         });
@@ -185,7 +190,7 @@ public class RulesManager extends Application {
      */
     @SuppressWarnings("unchecked")
     private HBox getRenameTextField(Label label, JSONObject jsonObject) {
-        Button updateButton = styledButton("Update", lightGreenColor);
+        Button updateButton = AppStyle.getButtonWithDropShadow("Update", lightGreenColor);
 
         String ruleName = (String) ((JSONObject) jsonObject.get("outerName")).get("innerName");
 
@@ -267,7 +272,7 @@ public class RulesManager extends Application {
      * @return the delete button.
      */
     private Button getDeleteButton(JSONObject nodeJSON) {
-        Button delete = styledButton("Delete", lightRedColor);
+        Button delete = AppStyle.getButtonWithDropShadow("Delete", lightRedColor);
         setButtonIcon(delete, "icons8-full-trash-96.png");
 
         delete.setOnAction(actionEvent -> {
@@ -290,7 +295,7 @@ public class RulesManager extends Application {
      * @return the edit button.
      */
     private Button getEditButton(boolean isClassRule, JSONObject nodeJSON) {
-        Button edit = styledButton("Edit", lightGrayColor);
+        Button edit = AppStyle.getButtonWithDropShadow("Edit", lightGrayColor);
         setButtonIcon(edit, "icons8-edit-384.png");
 
         edit.setOnAction(actionEvent -> {
@@ -312,18 +317,19 @@ public class RulesManager extends Application {
 
             popupStage.setMinHeight(300);
             popupStage.setMinWidth(700);
+            popupStage.setMinWidth(700);
 
             popupStage.setOnCloseRequest(windowEvent -> {
-                rules.remove(nodeJSON);
 
                 JSONObject ruleToADD = ruleEditor.getRule();
 
                 if (ruleToADD != null) {
-
+                    rules.remove(nodeJSON);
                     rules.add(ruleToADD);
                     ruleFileManager.saveJSONListToFile(rules);
-                    updateRulesEditorPanel();
                 }
+                updateRulesEditorPanel();
+
 
             });
 
@@ -344,7 +350,7 @@ public class RulesManager extends Application {
      * @return the rename button.
      */
     private Button getRenameButton(Label label, JSONObject nodeJSON) {
-        Button rename = styledButton("Rename", lightYellowColor);
+        Button rename = AppStyle.getButtonWithDropShadow("Rename", lightYellowColor);
         setButtonIcon(rename, "icons8-rename-96.png");
 
         rename.setOnAction(actionEvent -> {
@@ -391,12 +397,21 @@ public class RulesManager extends Application {
      * @return the button to add a new rule.
      */
     private Button setUpAddNewRuleButton() {
-        Button addNewRule = styledButton("Add rule", lightPurpleColor);
-        setButtonIcon(addNewRule, "add.png");
+        Button addNewRule = AppStyle.getButtonWithDropShadow("Add rule", lightPurpleColor);
 
         addNewRule.setMaxHeight(30);
 
         ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem longMethodItem = new MenuItem("isLongMethod");
+        longMethodItem.setOnAction(actionEvent -> {
+            try {
+                addIsLongMethod();
+            } catch (IncorrectRuleException e) {
+                e.printStackTrace();
+            }
+        });
+        MenuItem godClassItem = new MenuItem("isGodClass");
 
         MenuItem classSmellMenuItem = new MenuItem("Class Rule");
         classSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(true));
@@ -415,6 +430,27 @@ public class RulesManager extends Application {
 
         return addNewRule;
     }
+
+    private void addIsLongMethod() throws IncorrectRuleException {
+        ConditionBlock isLongMethod = new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "10");
+        ArrayList<CustomNode> nodes = new ArrayList<>();
+        nodes.add(isLongMethod);
+
+        JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isLongMethod", false);
+        rules.add(ruleToAdd);
+        ruleFileManager.saveJSONListToFile(rules);
+    }
+
+    private void addIsGodClass() throws IncorrectRuleException {
+        ConditionBlock isLongMethod = new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Class"), "10");
+        ArrayList<CustomNode> nodes = new ArrayList<>();
+        nodes.add(isLongMethod);
+
+        JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isGodClass", true);
+        rules.add(ruleToAdd);
+        ruleFileManager.saveJSONListToFile(rules);
+    }
+
 
     /**
      * Helper method to open the rule editor with the given type of the rule (Class Rule or Method Rule).
@@ -511,28 +547,6 @@ public class RulesManager extends Application {
         mainPane.getChildren().add(saveAndLoadButtons);
     }
 
-
-    /**
-     * Helper method to have buttons with a consistent design all around.
-     *
-     * @param text  the text to be displayed.
-     * @param color the color of the button background.
-     * @return the button.
-     */
-    private Button styledButton(String text, String color) {
-        Button button = new Button(text);
-
-        button.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
-
-        button.setMinHeight(50);
-        button.setMinWidth(Region.USE_PREF_SIZE);
-
-        button.setAlignment(Pos.CENTER);
-
-        button.setMaxWidth(Double.MAX_VALUE);
-
-        return button;
-    }
 
     /**
      * Helper method to deal with the multiple times this GUI can be presented.

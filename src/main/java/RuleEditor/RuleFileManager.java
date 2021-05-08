@@ -137,9 +137,12 @@ public class RuleFileManager {
      * @return the json object representing a given rule defined in GUI terms.
      */
     @SuppressWarnings("unchecked")
-    public JSONObject guiToJSONObject(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell) {
+    public JSONObject guiToJSONObject(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell) throws IncorrectRuleException {
 
         //The first node is always in the zero index.
+        if(customNodeArrayList.isEmpty())
+            throw new IncorrectRuleException("Empty rule");
+
         CustomNode firstCustomNode = customNodeArrayList.get(0);
 
         JSONObject jsonObject = customNodeToJSON(firstCustomNode, customNodeArrayList);
@@ -149,7 +152,6 @@ public class RuleFileManager {
         outerName.put("isClassSmell", isClassSmell);
         outerName.put("uniqueIdentifier", UUID.randomUUID().toString());
         jsonObject.put("outerName", outerName);
-
 
         jsonObject.replace("outerName", outerName);
 
@@ -199,16 +201,39 @@ public class RuleFileManager {
      * @return the JSONObject representing the rule represented by the CustomNode node.
      */
     @SuppressWarnings("unchecked")
-    public JSONObject customNodeToJSON(CustomNode node, List<CustomNode> others) {
+    public JSONObject customNodeToJSON(CustomNode node, List<CustomNode> others) throws IncorrectRuleException {
         JSONObject json = new JSONObject();
         json.put("rule", node); // and so on
 
         ArrayList<CustomNode> childrenCustomNode = getChild(node, others);
         List<JSONObject> children = new ArrayList<>();
 
+
         for (CustomNode subNode : childrenCustomNode) {
             children.add(customNodeToJSON(subNode, others));
         }
+
+        if(node.getType() == Types.ConditionBlock){
+            ConditionBlock tempConditionBlock = (ConditionBlock) node;
+            if(tempConditionBlock.getOperator() != RuleOperator.DEFAULT){
+                try{
+                    Double doubleValue = Double.valueOf(tempConditionBlock.getValue());
+                }catch (NumberFormatException e){
+                    throw new IncorrectRuleException("Incorrect rule");
+                }
+
+                if(tempConditionBlock.getRuleBlock() == null){
+                    throw new IncorrectRuleException("Incorrect rule");
+                }
+            }else{
+                throw new IncorrectRuleException("Incorrect rule");
+            }
+        }else if(node.getType() == Types.LogicBlock){
+            if(children.size() != 2){
+                throw new IncorrectRuleException("Incorrect rule");
+            }
+        }
+
 
         json.put("children", children);
         return json;
@@ -226,7 +251,6 @@ public class RuleFileManager {
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
 
         if (firstCustomNode.getType() == Types.LogicBlock) {
-            //addChildrenToLogicBlock((LogicBlock) firstCustomNode, jsonObject, draggingObject);
             LogicBlock logicBlock = (LogicBlock) firstCustomNode;
             addChildrenToObject(logicBlock, jsonObject, draggingObject,
                     (a,b) -> {
@@ -388,3 +412,4 @@ public class RuleFileManager {
     }
 
 }
+

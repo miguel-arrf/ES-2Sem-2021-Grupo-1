@@ -205,7 +205,7 @@ class RuleFileManagerTest {
 
 
     @Test
-    void testGetChild() {
+    void testGetChild() throws IncorrectRuleException {
     	RuleFileManager manager = createRuleFileManagerAndSetFile();
     	
         DraggingObject draggingObject = new DraggingObject();
@@ -240,7 +240,7 @@ class RuleFileManagerTest {
     }
 
 
-    void testGuiToJSONObject(ArrayList<CustomNode> customNodeArrayList, int childrenSize) {
+    void testGuiToJSONObject(ArrayList<CustomNode> customNodeArrayList, int childrenSize) throws IncorrectRuleException {
     	RuleFileManager manager = createRuleFileManagerAndSetFile();
     	
         String ruleName = "testRule";

@@ -53,6 +53,8 @@ public class NewGUI extends Application {
     private VBox leftPane;
     private VBox buttonsBox;
 
+    private Button loadJASMLButton;
+
     //SavedRules
     private final RulesManager rulesManager = new RulesManager();
     private MetricExtractor metricExtractor;
@@ -120,7 +122,7 @@ public class NewGUI extends Application {
 
         });
 
-        Button showMetrics = new Button("Mostrar métricas e processar regras");
+        Button showMetrics = new Button("Processar métricas");
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
 
@@ -151,7 +153,7 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox, getShowConfusionMatrixButton());
+        emptyLeftPane.getChildren().addAll(buttonsBox , getShowConfusionMatrixButton());
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
@@ -239,7 +241,6 @@ public class NewGUI extends Application {
                         e.printStackTrace();
                     }
 
-
                     Platform.runLater(() -> {
                         updateFilePane();
                         blurBackground(30, 0, 500, leftPane);
@@ -263,8 +264,11 @@ public class NewGUI extends Application {
             final File selectedDirectory =
                     directoryChooser.showDialog(selectFolder.getScene().getWindow());
             if (selectedDirectory != null) {
+                loadJASMLButton.setDisable(false);
                 selectedFile = selectedDirectory;
                 processProjectButton.setDisable(false);
+
+                filePane.getChildren().clear();
             } else {
                 processProjectButton.setDisable(true);
             }
@@ -287,12 +291,8 @@ public class NewGUI extends Application {
         Button selectFolder = getGrowingButtonWithCSSClass("Load JASML Project", "loadJASMLButton");
 
         selectFolder.setOnMouseClicked(event -> {
-
-
             selectedFile = QualityEvaluator.getDefaultProject();
             processProjectButton.setDisable(false);
-            selectFolder.setDisable(true);
-
 
         });
 
@@ -385,7 +385,9 @@ public class NewGUI extends Application {
         Button selectFolder = getSelectFolderButton(processProjectButton);
         selectFolderANDLoadDefaulProjectHBOX.setSpacing(10);
 
-        selectFolderANDLoadDefaulProjectHBOX.getChildren().addAll(selectFolder, getDefaultProjectButton(processProjectButton));
+        loadJASMLButton = getDefaultProjectButton(processProjectButton);
+
+        selectFolderANDLoadDefaulProjectHBOX.getChildren().addAll(selectFolder, loadJASMLButton);
 
         buttonsBox = new VBox(selectFolderANDLoadDefaulProjectHBOX, processProjectButton);
         buttonsBox.setSpacing(10);

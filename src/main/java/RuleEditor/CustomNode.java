@@ -1,6 +1,7 @@
 package RuleEditor;
 
 import CodeSmellDetection.RuleOperator;
+import g1.ISCTE.AppStyle;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;

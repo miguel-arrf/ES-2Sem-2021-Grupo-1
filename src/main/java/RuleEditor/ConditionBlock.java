@@ -262,14 +262,25 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: #3d3c40");
-        TextField textField = new TextField("0.0");
+
+        TextField textField = new TextField();
+        if(valueLabel.getText() != null){
+            textField.setText(valueLabel.getText());
+        }else{
+            textField.setText("0");
+        }
         textField.setStyle("-fx-text-inner-color: white;");
 
-
         updateButton.setOnAction(actionEvent -> {
-            valueLabel.setText(textField.getText());
+            try{
+                Double value = Double.valueOf(textField.getText());
+                valueLabel.setText(textField.getText());
 
-            Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+                Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
+            }catch(NumberFormatException e){
+                textField.setStyle("-fx-border-radius: 10; -fx-text-inner-color: white; -fx-background-color: #606060; -fx-border-color: red");
+            }
+
         });
 
         DecimalFormat format = new DecimalFormat("-#.0;#.0");

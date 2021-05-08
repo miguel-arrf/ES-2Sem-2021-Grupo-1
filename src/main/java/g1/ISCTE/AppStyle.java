@@ -48,11 +48,11 @@ public class AppStyle {
      * @return the default style string to be used to stylize any node in the App.
      */
     public static String setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(String color){
+
         return "-fx-background-radius: 7 7 7 7;\n"
                 + "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: " + color;
+                "    -fx-background-color: " + color + ";";
     }
-
 
 
     /**
@@ -104,7 +104,7 @@ public class AppStyle {
         label.setTextFill(Color.BLACK);
         label.setPadding(new Insets(insets));
         label.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
-
+        label.setEffect(AppStyle.getDropShadow(color));
 
         return label;
     }
@@ -233,6 +233,26 @@ public class AppStyle {
     }
 
     /**
+     * Helper method to have buttons with a consistent design all around.
+     *
+     * @param text  the text to be displayed.
+     * @param color the color of the button background.
+     * @return the button.
+     */
+    public static Button getButtonWithDropShadow(String text, String color){
+        Button button = new Button(text);
+        button.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color) );
+        button.setMinHeight(50);
+        button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setAlignment(Pos.CENTER);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.setEffect(new DropShadow(10, 0, 10, Color.web(color, 0.25)));
+
+        return button;
+    }
+
+    /**
      * Helper method to set the graphic of a button with a given icon.
      *
      * @param button the button to where the icon shall be added.
@@ -304,6 +324,10 @@ public class AppStyle {
         dropShadow.setColor(Color.color(0,0,0,0.10));
 
         return dropShadow;
+    }
+
+    public static DropShadow getDropShadow(String color){
+        return new DropShadow(10, 0, 10, Color.web(color, 0.25));
     }
 
 

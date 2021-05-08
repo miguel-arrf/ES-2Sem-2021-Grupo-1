@@ -26,6 +26,8 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import static g1.ISCTE.AppStyle.lightPurpleColor;
+
 public class RuleEditor extends Application {
 
     public static final DataFormat customFormat = new DataFormat("Node");
@@ -43,6 +45,8 @@ public class RuleEditor extends Application {
     private String ruleName;
     private RuleFileManager ruleFileManager;
 
+    private SplitPane splitPane;
+
     private boolean isClassSmell;
 
     public String getRuleName() {
@@ -55,13 +59,13 @@ public class RuleEditor extends Application {
 
     public JSONObject getRule() {
         JSONParser parser = new JSONParser();
-        JSONObject json = null;
+        JSONObject json;
         try {
             if(rule == null){
                 rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(),isClassSmell);
             }
             json = (JSONObject) parser.parse(rule.toJSONString());
-        } catch (ParseException | IndexOutOfBoundsException exception) {
+        } catch (ParseException | IndexOutOfBoundsException | IncorrectRuleException exception) {
             return null;
         }
         return json;
@@ -73,7 +77,7 @@ public class RuleEditor extends Application {
 
     @Override
     public void start(Stage stage) {
-
+        ruleNodes.clear();
         SplitPane splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
@@ -86,8 +90,10 @@ public class RuleEditor extends Application {
     }
 
     public SplitPane getRuleEditor(Stage stage, RuleFileManager ruleFileManager){
+        ruleNodes.clear();
+
         this.ruleFileManager = ruleFileManager;
-        SplitPane splitPane = new SplitPane();
+        splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
         primaryStage = stage;
 
@@ -95,11 +101,13 @@ public class RuleEditor extends Application {
     }
 
     public SplitPane getEditRuleEditor(Stage stage, RuleFileManager ruleFileManager, JSONObject jsonObject, String ruleName){
+        ruleNodes.clear();
+
         isNewRule = false;
 
         this.ruleName = ruleName;
         this.ruleFileManager = ruleFileManager;
-        SplitPane splitPane = new SplitPane();
+        splitPane = new SplitPane();
         configureSceneMainView(splitPane, stage);
 
         mainPane.getChildren().clear();
@@ -322,7 +330,6 @@ public class RuleEditor extends Application {
             if(ruleFileManager.isValidName(textField.getText()) || (ruleName != null && ruleName.equals(textField.getText()))) {
                 ruleName = textField.getText();
                 popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             } else {
                 textField.setStyle("-fx-border-radius: 10; -fx-text-inner-color: white; -fx-background-color: #606060; -fx-border-color: red");
                 System.out.println("Nome invalido");
@@ -332,9 +339,15 @@ public class RuleEditor extends Application {
         popupStage.show();
 
         popupStage.setOnCloseRequest(windowEvent -> {
-            System.out.println("im here: " + getRuleName());
-            stage.setTitle(ruleName);
-            rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
+            try {
+                rule = ruleFileManager.guiToJSONObject(ruleNodes, getRuleName(), isClassSmell);
+                stage.setTitle(ruleName);
+                primaryStage.fireEvent(new WindowEvent(primaryStage, WindowEvent.WINDOW_CLOSE_REQUEST));
+            } catch (IncorrectRuleException e) {
+                System.err.println("Incorrect rule");
+                mainPane.setStyle("-fx-background-color: " + AppStyle.redRowBackgroundColor + "; -fx-background-radius: 0 0 7 7 ");
+                //mainPane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("red"));
+            }
         });
 
     }
@@ -342,23 +355,11 @@ public class RuleEditor extends Application {
 
 
     private Button getSaveButton(Stage stage) {
+        Button saveButton = AppStyle.getButtonWithDropShadow(isNewRule ? "Save me :3" : "Update me :3", lightPurpleColor);
 
-        Button saveButton = new Button(isNewRule ? "Save me :3" : "Update me :3");
         saveButton.setOnAction(actionEvent -> {
             textFieldStage(stage);
         });
-
-
-        saveButton.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: #a29bfe");
-        saveButton.setMinWidth(150);
-        saveButton.setMinHeight(50);
-        saveButton.setAlignment(Pos.CENTER);
-
-        saveButton.setMaxWidth(Double.MAX_VALUE);
-
-
 
         return saveButton;
     }
@@ -452,8 +453,9 @@ public class RuleEditor extends Application {
                 if (mainPane.getChildren().size() < 1) {
                     CustomNode copy = inDragObject.getNode().getCopy();
                     addCustomNode(copy);
-
                 }
+
+                mainPane.setStyle("-fx-background-color: #3d3c40 ");
 
             }
 
