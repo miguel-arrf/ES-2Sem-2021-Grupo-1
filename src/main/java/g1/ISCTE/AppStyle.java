@@ -5,6 +5,7 @@ import javafx.animation.Interpolator;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,19 +15,13 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class AppStyle {
@@ -40,6 +35,11 @@ public class AppStyle {
     public static final String lightPurpleColor = "#a29bfe";
 
     public static final String lightGrayTextColor = "#d1d1d1";
+    public static final String redRowTextColor = "#ff7675";
+    public static final String greenRowTextColor = "#55efc4";
+
+    public static final String redRowBackgroundColor = "#4b0c0c";
+    public static final String greenRowBackgroundColor = "#20402c";
 
     /**
      * Gets the default style for rounded nodes in the App.
@@ -57,15 +57,12 @@ public class AppStyle {
 
     /**
      * @param paint color for the label
-     * @param fontType font style to be applied
-     * @param size the display size of the font
      * @param string text to be displayed
      * @return a label with the specified color, size, text and font type
      */
-    public static Label getLabelWithColorAndFont(Paint paint, FontType fontType, int size, String string){
+    public static Label getLabelWithColorAndFont(Paint paint, String string){
         Label label = new Label(string);
         label.setTextFill(paint);
-       // label.setFont(getFont(fontType, size));
 
         return label;
     }
@@ -80,7 +77,6 @@ public class AppStyle {
 
         Label subTitleLabel = new Label(message);
         subTitleLabel.setTextFill(Color.web("#76747e"));
-      //  subTitleLabel.setFont(AppStyle.getFont(FontType.DISPLAY_MEDIUM, 12));
 
         return subTitleLabel;
     }
@@ -94,11 +90,24 @@ public class AppStyle {
     public static Label getTitleLabel(String message){
         Label titleLabel = new Label(message);
         titleLabel.setTextFill(Color.web("#b7b7b8"));
-       // titleLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
 
         return titleLabel;
     }
 
+    public static Label getStyledLabel(String text, String color, int insets){
+        Label label = new Label(text);
+
+        HBox.setHgrow(label, Priority.ALWAYS);
+        label.setAlignment(Pos.CENTER);
+        label.setMaxWidth(Double.MAX_VALUE);
+        label.setMinWidth(Region.USE_PREF_SIZE);
+        label.setTextFill(Color.BLACK);
+        label.setPadding(new Insets(insets));
+        label.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
+
+
+        return label;
+    }
 
     /**
      * Creates stage with given title, icon and resizable option.

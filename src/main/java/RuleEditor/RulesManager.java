@@ -2,6 +2,7 @@ package RuleEditor;
 
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
+import MetricExtraction.MetricExtractor;
 import g1.ISCTE.AppStyle;
 import g1.ISCTE.NewGUI;
 import javafx.application.Application;
@@ -20,7 +21,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import MetricExtraction.MetricExtractor;
 import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
@@ -40,8 +40,8 @@ public class RulesManager extends Application {
 
     private static final String FILE_EXTENSION = "rule";
 
-    private  VBox mainPane = new VBox();
-    private  VBox rulesPanel = new VBox();
+    private VBox mainPane = new VBox();
+    private VBox rulesPanel = new VBox();
     private Label numberOfRules = new Label("No Rules");
     private Button setRulesDirectoryButton;
     private Button loadRulesButton;
@@ -49,7 +49,7 @@ public class RulesManager extends Application {
     private File rulesFile = null;
     private HashMap<String, ArrayList<String>> results = new HashMap<>();
 
-    private ObservableList<JSONObject> rules = FXCollections.observableArrayList();
+    private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
     private RuleFileManager ruleFileManager;
     private MetricExtractor metricExtractor;
 
@@ -70,9 +70,9 @@ public class RulesManager extends Application {
     public ObservableList<JSONObject> getRules() {
         return rules;
     }
-    
+
     public void setFile(File file) {
-    	this.rulesFile = file;
+        this.rulesFile = file;
     }
 
 
@@ -82,7 +82,7 @@ public class RulesManager extends Application {
      * @param message the type of file chooser (to save or to load).
      * @return the FileChooser
      */
-    private FileChooser getFileChooser(String message){
+    private FileChooser getFileChooser(String message) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Rule file(*." + FILE_EXTENSION + ")", "*." + FILE_EXTENSION));
         fileChooser.setInitialFileName("*." + FILE_EXTENSION);
@@ -123,7 +123,7 @@ public class RulesManager extends Application {
     /**
      * Load JSON files from the chosen path.
      */
-    public void loadFile(){
+    public void loadFile() {
         ruleFileManager.setFile(rulesFile);
 
         try {
@@ -141,7 +141,6 @@ public class RulesManager extends Application {
         }
 
     }
-
 
 
     /**
@@ -180,7 +179,7 @@ public class RulesManager extends Application {
     /**
      * HBox with the respective content (rule rename text field) to be displayed into a popup.
      *
-     * @param label the label that displays the rule name and that shall be updated or not by the user.
+     * @param label      the label that displays the rule name and that shall be updated or not by the user.
      * @param jsonObject the rule in JSON format.
      * @return the content needed to create a popup to rename a given rule.
      */
@@ -188,18 +187,20 @@ public class RulesManager extends Application {
     private HBox getRenameTextField(Label label, JSONObject jsonObject) {
         Button updateButton = styledButton("Update", lightGreenColor);
 
-        String ruleName = (String) ((JSONObject)jsonObject.get("outerName")).get("innerName");
+        String ruleName = (String) ((JSONObject) jsonObject.get("outerName")).get("innerName");
 
         HBox hBox = new HBox();
         hBox.setStyle("-fx-background-color: " + darkGrayBoxColor);
         TextField textField = new TextField(ruleName);
         textField.setStyle("-fx-text-inner-color: white; -fx-background-color: #606060");
 
+        boolean isClassRule = (Boolean) ((JSONObject) jsonObject.get("outerName")).get("isClassSmell");
 
         updateButton.setOnAction(actionEvent -> {
 
-            if(ruleFileManager.isValidName(textField.getText()) || textField.getText().equals(ruleName)) {
-                label.setText(textField.getText());
+            if (ruleFileManager.isValidName(textField.getText()) || textField.getText().equals(ruleName)) {
+                label.setText(textField.getText() + " | " + (isClassRule ? "Class rule" : "Method rule"));
+
 
                 JSONObject outerName = (JSONObject) jsonObject.get("outerName");
                 outerName.replace("innerName", textField.getText());
@@ -241,25 +242,33 @@ public class RulesManager extends Application {
      * @return the cell graphical representation.
      */
     private Node getRulePane(JSONObject nodeJSON) {
+        boolean isClassRule = (Boolean) ((JSONObject) nodeJSON.get("outerName")).get("isClassSmell");
 
         HBox pane = new HBox();
         pane.setSpacing(20);
 
-        Label label = new Label((String) ((JSONObject) nodeJSON.get("outerName")).get("innerName"));
+        Label label = AppStyle.getStyledLabel((String) ((JSONObject) nodeJSON.get("outerName")).get("innerName"), lightGreenColor,5);
+        label.setText(label.getText() + " | " + (isClassRule ? "Class rule" : "Method rule"));
 
-        label.setAlignment(Pos.CENTER);
+        Button deleteButton = getDeleteButton(nodeJSON);
+        Button editButton = getEditButton(isClassRule, nodeJSON);
+        Button renameButton = getRenameButton(label, nodeJSON);
 
-        HBox.setHgrow(label, Priority.ALWAYS);
-        label.setMaxWidth(Double.MAX_VALUE);
+        pane.getChildren().addAll(label, deleteButton, editButton, renameButton);
 
-        label.setMinWidth(Region.USE_PREF_SIZE);
-        label.setTextFill(Color.BLACK);
-        label.setPadding(new Insets(5));
-        label.setStyle(setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(lightGreenColor));
+        return pane;
+    }
 
 
+    /**
+     * Gets the delete button while also setting up the behaviour of it.
+     *
+     * @param nodeJSON the json node representing the rule.
+     * @return the delete button.
+     */
+    private Button getDeleteButton(JSONObject nodeJSON) {
         Button delete = styledButton("Delete", lightRedColor);
-        setButtonIcon(delete,"icons8-full-trash-96.png" );
+        setButtonIcon(delete, "icons8-full-trash-96.png");
 
         delete.setOnAction(actionEvent -> {
             rules.remove(nodeJSON);
@@ -269,6 +278,18 @@ public class RulesManager extends Application {
         });
         delete.setMinHeight(0);
 
+        return delete;
+    }
+
+
+    /**
+     * Gets the edit button while also setting up the behaviour of it.
+     *
+     * @param isClassRule if the rule is a class or method one.
+     * @param nodeJSON    the json node representing the rule.
+     * @return the edit button.
+     */
+    private Button getEditButton(boolean isClassRule, JSONObject nodeJSON) {
         Button edit = styledButton("Edit", lightGrayColor);
         setButtonIcon(edit, "icons8-edit-384.png");
 
@@ -276,10 +297,7 @@ public class RulesManager extends Application {
 
             Stage popupStage = AppStyle.setUpPopupStage("Edit Rule", "/RuleBuilderIcon.gif", true);
 
-            boolean isClassSmell = (Boolean) ((JSONObject) nodeJSON.get("outerName")).get("isClassSmell");
-
-
-            RuleEditor ruleEditor = new RuleEditor(isClassSmell);
+            RuleEditor ruleEditor = new RuleEditor(isClassRule);
             String ruleName = (String) ((JSONObject) nodeJSON.get("outerName")).get("innerName");
 
             SplitPane content = ruleEditor.getEditRuleEditor(popupStage, ruleFileManager, nodeJSON, ruleName);
@@ -314,12 +332,22 @@ public class RulesManager extends Application {
 
         edit.setMinHeight(0);
 
+        return edit;
+    }
+
+
+    /**
+     * Gets the rename button while also setting up the behaviour of it.
+     *
+     * @param label    the label to be updated on the rename of the rule.
+     * @param nodeJSON the json node representing the rule.
+     * @return the rename button.
+     */
+    private Button getRenameButton(Label label, JSONObject nodeJSON) {
         Button rename = styledButton("Rename", lightYellowColor);
         setButtonIcon(rename, "icons8-rename-96.png");
 
         rename.setOnAction(actionEvent -> {
-
-
             HBox optionsHBox = getRenameTextField(label, nodeJSON);
             Stage popupStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm());
 
@@ -334,10 +362,7 @@ public class RulesManager extends Application {
         });
         rename.setMinHeight(0);
 
-
-        pane.getChildren().addAll(label, delete, edit, rename);
-
-        return pane;
+        return rename;
     }
 
     /**
@@ -346,7 +371,7 @@ public class RulesManager extends Application {
     private void updateRulesEditorPanel() {
         rulesPanel.getChildren().clear();
 
-        if(rules.size() == 0)
+        if (rules.size() == 0)
             rulesPanel.getChildren().add(numberOfRules);
 
         for (JSONObject entry : rules) {
@@ -354,7 +379,7 @@ public class RulesManager extends Application {
             rulesPanel.getChildren().add(rulePane);
         }
 
-        if(rulesPanel.getScene() != null)
+        if (rulesPanel.getScene() != null)
             rulesPanel.getScene().getWindow().sizeToScene();
 
 
@@ -373,34 +398,33 @@ public class RulesManager extends Application {
 
         ContextMenu contextMenu = new ContextMenu();
 
-        MenuItem classSmellMenuItem = new MenuItem("Class Smell");
+        MenuItem classSmellMenuItem = new MenuItem("Class Rule");
         classSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(true));
 
-        MenuItem methodSmellMenuItem = new MenuItem("Method Smell");
+        MenuItem methodSmellMenuItem = new MenuItem("Method Rule");
         methodSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(false));
 
         contextMenu.getItems().addAll(classSmellMenuItem, methodSmellMenuItem);
 
         addNewRule.setOnMouseClicked(mouseEvent -> {
-            if(mouseEvent.getButton() == MouseButton.PRIMARY){
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 contextMenu.show(addNewRule, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             }
         });
-
 
 
         return addNewRule;
     }
 
     /**
-     * Helper method to open the rule editor with the given type of the rule (Class Smell or Method Smell).
+     * Helper method to open the rule editor with the given type of the rule (Class Rule or Method Rule).
      *
-     * @param isClassSmell the type of the rule.
+     * @param isClassRule the type of the rule.
      */
-    private void openAddRuleEditor(boolean isClassSmell){
+    private void openAddRuleEditor(boolean isClassRule) {
         Stage popupStage = AppStyle.setUpPopupStage("New Rule", "/RuleBuilderIcon.gif", true);
 
-        RuleEditor ruleEditor = new RuleEditor(isClassSmell);
+        RuleEditor ruleEditor = new RuleEditor(isClassRule);
         SplitPane content = ruleEditor.getRuleEditor(popupStage, ruleFileManager);
 
         VBox.setMargin(content, new Insets(20));
@@ -441,9 +465,9 @@ public class RulesManager extends Application {
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
-        	System.out.println("ENTRÁAAAAMOS AQUI: " + rules.size());
+            System.out.println("ENTRÁAAAAMOS AQUI: " + rules.size());
             if (rules.size() == 0) {
-                if(!rulesPanel.getChildren().contains(numberOfRules))
+                if (!rulesPanel.getChildren().contains(numberOfRules))
                     rulesPanel.getChildren().add(numberOfRules);
                 numberOfRules.setText("No Rules");
                 numberOfRules.setGraphic(getIcon("bird.png"));
@@ -480,7 +504,6 @@ public class RulesManager extends Application {
         loadRulesButton = setUpLoadRulesFileButton();
 
 
-
         saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
         saveAndLoadButtons.setMaxWidth(Double.MAX_VALUE);
@@ -492,7 +515,7 @@ public class RulesManager extends Application {
     /**
      * Helper method to have buttons with a consistent design all around.
      *
-     * @param text the text to be displayed.
+     * @param text  the text to be displayed.
      * @param color the color of the button background.
      * @return the button.
      */
@@ -514,7 +537,7 @@ public class RulesManager extends Application {
     /**
      * Helper method to deal with the multiple times this GUI can be presented.
      */
-    private void resetEverything(){
+    private void resetEverything() {
         mainPane = new VBox();
         rulesPanel = new VBox();
         numberOfRules = new Label("No Rules");
@@ -529,13 +552,14 @@ public class RulesManager extends Application {
     public HashMap<String, ArrayList<String>> getResults() {
         return results;
     }
+
     /**
      * Creates the Code Smells for each rule and detects them.
      */
-    public ArrayList<CodeSmell> createCodeSmells( )   {
+    public ArrayList<CodeSmell> createCodeSmells() {
         ArrayList<CodeSmell> smells = new ArrayList<>();
 
-        for(JSONObject entry: rules){
+        for (JSONObject entry : rules) {
             String ruleName = (String) ((JSONObject) entry.get("outerName")).get("innerName");
             RuleFileManager tempRuleFileManager = new RuleFileManager();
             boolean isClassSmell = (Boolean) ((JSONObject) entry.get("outerName")).get("isClassSmell");
@@ -545,7 +569,7 @@ public class RulesManager extends Application {
 
         }
 
-        if(metricExtractor != null && metricExtractor.getResults() != null){
+        if (metricExtractor != null && metricExtractor.getResults() != null) {
             CodeSmellDetector detector = new CodeSmellDetector(metricExtractor.getResults(), smells);
             try {
                 detector.runDetection();
@@ -555,7 +579,7 @@ public class RulesManager extends Application {
             }
 
             return smells;
-        }else{
+        } else {
             return new ArrayList<>();
         }
 
@@ -583,19 +607,18 @@ public class RulesManager extends Application {
         stage.setScene(scene);
         stage.show();
 
-        if(rulesFile != null){
+        if (rulesFile != null) {
             loadFile();
             ruleFileManager.setRules(rules);
         }
 
     }
 
-    private void setUpGUI(){
+    private void setUpGUI() {
         resetEverything();
         setUpMainPane();
-        
-    }
 
+    }
 
 
     public File getRulesFile() {

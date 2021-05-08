@@ -17,7 +17,6 @@ public class RuleApplier {
     private final XSSFWorkbook myWorkbook;
     private final String path;
     private final HashMap<String, ArrayList<String>> rules;
-    private String[] rulesKeys;
 
     public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
         this.rules = rules;
@@ -38,11 +37,11 @@ public class RuleApplier {
         resetMetricsTable();
         XSSFRow titleRow = mySheet.getRow(0);
         int lastcell = titleRow.getLastCellNum();
-        rulesKeys = rules.keySet().toArray(new String[rules.size()]);
+        String[] rulesKeys = rules.keySet().toArray(new String[0]);
 
         int offset = 0;
 
-        for (int x = lastcell;x < lastcell + rulesKeys.length; x++) {
+        for (int x = lastcell; x < lastcell + rulesKeys.length; x++) {
             if(!rulesKeys[x-lastcell].equals("NoCodeSmellDetected")){
                 addColumn(rulesKeys[x - lastcell], x - offset);
             }else{

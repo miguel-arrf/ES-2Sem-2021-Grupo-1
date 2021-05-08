@@ -35,7 +35,7 @@ public class MyTree {
 
         File[] files = file.listFiles();
 
-        for(int i = 0; i < files.length ; i++){
+        for(int i = 0; i < (files != null ? files.length : 0); i++){
             File filename = files[i];
 
             System.out.println("file: "  + filename.toString());

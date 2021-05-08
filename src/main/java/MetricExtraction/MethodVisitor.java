@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class MethodVisitor extends VoidVisitorAdapter {
 
-    private ArrayList<Method> class_methods = new ArrayList<>();
+    private final ArrayList<Method> class_methods = new ArrayList<>();
 
     /**
      * Visits the Java class's method declarations using the parser, and for each declaration visited, constructs an instance of Method

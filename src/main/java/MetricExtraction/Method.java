@@ -1,7 +1,5 @@
 package MetricExtraction;
 
-import com.github.javaparser.metamodel.LiteralExprMetaModel;
-
 import java.util.HashMap;
 import java.util.Scanner;
 

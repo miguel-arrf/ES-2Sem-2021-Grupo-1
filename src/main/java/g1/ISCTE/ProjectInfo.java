@@ -17,7 +17,7 @@ import java.util.Iterator;
  */
 public class ProjectInfo {
 
-    private XSSFSheet sheet;
+    private final XSSFSheet sheet;
     private final int NUM_OF_COLUMNS = 11;
 
     /**

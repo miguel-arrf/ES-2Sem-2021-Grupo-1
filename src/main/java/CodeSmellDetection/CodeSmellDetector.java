@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class CodeSmellDetector {
 
-    private ArrayList<ClassMetrics> metrics;
-    private ArrayList<CodeSmell> codeSmells;
-    private HashMap<String, ArrayList<String>> results = new HashMap<>();
+    private final ArrayList<ClassMetrics> metrics;
+    private final ArrayList<CodeSmell> codeSmells;
+    private final HashMap<String, ArrayList<String>> results = new HashMap<>();
 
     /**
      * Constructs an instance of CodeSmellDetector
@@ -40,7 +40,7 @@ public class CodeSmellDetector {
     }
 
     /** Runs the detection of the code smells' presence or absence in the source code, and generates the results
-     * @throws InterruptedException
+     * @throws InterruptedException in case of timeout.
      */
     public void runDetection() throws InterruptedException {
         ArrayList<DetectionWorker> workers = new ArrayList<>();

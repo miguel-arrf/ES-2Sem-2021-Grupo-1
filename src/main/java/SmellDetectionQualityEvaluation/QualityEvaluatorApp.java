@@ -1,21 +1,17 @@
 package SmellDetectionQualityEvaluation;
 
-import CodeSmellDetection.CodeSmell;
 import RuleEditor.RulesManager;
 import g1.ISCTE.AppStyle;
-import g1.ISCTE.FontType;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,7 +93,6 @@ public class QualityEvaluatorApp  {
         //ScrollPane where boxes go
         ScrollPane scrollPane = getScrollPane(content);
 
-        //scrollPane.vvalueProperty().bind(content.heightProperty());
 
         //StackPane due to rounded corners...
         StackPane stackPane = new StackPane();
@@ -188,6 +183,7 @@ public class QualityEvaluatorApp  {
                 mainBox.setAlignment(Pos.TOP_CENTER);
 
                 mainBox.getChildren().add(emptyLabel);
+                mainBox.getChildren().removeIf(node -> node instanceof StackPane || node instanceof ChoiceBox);
 
             }
         }

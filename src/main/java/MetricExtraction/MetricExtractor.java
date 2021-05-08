@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 public class MetricExtractor {
 
     private final ExecutorService threadPool;
-    private ArrayList<File> source_code = new ArrayList<>();
+    private final ArrayList<File> source_code = new ArrayList<>();
     private final String exported_file_name;
     private final String destination_directory;
-    private ArrayList<ClassMetrics> metrics = new ArrayList<>();
+    private final ArrayList<ClassMetrics> metrics = new ArrayList<>();
 
     /**
      * Constructs an instance of MetricExtractor
@@ -55,7 +55,7 @@ public class MetricExtractor {
 
     /**
      * If there's source code present in the source directory, executes metric extraction process on the source code, and exports results to file
-     * @throws InterruptedException
+     * @throws InterruptedException in case of timout.
      */
     public void executeExtraction() throws InterruptedException {
         if(source_code.isEmpty()) {
@@ -109,19 +109,18 @@ public class MetricExtractor {
                 String[][] methods = metrics.get(i).getMetrics_by_method();
 
                 //Iterar pelo numero de methodos (começa no um porque a primeira row já está ocupada)
-                for (int j=0; j < methods.length; j++) {
+                for (String[] method : methods) {
                     sumID++;
                     currentRow = mySheet.createRow(sumID);
-                    String[] oneMethod = methods[j];
 
                     //inserir no excel
-                        //Para ter MethodID
+                    //Para ter MethodID
                     XSSFCell myCell = currentRow.createCell(0);
                     myCell.setCellValue(sumID);
 
-                    for(int z=1; z < 9; z++) {
+                    for (int z = 1; z < 9; z++) {
                         myCell = currentRow.createCell(z);
-                        myCell.setCellValue(oneMethod[z-1]);
+                        myCell.setCellValue(method[z - 1]);
 
                     }
                 }

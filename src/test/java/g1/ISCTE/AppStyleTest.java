@@ -23,7 +23,7 @@ public class AppStyleTest {
 
     @Test
     public void getLabelWithColorAndFont() {
-        Label label = AppStyle.getLabelWithColorAndFont(Color.RED, FontType.BOLD, 12, testLabel);
+        Label label = AppStyle.getLabelWithColorAndFont(Color.RED, testLabel);
         assertEquals(label.getText(), testLabel);
     }
 

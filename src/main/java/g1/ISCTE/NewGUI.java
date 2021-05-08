@@ -41,20 +41,20 @@ public class NewGUI extends Application {
     //Right Side
     private final VBox centerPane = new VBox();
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
+
     //Left Side
     private final VBox filePane = new VBox();
-    public TableView table = new TableView();
+    public TableView<ObservableList<String>> table = new TableView<>();
     private Stage stage;
     private File selectedFile = null;
     private String docPath = "";
-    private VBox centerPaneVBox;
     private StackPane stackPaneLeftVBox;
     private VBox leftUnderVBox;
     private VBox leftPane;
     private VBox buttonsBox;
+
     //SavedRules
     private final RulesManager rulesManager = new RulesManager();
-    private final Button processRulesButton = setUpProcessRulesButton();
     private MetricExtractor metricExtractor;
 
 
@@ -68,9 +68,7 @@ public class NewGUI extends Application {
 
         pane.setEffect(gaussianBlur);
 
-        value.addListener((observableValue, number, t1) -> {
-            gaussianBlur.setRadius(t1.doubleValue());
-        });
+        value.addListener((observableValue, number, t1) -> gaussianBlur.setRadius(t1.doubleValue()));
 
         Timeline timeline = new Timeline();
         KeyValue kv = new KeyValue(value, endValue);
@@ -104,10 +102,8 @@ public class NewGUI extends Application {
 
     private VBox getButtonsLeft() {
         Button rulesEditor = new Button("Editor De Regras");
-        rulesEditor.setTextFill(Color.BLACK);
         rulesEditor.setMaxWidth(Double.MAX_VALUE);
         rulesEditor.getStyleClass().add("selectRuleBuilderButton");
-        //rulesEditor.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         rulesEditor.setOnMouseClicked(mouseEvent -> {
             Stage stage = AppStyle.setUpPopupStage("Rule Editor", null, true);
@@ -119,21 +115,24 @@ public class NewGUI extends Application {
 
             stage.setOnCloseRequest(windowEvent -> {
                 NewGUI.blurBackground(30, 0, 200, rulesEditor.getScene().getRoot());
-                processRulesButton.setDisable(rulesManager.getRules().size() == 0);
             });
 
 
         });
 
         Button showMetrics = new Button("Mostrar Métricas");
-        showMetrics.setTextFill(Color.BLACK);
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
-        // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
 
         showMetrics.setOnMouseClicked(mouseEvent -> {
 
             try {
+                if (rulesManager.getRulesFile() != null && rulesManager.getRules().size() > 0) {
+                    rulesManager.loadFile();
+                    rulesManager.createCodeSmells();
+                    RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
+                    ra.processRules();
+                }
                 updateCenterPane();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -152,39 +151,31 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox, processRulesButton);
+        emptyLeftPane.getChildren().addAll(buttonsBox, getShowConfusionMatrixButton());
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
         return emptyLeftPane;
 
-
     }
 
-    private Button setUpProcessRulesButton() {
-        Button processRulesButton = new Button("Process Rules");
-        processRulesButton.setTextFill(Color.BLACK);
-        processRulesButton.setMaxWidth(Double.MAX_VALUE);
-        processRulesButton.getStyleClass().add("selectShowMetricsButton");
-        // showMetrics.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 10));
-        processRulesButton.setDisable(true);
+    private Button getShowConfusionMatrixButton(){
+        Button showConfusionMatrix = getGrowingButtonWithCSSClass("Show confusion matrix", "showConfusionMatrixButton");
 
-        processRulesButton.setOnMouseClicked(mouseEvent -> {
+        showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
+            //TODO verifcar o que está no center pane, se for o coiso, então nao faz rload!!!!
+            QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
+            VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager);
 
-            try {
-                if (rulesManager.getRulesFile() != null && rulesManager.getRules().size() > 0) {
-                    rulesManager.loadFile();
-                    rulesManager.createCodeSmells();
-                    RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
-                    ra.processRules();
-                    updateCenterPane();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            mainpane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.darkGrayBoxColor));
+            centerPane.getChildren().clear();
+            centerPane.getChildren().add(mainpane);
+            mainpane.setMaxWidth(Double.MAX_VALUE);
+            mainpane.setMaxHeight(Double.MAX_VALUE);
+            VBox.setVgrow(mainpane, Priority.ALWAYS);
         });
 
-        return processRulesButton;
+        return showConfusionMatrix;
     }
 
     private void updateFilePane() {
@@ -302,26 +293,6 @@ public class NewGUI extends Application {
             processProjectButton.setDisable(false);
             selectFolder.setDisable(true);
 
-            Button showConfusionMatrix = getGrowingButtonWithCSSClass("Show confusion matrix", "showConfusionMatrixButton");
-            if (!buttonsBox.getChildren().contains(showConfusionMatrix)) {
-                buttonsBox.getChildren().add(showConfusionMatrix);
-            }
-
-            showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
-
-                //TODO verifcar o que está no center pane, se for o coiso, então nao faz rload!!!!
-                QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
-                VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager);
-
-                mainpane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.darkGrayBoxColor));
-                centerPane.getChildren().clear();
-                centerPane.getChildren().add(mainpane);
-                mainpane.setMaxWidth(Double.MAX_VALUE);
-                mainpane.setMaxHeight(Double.MAX_VALUE);
-                VBox.setVgrow(mainpane, Priority.ALWAYS);
-
-            });
-
 
         });
 
@@ -358,9 +329,6 @@ public class NewGUI extends Application {
                 if (file.isDirectory()) {
                     stage.setTitle(file.getName());
 
-                    String name = file.getName();
-                    //webEngine.executeScript("changeFirstBox("+"'"+ name +"'"+ ")");
-
                     selectedFile = file;
                     processProjectButton.setDisable(false);
                     success = true;
@@ -396,7 +364,7 @@ public class NewGUI extends Application {
 
                         }
                     };
-                    timer.schedule(task, 3000l);
+                    timer.schedule(task, 3000L);
 
                 }
 
@@ -409,7 +377,7 @@ public class NewGUI extends Application {
         });
 
         dragAndDropVBox.getChildren().add(
-                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), FontType.ROUNDED_SEMI_BOLD, 10, "Drag & drop folder here")
+                AppStyle.getLabelWithColorAndFont(Color.web("#76747e"), "Drag & drop folder here")
         );
 
 
@@ -477,14 +445,14 @@ public class NewGUI extends Application {
     
 
     private VBox centerPane() {
-        centerPaneVBox = new VBox();
+        VBox centerPaneVBox = new VBox();
         centerPaneVBox.setSpacing(15);
 
         centerPane.setMinWidth(600);
         centerPane.setAlignment(Pos.CENTER);
 
         VBox.setVgrow(centerPane, Priority.ALWAYS);
-        centerPaneVBox.getChildren().addAll(getInfoBoxes() /*, centerPaneWebViewPane*/, centerPane);
+        centerPaneVBox.getChildren().addAll(getInfoBoxes(), centerPane);
 
         centerPaneVBox.setPadding(new Insets(15));
 
@@ -494,7 +462,7 @@ public class NewGUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
-        SplitPane splitPane = initializeGUI(stage);
+        SplitPane splitPane = initializeGUI();
 
         stage.setTitle("CodeSmells Detector");
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/CodeSmellsIcon.gif")));
@@ -507,10 +475,9 @@ public class NewGUI extends Application {
         stage.show();
     }
 
-    public SplitPane initializeGUI(Stage stage) {
+    public SplitPane initializeGUI() {
         SplitPane splitPane = new SplitPane();
         splitPane.setStyle("-fx-background-insets: 0; -fx-padding: 0; -fx-background-color: rgb(28,28,30)");
-
 
         leftPane = getLeft();
         leftPane.setMinWidth(300);
@@ -543,8 +510,8 @@ public class NewGUI extends Application {
             column.setCellFactory(new Callback() {
 
                 @Override
-                public TableCell call(Object param) {
-                    return new TableCell<String, String>() {
+                public TableCell<String, String> call(Object param) {
+                    return new TableCell<>() {
                         public void updateItem(String item, boolean empty) {
                             super.updateItem(item, empty);
 
@@ -553,23 +520,23 @@ public class NewGUI extends Application {
                             } else {
 
                                 if (item != null) {
-
                                     if (currentColumn > 8) {
 
                                         if (item.equals("FALSE")) {
-                                            setTextFill(Color.web("#ff7675"));
-                                            setStyle("-fx-background-color: rgb(75,12,12)");
-                                           // setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("red"));
-                                        } else if(item.equals("TRUE")){
-                                            setTextFill(Color.web("#55efc4"));
-                                            setStyle("-fx-background-color: rgb(32, 64, 44)");
+
+                                            setTextFill(Color.web(AppStyle.redRowTextColor));
+                                            setStyle("-fx-background-color: " + AppStyle.redRowBackgroundColor);
+
+                                        } else if (item.equals("TRUE")) {
+
+                                            setTextFill(Color.web(AppStyle.greenRowTextColor));
+                                            setStyle("-fx-background-color: " + AppStyle.greenRowBackgroundColor);
                                         }
                                     } else {
                                         setTextFill(Color.web(AppStyle.lightGrayTextColor));
                                     }
                                     setText(item);
                                 }
-
 
                             }
                         }
@@ -580,9 +547,7 @@ public class NewGUI extends Application {
 
 
             column.setOnEditCommit(
-                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> {
-                        t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue());
-                    });
+                    (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue()));
             table.getColumns().add(column);
         }
 
@@ -592,10 +557,10 @@ public class NewGUI extends Application {
     }
 
     private HBox getInfoBoxes() {
-        VBox infoBox = getSquareInfoBox("Número total de packages", "?");
-        VBox infoBox1 = getSquareInfoBox("Número total de classes", "?");
-        VBox infoBox2 = getSquareInfoBox("Número total de métodos", "?");
-        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto", "?");
+        VBox infoBox = getSquareInfoBox("Número total de packages");
+        VBox infoBox1 = getSquareInfoBox("Número total de classes");
+        VBox infoBox2 = getSquareInfoBox("Número total de métodos");
+        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto");
 
         AppStyle.addFadingInGroup(1000, 500, infoBox, infoBox1, infoBox2, infoBox3);
 
@@ -613,7 +578,7 @@ public class NewGUI extends Application {
         return infoBoxes;
     }
 
-    private VBox getSquareInfoBox(String typeOfInfo, String number) {
+    private VBox getSquareInfoBox(String typeOfInfo) {
         VBox emptyLeftPane = new VBox();
 
         emptyLeftPane.setSpacing(10);
@@ -627,7 +592,7 @@ public class NewGUI extends Application {
 
         typeOfInfoLabel.setWrapText(true);
 
-        Label numberLabel = getStyledLabel(number);
+        Label numberLabel = getStyledLabel();
 		numberLabel.setPadding(new Insets(2, 2, 2, 2));
         Pane spacer = new Pane();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -639,8 +604,8 @@ public class NewGUI extends Application {
         return emptyLeftPane;
     }
 
-	private Label getStyledLabel(String number) {
-		Label numberLabel = new Label(number);
+	private Label getStyledLabel() {
+		Label numberLabel = new Label("?");
 		numberLabel.setTextFill(Color.BLACK);
 		numberLabel.setMinWidth(20);
 		numberLabel.setAlignment(Pos.CENTER);

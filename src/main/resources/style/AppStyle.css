@@ -15,36 +15,46 @@
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #6562fc;
+    -fx-font-weight: bold;
 }
 
 .processProjectButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #fd79a8;
+    -fx-font-weight: bold;
 }
 
 .showConfusionMatrixButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #55efc4;
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
 }
 
 .loadJASMLButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #74b9ff;
+    -fx-font-weight: bold;
 }
 
 .selectRuleBuilderButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #e4bad4;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
 }
 
 .selectShowMetricsButton {
     -fx-background-radius: 7 7 7 7;
     -fx-border-radius: 7 7 7 7;
     -fx-background-color: #caf7e3;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+
 }
 
 .emptyLeftPane{

@@ -14,8 +14,8 @@ import java.util.Scanner;
  */
 public class ExtractionWorker implements Runnable {
 
-    private ArrayList<ClassMetrics> metrics = new ArrayList<>();
-    private File class_file;
+    private final ArrayList<ClassMetrics> metrics = new ArrayList<>();
+    private final File class_file;
 
     /**
      * Constructs an instance of ExtractionWorker
