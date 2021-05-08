@@ -120,7 +120,7 @@ public class NewGUI extends Application {
 
         });
 
-        Button showMetrics = new Button("Mostrar Métricas");
+        Button showMetrics = new Button("Mostrar métricas e processar regras");
         showMetrics.setMaxWidth(Double.MAX_VALUE);
         showMetrics.getStyleClass().add("selectShowMetricsButton");
 
@@ -425,8 +425,9 @@ public class NewGUI extends Application {
         String[][] columnData = new String[tableData.size()][tableData.get(0).size()];
         String[] cols = tableData.get(0).toArray(new String[0]);
 
+        tableData.remove(0);
+
         for(int rowNum=0; rowNum!=tableData.size(); rowNum++) {
-            tableData.remove(0);
             ArrayList<String> column = tableData.get(rowNum);
 
             for(int rowValue = 0; rowValue != column.size(); rowValue++) {
