@@ -503,7 +503,7 @@ public class RulesManager extends Application {
 
 
     /**
-     * Helper method to open the rule editor with the given type of the rule (Class Rule or Method Rule).
+     * Helper method to open the rule editor with the given type of the rule (Class Rule or Method Rule)
      *
      * @param isClassRule the type of the rule.
      */
