@@ -16,7 +16,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -24,16 +23,16 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Optional;
 
 import static g1.ISCTE.AppStyle.*;
 
@@ -189,8 +188,6 @@ public class RulesManager extends Application {
         });
 
         HBox.setHgrow(setDirectoryButton, Priority.ALWAYS);
-
-
         return setDirectoryButton;
     }
 
@@ -219,7 +216,6 @@ public class RulesManager extends Application {
             if (ruleFileManager.isValidName(textField.getText()) || textField.getText().equals(ruleName)) {
                 label.setText(textField.getText() + " | " + (isClassRule ? "Class rule" : "Method rule"));
 
-
                 JSONObject outerName = (JSONObject) jsonObject.get("outerName");
                 outerName.replace("innerName", textField.getText());
 
@@ -238,12 +234,9 @@ public class RulesManager extends Application {
         textField.setMaxWidth(150);
 
         hBox.getChildren().addAll(textField, updateButton);
-
         hBox.getStyleClass().add("ruleBuilderMenu");
-
         hBox.setPadding(new Insets(10));
         hBox.setSpacing(10);
-
         hBox.setMaxHeight(100);
         hBox.setMaxWidth(500);
         hBox.setEffect(AppStyle.getDropShadow());
@@ -343,7 +336,6 @@ public class RulesManager extends Application {
                 }
                 updateRulesEditorPanel();
 
-
             });
 
             popupStage.show();
@@ -376,8 +368,6 @@ public class RulesManager extends Application {
 
             rename.getScene().setFill(Color.web(darkGrayBoxColor));
             NewGUI.blurBackground(0, 30, 500, rename.getScene().getRoot());
-
-
         });
         rename.setMinHeight(0);
 
@@ -401,7 +391,6 @@ public class RulesManager extends Application {
 
         if (rulesPanel.getScene() != null)
             rulesPanel.getScene().getWindow().sizeToScene();
-
 
     }
 
@@ -452,13 +441,40 @@ public class RulesManager extends Application {
         return addNewRule;
     }
 
+    /**
+     * Auxiliary method to add a default isLongMethod.
+     *
+     * @throws IncorrectRuleException In case the rule is incorrectly formatted.
+     * @throws ParseException In case the JSON parsing fails.
+     */
     private void addIsLongMethod() throws IncorrectRuleException, ParseException {
         addDefaultRule(getDefaultIsLongMethodBlock(), "isLongMethod", false);
     }
 
-    private void addDefaultRule(ConditionBlock defaultBlock, String nameToSearch, boolean isClassSmell) throws IncorrectRuleException, ParseException {
-        ConditionBlock isGodClass = defaultBlock;
-        ArrayList<CustomNode> nodes = new ArrayList<>(Arrays.asList(isGodClass));
+
+    /**
+     * Auxiliary method to add a default isGodClass.
+     *
+     * @throws IncorrectRuleException In case the rule is incorrectly formatted.
+     * @throws ParseException In case the JSON parsing fails.
+     */
+    private void addIsGodClass() throws IncorrectRuleException, ParseException {
+        addDefaultRule(getDefaultIsGodClassBlock(), "isGodClass", true);
+    }
+
+    /**
+     * Auxiliary method to create 1-level depth default rules.
+     * If the name already exists, the other rules with the given name, are renamed to previousName_old[Count], where
+     * count is the number of occurrences found.
+     *
+     * @param defaultBlock the block representing the rule.
+     * @param nameToSearch the name of the rule.
+     * @param isClassSmell if the rule is a class or method one.
+     * @throws IncorrectRuleException In case the rule is incorrectly formated.
+     * @throws ParseException In case the JSON parsing fails.
+     */
+    private void addDefaultRule(CustomNode defaultBlock, String nameToSearch, boolean isClassSmell) throws IncorrectRuleException, ParseException {
+        ArrayList<CustomNode> nodes = new ArrayList<>(Collections.singletonList(defaultBlock));
 
         JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, nameToSearch, isClassSmell);
         JSONParser jsonParser = new JSONParser();
@@ -495,10 +511,6 @@ public class RulesManager extends Application {
         ruleFileManager.saveJSONListToFile(rules);
         updateRulesEditorPanel();
 
-    }
-
-    private void addIsGodClass() throws IncorrectRuleException, ParseException {
-        addDefaultRule(getDefaultIsGodClassBlock(), "isGodClass", true);
     }
 
 
@@ -570,6 +582,9 @@ public class RulesManager extends Application {
         mainPane.getChildren().add(saveAndLoadButtons);
     }
 
+    /**
+     * Method that sets the new rule button and its behavior.
+     */
 	private void addNewRuleButton() {
 		mainPane.setSpacing(20);
 		mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
@@ -586,12 +601,14 @@ public class RulesManager extends Application {
 		});
 		numberOfRules.setTextFill(Color.WHITE);
 		numberOfRules.setGraphic(getIcon("bird.png"));
-		numberOfRules.setGraphic(getIcon("bird.png"));
+
 		rulesPanel.setSpacing(20);
 		rulesPanel.setMaxWidth(Double.MAX_VALUE);
 		rulesPanel.setAlignment(Pos.CENTER);
+
 		addNewRuleButton = setUpAddNewRuleButton();
 		addNewRuleButton.setDisable(true);
+
 		setRulesDirectoryButton = setUpSetRulesFileButton();
 		loadRulesButton = setUpLoadRulesFileButton();
 	}
@@ -611,13 +628,28 @@ public class RulesManager extends Application {
         addNewRuleButton = null;
     }
 
+    /**
+     * Method to get the rules file, which is the file where the JSON rules are stored.
+     *
+     * @return the file to store the JSON rules.
+     */
+    public File getRulesFile() {
+        return rulesFile;
+    }
 
+
+    /**
+     * Method to get the results. This results are the metric results that are obtained when the code smells are
+     * created and detected.
+     *
+     * @return the results.
+     */
     public HashMap<String, ArrayList<String>> getResults() {
         return results;
     }
 
     /**
-     * Creates the Code Smells for each rule and detects them.
+     * Creates and detects the Code Smells for each rule.
      */
     public ArrayList<CodeSmell> createCodeSmells() {
         ArrayList<CodeSmell> smells = new ArrayList<>();
@@ -649,15 +681,15 @@ public class RulesManager extends Application {
 
     }
 
-
     /**
-     * Start of the GUI.
+     * Start of the GUI, displays the RuleManager.
      *
      * @param stage stage to be displayed.
      */
     @Override
     public void start(Stage stage) {
-        setUpGUI();
+        resetEverything();
+        setUpMainPane();
 
         Scene scene = new Scene(mainPane);
         mainPane.setPrefSize(500, 500);
@@ -677,14 +709,4 @@ public class RulesManager extends Application {
 
     }
 
-    private void setUpGUI() {
-        resetEverything();
-        setUpMainPane();
-
-    }
-
-
-    public File getRulesFile() {
-        return rulesFile;
-    }
 }

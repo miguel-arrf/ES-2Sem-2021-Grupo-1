@@ -6,7 +6,6 @@ import g1.ISCTE.MyTree;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +50,7 @@ class RulesManagerTest {
 		RulesManager rulesManager = new RulesManager();
 		
 		URL sqlScriptUrl = MyTree.class.getClassLoader().getResource("forTestPurposes");
-		MetricExtractor metricExtractor = new MetricExtractor(new File(sqlScriptUrl.toURI()), null);
+		MetricExtractor metricExtractor = new MetricExtractor(new File(sqlScriptUrl.toURI()));
 		
 		
 		rulesManager.setMetricExtractor(metricExtractor);
@@ -157,7 +156,7 @@ class RulesManagerTest {
 		RulesManager rulesManager = initialize();
 		
 		URL sqlScriptUrl = MyTree.class.getClassLoader().getResource("forTestPurposes");
-		MetricExtractor metricExtractor = new MetricExtractor(new File(sqlScriptUrl.toURI()), null);
+		MetricExtractor metricExtractor = new MetricExtractor(new File(sqlScriptUrl.toURI()));
 		rulesManager.setMetricExtractor(metricExtractor);
 		
 		assertEquals(rulesManager.createCodeSmells().size(), 2);

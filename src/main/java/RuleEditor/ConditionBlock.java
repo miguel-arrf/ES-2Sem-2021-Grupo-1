@@ -21,8 +21,8 @@ import javafx.stage.WindowEvent;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 /**
  * The type Condition block.
@@ -219,7 +219,6 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         hBox.getChildren().addAll(lessButton, lessOrEqualButton, greaterButton, greatOrEqualButton, equalButton, differentButton);
 
-
         hBox.getStyleClass().add("ruleBuilderMenu");
 
         hBox.setPadding(new Insets(10));
@@ -242,13 +241,13 @@ public class ConditionBlock implements CustomNode, Serializable {
      */
     private HBox valueHBox() {
 
-        Button updateButton = AppStyle.getBolderButton("Update", "#a3ddcb");
-        Button cancelButton = AppStyle.getBolderButton("Cancel", "#d8345f");
+        Button updateButton = AppStyle.getBolderButton("Update", AppStyle.lightGreenColor);
+        Button cancelButton = AppStyle.getBolderButton("Cancel", AppStyle.lightPinkColor);
 
         cancelButton.setOnAction(actionEvent -> Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST))));
 
         HBox hBox = new HBox();
-        hBox.setStyle("-fx-background-color: #3d3c40");
+        hBox.setStyle("-fx-background-color: " + AppStyle.darkGrayBoxColor);
 
         TextField textField = new TextField();
         if(valueLabel.getText() != null){
@@ -270,19 +269,13 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         });
 
-        DecimalFormat format = new DecimalFormat("-#.0;#.0");
 
         textField.setMaxWidth(150);
 
         hBox.getChildren().addAll(textField, updateButton, cancelButton);
-
-
         hBox.getStyleClass().add("ruleBuilderMenu");
-
         hBox.setPadding(new Insets(10));
         hBox.setSpacing(10);
-
-
         hBox.setMaxHeight(100);
         hBox.setMaxWidth(500);
         hBox.setEffect(AppStyle.getDropShadow());
@@ -330,50 +323,15 @@ public class ConditionBlock implements CustomNode, Serializable {
         operatorLabelVbox.setAlignment(Pos.CENTER);
 
 
-        operatorLabelVbox.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (metricBlock != null) {
-                    optionsHBox = optionsHBox();
-                    optionsHBox.setStyle("-fx-background-color: #3d3c40");
+        Supplier<HBox> optionsHBoxSupplier = this::optionsHBox;
+        displaysSupplierInPopUp(operatorLabelVbox, "Operator", optionsHBoxSupplier);
 
-                    Stage newStage = AppStyle.setUpPopup("Operator", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
-                    popupStage = newStage;
-                    newStage.getScene().setFill(Color.web("#3d3c40"));
-
-
-                    //newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, FinalMain.splitPane));
-                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
-
-                    graphicalRepresentationNode.getScene().setFill(Color.web("#3d3c40"));
-                    NewGUI.blurBackground(0, 30, 500, graphicalRepresentationNode.getScene().getRoot());
-                }
-
-            }
-
-
-        });
 
         VBox valueLabelVbox = new VBox(valueLabel);
         valueLabelVbox.setAlignment(Pos.CENTER);
 
-        valueLabelVbox.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (metricBlock != null) {
-                    optionsHBox = valueHBox();
-
-                    Stage newStage = AppStyle.setUpPopup("Value", "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
-                    popupStage = newStage;
-                    popupStage.getScene().setFill(Color.web("#3d3c40"));
-
-                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
-
-                    graphicalRepresentationNode.getScene().setFill(Color.web("#3d3c40"));
-                    NewGUI.blurBackground(0, 30, 500, graphicalRepresentationNode.getScene().getRoot());
-                }
-
-            }
-
-        });
+        Supplier<HBox> valueHBoxSupplier = this::valueHBox;
+        displaysSupplierInPopUp(valueLabelVbox, "Value", valueHBoxSupplier);
 
         setDrag(ruleLabelVbox);
 
@@ -385,9 +343,7 @@ public class ConditionBlock implements CustomNode, Serializable {
 
         box.getChildren().addAll(ruleLabelVbox, operatorLabelVbox, valueLabelVbox);
 
-        box.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: white;");
+        box.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("white"));
 
         box.setMinWidth(200);
         box.setMinHeight(50);
@@ -398,6 +354,42 @@ public class ConditionBlock implements CustomNode, Serializable {
         return box;
     }
 
+    /**
+     * Displays the optionsHBox in a popup when clicked in the node.
+     * The optionsHBox is updated with the given supplier.
+     *
+     * @param node the node in which to display when clicked.
+     * @param title the title of the popup.
+     * @param supplier the supplier returning what will be displayed.
+     */
+    private void displaysSupplierInPopUp(Node node, String title, Supplier<HBox> supplier){
+        node.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                if (metricBlock != null) {
+                    optionsHBox = supplier.get();
+                    optionsHBox.setStyle("-fx-background-color: " + AppStyle.darkGrayBoxColor);
+
+                    Stage newStage = AppStyle.setUpPopup(title, "/PreferencesPanelIcon.gif", optionsHBox, getClass().getResource("/style/AppStyle.css").toExternalForm(), mouseEvent.getScreenX(), mouseEvent.getScreenY());
+                    popupStage = newStage;
+                    newStage.getScene().setFill(Color.web(AppStyle.darkGrayBoxColor));
+
+                    newStage.setOnCloseRequest(windowEvent -> NewGUI.blurBackground(30, 0, 200, graphicalRepresentationNode.getScene().getRoot()));
+
+                    graphicalRepresentationNode.getScene().setFill(Color.web(AppStyle.darkGrayBoxColor));
+                    NewGUI.blurBackground(0, 30, 500, graphicalRepresentationNode.getScene().getRoot());
+                }
+
+            }
+        });
+
+    }
+
+    /**
+     * Returns the graphical representation of this block.
+     * It is what displayed in the main gui when this block small widget was dragged into the main pane.
+     *
+     * @return the graphical representation of this block.
+     */
     @Override
     public Node getGraphicalRepresentation() {
         setHBoxDelete(graphicalRepresentationNode);

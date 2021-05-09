@@ -230,7 +230,6 @@ public class RuleEditor  {
                     inDragObject.setNode(copyBlock);
                 }
 
-
                 db.setContent(content);
 
                 event.consume();
@@ -250,12 +249,16 @@ public class RuleEditor  {
             }
         }
 
-
         return vBoxItems;
     }
 
 
-
+    /**
+     * VBox representing the right side of the gui, with the save/update button and the draggable blocks.
+     *
+     * @param stage the current stage.
+     * @return the VBox representing the right side of the GUI.
+     */
     private VBox rightVBox(Stage stage) {
         VBox rightVBox = new VBox();
 
@@ -267,14 +270,11 @@ public class RuleEditor  {
 
         rightVBox.setStyle("-fx-background-color: #1c1c1e");
 
-
         //We need this to disable the shrinking of the button while resizing the window... Let the upper panel (with the blocks be the one resizing)
         StackPane saveButtonStackPane = AppStyle.getStackPane(getOptionsVBox(stage),350);
         saveButtonStackPane.setMinHeight(Region.USE_PREF_SIZE);
 
-
         rightVBox.getChildren().addAll(AppStyle.getStackPane(getBlocksVBox(), 350), saveButtonStackPane);
-
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
 
@@ -283,13 +283,17 @@ public class RuleEditor  {
     }
 
 
-    private void textFieldStage(Stage stage){
-
+    /**
+     * Auxiliary method that displays a textField to set/update the rule name.
+     * In case the the name is valid the window is closed. Otherwise the name is not updated or the rule is not created.
+     *
+     * @param stage the current stage. Needed to fire a close event if the name is valid and close the window.
+     */
+    private void saveOrUpdateMenu(Stage stage){
         Button saveButton = AppStyle.getBolderButton("Save", "#a3ddcb");
         TextField textField = new TextField(ruleName == null ? "Rule Name" : getRuleName());
         textField.setStyle("-fx-text-inner-color: white; -fx-background-color: #606060");
         textField.setMaxWidth(150);
-
 
         HBox hBox = new HBox(textField, saveButton );
         hBox.setStyle("-fx-background-color: #3d3c40");
@@ -336,16 +340,23 @@ public class RuleEditor  {
 
     }
 
-
-
+    /**
+     * Gets and sets the save or update button.
+     *
+     * @param stage the current stage.
+     * @return the button.
+     */
     private Button getSaveButton(Stage stage) {
         Button saveButton = AppStyle.getButtonWithDropShadow(isNewRule ? "Save me :3" : "Update me :3", lightPurpleColor);
 
-        saveButton.setOnAction(actionEvent -> textFieldStage(stage));
+        saveButton.setOnAction(actionEvent -> saveOrUpdateMenu(stage));
 
         return saveButton;
     }
 
+    /**
+     * Sets the predefined blocks to be dragged.
+     */
     private void addDefaultBlocks() {
         ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.DEFAULT, "Value", inDragObject);
         MetricBlock locClassBlock = new MetricBlock("LOC_Class");
@@ -355,8 +366,8 @@ public class RuleEditor  {
         MetricBlock CYCLO_method = new MetricBlock("CYCLO_Method");
 
 
-        LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, "#ffeebb");
-        LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, "#8f4068");
+        LogicBlock logicBlock = new LogicBlock(inDragObject, RuleOperator.AND, AppStyle.lightOrangeColor);
+        LogicBlock orBlock = new LogicBlock(inDragObject, RuleOperator.OR, AppStyle.lightPinkColor);
 
         if(isClassSmell){
             rectanglesTypes.add(locClassBlock);
@@ -372,8 +383,13 @@ public class RuleEditor  {
         rectanglesTypes.add(conditionBlock);
     }
 
+    /**
+     * Configures the mainPane graphics and sets the behaviour on drag.
+     *
+     * @param stage the current stage.
+     */
     private void configureMainPane(Stage stage) {
-        mainPane.setStyle("-fx-background-color: #3d3c40 ");
+        mainPane.setStyle("-fx-background-color: " + AppStyle.darkGrayBoxColor);
         mainPane.setAlignment(Pos.TOP_CENTER);
         mainPane.setPadding(new Insets(20));
 
@@ -385,13 +401,21 @@ public class RuleEditor  {
         firstLabel.setTextFill(Color.WHITE);
         firstLabel.setAlignment(Pos.CENTER);
         firstLabel.setPadding(new Insets(20,100,20,100));
-        firstLabel.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
+        firstLabel.setBorder(new Border(new BorderStroke(Color.web(AppStyle.grayTextColor), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
         firstLabel.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
 
         mainPane.setAlignment(Pos.CENTER);
-
         mainPane.getChildren().add(firstLabel);
 
+       setMainPaneBehaviourOnDrag(firstLabel);
+    }
+
+    /**
+     * Sets the behaviour on drag in the mainPane.
+     *
+     * @param firstLabel the label to be added if there are no blocks dragged, or to be removed, if there are.
+     */
+    private void setMainPaneBehaviourOnDrag(Label firstLabel){
         mainPane.getChildren().addListener((ListChangeListener<Node>) change -> {
             while (change.next()) {
                 if (change.wasRemoved() && mainPane.getChildren().size() == 0) {
@@ -408,8 +432,6 @@ public class RuleEditor  {
             }
             event.consume();
         });
-
-
 
         mainPane.setOnDragExited(event -> {
             mainPane.getStyleClass().remove("background");
@@ -437,7 +459,7 @@ public class RuleEditor  {
                     addCustomNode(copy);
                 }
 
-                mainPane.setStyle("-fx-background-color: #3d3c40 ");
+                mainPane.setStyle("-fx-background-color: " + AppStyle.darkGrayBoxColor);
 
             }
 
@@ -445,11 +467,15 @@ public class RuleEditor  {
 
             event.consume();
         });
-
     }
 
+    /**
+     * Adds a copy of the dragged node into the main pane. Removes the previously added into the ruleNodes,
+     * since this is the root one.
+     *
+     * @param customNode the node to be added.
+     */
     private void addCustomNode(CustomNode customNode) {
-
         VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
         mainPane.getChildren().add(customNode.getGraphicalRepresentation());
 
@@ -457,6 +483,15 @@ public class RuleEditor  {
         ruleNodes.add(customNode);
     }
 
+    /**
+     * Adds a copy of the dragged node into the main pane. Doesn't remove the previously added since this is to be used
+     * when we are in edit mode in the rule editor. As since, then the RuleEditor was opened, when the JSON rule was parsed,
+     * the children node (if there were any), were added into the rulesNode, as such, it can't be emptied.
+     *
+     * The node is added into the first position, since it is the root one.
+     *
+     * @param customNode the node to be added.
+     */
     private void addCustomNodeWithouClear(CustomNode customNode){
         VBox.setVgrow(customNode.getGraphicalRepresentation(), Priority.ALWAYS);
         mainPane.getChildren().add(customNode.getGraphicalRepresentation());

@@ -5,13 +5,11 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 
 import MetricExtraction.MetricExtractor;
-import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,7 +87,7 @@ class NewGUITest {
         f.set(ng, projectFile);
         
         
-        MetricExtractor metricExtractor = new MetricExtractor(projectFile, "src/main/Created_Excels");
+        MetricExtractor metricExtractor = new MetricExtractor(projectFile);
 
         Field docPath = NewGUI.class.getDeclaredField("docPath");
         docPath.setAccessible(true);

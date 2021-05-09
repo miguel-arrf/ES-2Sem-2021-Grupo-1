@@ -33,7 +33,7 @@ public class CodeSmellDetectorTest {
 
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
         File file = new File(directory_src);
-        MetricExtractor extractor = new MetricExtractor(file, file.getName());
+        MetricExtractor extractor = new MetricExtractor(file);
         extractor.executeExtraction();
 
         ArrayList<CodeSmell> smells = new ArrayList<>();

@@ -193,13 +193,8 @@ public class LogicBlock implements CustomNode  {
         setDrag(rightLabelVBox);
 
         String color = "#c7cfb7";
-
-        rightLabelVBox.setStyle("-fx-background-radius: 0 0 7 7;\n" +
-                "    -fx-border-radius: 0 0 7 7;\n" +
-                "    -fx-background-color:" + color);
-        leftLabelVBox.setStyle("-fx-background-radius: 7 7 0 0;\n" +
-                "    -fx-border-radius: 7 7 0 0;\n" +
-                "    -fx-background-color: " + color);
+        rightLabelVBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
+        leftLabelVBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
 
         andLabelVBox = new VBox(andLabel);
 
@@ -209,14 +204,11 @@ public class LogicBlock implements CustomNode  {
 
         andLabel.setPadding(new Insets(30));
         andLabelVBox.setStyle("-fx-background-color: #f0e4d7;");
-       // andLabel.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 14));
         andLabel.setTextFill(Color.web("#8e7f7f"));
 
         box.getChildren().addAll(leftLabelVBox, andLabelVBox, rightLabelVBox);
 
-        box.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: transparent;");
+        box.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("transparent"));
 
         box.setMinWidth(350);
         box.setMinHeight(100);

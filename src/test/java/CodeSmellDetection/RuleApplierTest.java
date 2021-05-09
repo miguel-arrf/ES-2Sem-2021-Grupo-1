@@ -62,7 +62,7 @@ class RuleApplierTest {
 
 
 
-		MetricExtractor metricExtractor = new MetricExtractor(directory_src, "/Users/chainz/IdeaProjects/ES-2Sem-2021-Grupo-1");
+		MetricExtractor metricExtractor = new MetricExtractor(directory_src);
 		metricExtractor.executeExtraction();
 		
 		String docPath = metricExtractor.getFinalPath();

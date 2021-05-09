@@ -1,12 +1,8 @@
 package SmellDetectionQualityEvaluation;
 
 import RuleEditor.RulesManager;
-import g1.ISCTE.MyTree;
 import javafx.embed.swing.JFXPanel;
-import javafx.event.Event;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -60,7 +56,7 @@ class QualityEvaluatorAppTest {
         
         File projectFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
 
-        MetricExtractor metricExtractor = new MetricExtractor(projectFile, testFile.getPath());
+        MetricExtractor metricExtractor = new MetricExtractor(projectFile);
         //metricExtractor.executeExtraction();
         
         rulesManager.setMetricExtractor(metricExtractor);
@@ -90,7 +86,7 @@ class QualityEvaluatorAppTest {
          
          RulesManager rulesManager = new RulesManager();
  		
-         MetricExtractor metricExtractor = new MetricExtractor(selectedFile, "test");
+         MetricExtractor metricExtractor = new MetricExtractor(selectedFile);
          //metricExtractor.executeExtraction();
          
          rulesManager.setMetricExtractor(metricExtractor);

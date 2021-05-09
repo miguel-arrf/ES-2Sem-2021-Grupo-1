@@ -18,7 +18,7 @@ import java.util.Iterator;
 public class ProjectInfo {
 
     private final XSSFSheet sheet;
-    private final int NUM_OF_COLUMNS = 11;
+    private final static int NUM_OF_COLUMNS = 11;
 
     /**
      * Create an excel workbook.
@@ -30,8 +30,7 @@ public class ProjectInfo {
     public static XSSFWorkbook createWorkbook(String path) throws IOException {
         File file = new File(path);
         FileInputStream fip = new FileInputStream(file);
-        XSSFWorkbook workbook = new XSSFWorkbook(fip);
-        return workbook;
+        return new XSSFWorkbook(fip);
     }
 
     /**

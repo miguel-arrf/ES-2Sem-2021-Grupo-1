@@ -44,6 +44,8 @@ public class AppStyle {
     public static final String redRowBackgroundColor = "#4b0c0c";
     public static final String greenRowBackgroundColor = "#20402c";
 
+    public static final String darkGrayBackgroundColor = "#1c1c1e";
+
     /**
      * Gets the default style for rounded nodes in the App.
      *
@@ -287,6 +289,15 @@ public class AppStyle {
         return stackPane;
     }
 
+    private static FadeTransition getFadeTransition(Duration duration, Node node, Double fromValue, Double toValue){
+        FadeTransition transition = new FadeTransition(duration, node);
+        transition.setFromValue(fromValue);
+        transition.setToValue(toValue);
+        transition.setInterpolator(Interpolator.EASE_IN);
+
+        return transition;
+    }
+
     /**
      * Helper method that stylizes and creates a scrollpane with the appropriate design for this application.
      *
@@ -298,17 +309,14 @@ public class AppStyle {
 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setContent(content);
-
         scrollPane.setMinWidth(250);
         scrollPane.setPrefWidth(200);
         scrollPane.setMaxWidth(maxWidth);
-
         HBox.setHgrow(scrollPane, Priority.ALWAYS);
 
         scrollPane.setFitToWidth(true);
 
         scrollPane.getStylesheets().add(AppStyle.class.getResource("/style/scrollPanel.css").toExternalForm());
-
 
         return scrollPane;
     }
@@ -336,10 +344,7 @@ public class AppStyle {
      * @param parent parent node where the child node with the fade int animation is added
      */
     public static void addFadingIn(final Node node, final Pane parent) {
-        final FadeTransition transition = new FadeTransition(Duration.millis(250), node);
-        transition.setFromValue(0);
-        transition.setToValue(1);
-        transition.setInterpolator(Interpolator.EASE_IN);
+        final FadeTransition transition = getFadeTransition(Duration.millis(250), node, 0.0, 1.0);
         parent.getChildren().add(node);
         transition.play();
     }
@@ -352,10 +357,7 @@ public class AppStyle {
      */
     public static void removeFadingOut(final Node node, final Pane parent) {
         if (parent.getChildren().contains(node)) {
-            final FadeTransition transition = new FadeTransition(Duration.millis(250), node);
-            transition.setFromValue(node.getOpacity());
-            transition.setToValue(0);
-            transition.setInterpolator(Interpolator.EASE_BOTH);
+            final FadeTransition transition = getFadeTransition(Duration.millis(250), node, node.getOpacity(), 0.0);
             transition.setOnFinished(finishHim -> parent.getChildren().remove(node));
             transition.play();
         }
@@ -376,6 +378,12 @@ public class AppStyle {
         return dropShadow;
     }
 
+    /**
+     * Default drop shadow style with a 10 pixel radius and y-axis offset.
+     *
+     * @param color the drops shadow color;
+     * @return the dropshadow with the given color.
+     */
     public static DropShadow getDropShadow(String color){
         return new DropShadow(10, 0, 10, Color.web(color, 0.25));
     }
@@ -397,9 +405,7 @@ public class AppStyle {
         for(Node node: nodes){
             node.setOpacity(0);
 
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
-            fadeTransition.setFromValue(0);
-            fadeTransition.setToValue(1);
+            FadeTransition fadeTransition = getFadeTransition(Duration.millis(duration), node, 0.0, 1.0);
             fadeTransition.setDelay(Duration.millis(currentMoment));
             fadeTransition.play();
 
@@ -419,9 +425,7 @@ public class AppStyle {
             for(Label label: nodes){
                 label.setOpacity(0);
 
-                FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), label);
-                fadeTransition.setFromValue(0);
-                fadeTransition.setToValue(1);
+                FadeTransition fadeTransition = getFadeTransition(Duration.millis(duration), label, 0.0, 1.0);
                 fadeTransition.setDelay(Duration.millis(currentMoment));
                 fadeTransition.play();
 

@@ -182,7 +182,7 @@ public class QualityEvaluator {
      */
     private HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
        File java_project = projectFile;
-        MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
+        MetricExtractor extractor = new MetricExtractor(java_project);
         extractor.executeExtraction();
 
         List<CodeSmell> smells = codeSmells.stream().filter(p -> {

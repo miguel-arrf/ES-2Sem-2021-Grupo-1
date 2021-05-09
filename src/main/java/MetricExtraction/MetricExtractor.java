@@ -26,10 +26,9 @@ public class MetricExtractor {
     /**
      * Constructs an instance of MetricExtractor
      * @param project_directory The source code project's directory
-     * @param destination_directory The directory on which to export the .xlsx file to
      */
-    public MetricExtractor(File project_directory, String destination_directory) {
-        String destination_directory1;
+    public MetricExtractor(File project_directory) {
+        String destination_directory1 = null;
         getFilesFromProjectDirectory(project_directory);
         this.threadPool = Executors.newFixedThreadPool(5);
         this.exported_file_name = project_directory.getName() + "_metrics.xlsx";
@@ -39,7 +38,7 @@ public class MetricExtractor {
             File file = temp.toFile();
             destination_directory1 = file.getPath();
         }catch (IOException e){
-            destination_directory1 = destination_directory;
+            System.err.println("It wasn't possible to create excel.");
         }
 
         this.destination_directory = destination_directory1;

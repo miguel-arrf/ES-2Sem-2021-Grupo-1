@@ -20,19 +20,12 @@
 
   <dependencies>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-
-
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
-
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>5.6.2</version>
       <scope>test</scope>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -46,16 +39,6 @@
       <scope>test</scope>
     </dependency>
 
-
-
-
-
-
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi-ooxml</artifactId>
-      <version>3.9</version>
-    </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
     <dependency>
@@ -94,17 +77,13 @@
       <artifactId>poi-ooxml</artifactId>
       <version>3.9</version>
     </dependency>
+
     <dependency>
       <groupId>com.github.javaparser</groupId>
       <artifactId>javaparser-core</artifactId>
       <version>3.20.0</version>
     </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>RELEASE</version>
-      <scope>test</scope>
-    </dependency>
+
   </dependencies>
 
   <build>
