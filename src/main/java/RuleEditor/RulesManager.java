@@ -421,7 +421,7 @@ public class RulesManager extends Application {
         longMethodItem.setOnAction(actionEvent -> {
             try {
                 addIsLongMethod();
-            } catch (IncorrectRuleException e) {
+            } catch (IncorrectRuleException | ParseException e) {
                 e.printStackTrace();
             }
         });
@@ -452,48 +452,38 @@ public class RulesManager extends Application {
         return addNewRule;
     }
 
-    private void addIsLongMethod() throws IncorrectRuleException {
-        ConditionBlock isLongMethod =getDefaultIsLongMethodBlock();
-        ArrayList<CustomNode> nodes = new ArrayList<>();
-        nodes.add(isLongMethod);
-
-        JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isLongMethod", false);
-        if(ruleFileManager.isValidName("isLongMethod")){
-            System.out.println("adicionei isLongMethod");
-            rules.add(ruleToAdd);
-            ruleFileManager.saveJSONListToFile(rules);
-            updateRulesEditorPanel();
-        }
-
+    private void addIsLongMethod() throws IncorrectRuleException, ParseException {
+        addDefaultRule(getDefaultIsLongMethodBlock(), "isLongMethod", false);
     }
 
-    private void addIsGodClass() throws IncorrectRuleException, ParseException {
-        ConditionBlock isGodClass = getDefaultIsGodClassBlock();
+    private void addDefaultRule(ConditionBlock defaultBlock, String nameToSearch, boolean isClassSmell) throws IncorrectRuleException, ParseException {
+        ConditionBlock isGodClass = defaultBlock;
         ArrayList<CustomNode> nodes = new ArrayList<>(Arrays.asList(isGodClass));
 
-        JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isGodClass", true);
+        JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, nameToSearch, isClassSmell);
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonArray = (JSONObject) jsonParser.parse(ruleToAdd.toJSONString());
 
-        int count = (int) rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains("isGodClass")).count();
+
+        int count = (int) rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains(nameToSearch)).count();
         if(count != 0){
-            Optional<JSONObject> rule = rules.stream().filter(p -> ((JSONObject) p.get("outerName")).get("innerName").equals("isGodClass")).findFirst();
+            Optional<JSONObject> rule = rules.stream().filter(p -> ((JSONObject) p.get("outerName")).get("innerName").equals(nameToSearch)).findFirst();
             if(rule.isPresent()){
                 rules.remove(rule.get());
 
                 JSONObject ruleExists = rule.get();
 
-                 Optional<Integer> newValue = rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains("isGodClass_old")).map(p -> {
-                   String name = (String) ((JSONObject) p.get("outerName")).get("innerName");
-                   name = name.replace("isGodClass_old", "");
-                   return Integer.parseInt(name);
+                Optional<Integer> newValue = rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains(nameToSearch + "_old")).map(p -> {
+                    String name = (String) ((JSONObject) p.get("outerName")).get("innerName");
+                    name = name.replace(nameToSearch + "_old", "");
+                    return Integer.parseInt(name);
                 }).sorted().findFirst();
 
-                 if(newValue.isPresent()){
-                     ruleFileManager.renameJSONRule(ruleExists,  "isGodClass_old" + (newValue.get() + 1));
-                 }else{
-                     ruleFileManager.renameJSONRule(ruleExists, "isGodClass_old" + 1);
-                 }
+                if(newValue.isPresent()){
+                    ruleFileManager.renameJSONRule(ruleExists,  nameToSearch + "_old" + (newValue.get() + 1));
+                }else{
+                    ruleFileManager.renameJSONRule(ruleExists, nameToSearch + "_old" + 1);
+                }
 
                 rules.add(ruleExists);
 
@@ -505,6 +495,10 @@ public class RulesManager extends Application {
         ruleFileManager.saveJSONListToFile(rules);
         updateRulesEditorPanel();
 
+    }
+
+    private void addIsGodClass() throws IncorrectRuleException, ParseException {
+        addDefaultRule(getDefaultIsGodClassBlock(), "isGodClass", true);
     }
 
 
