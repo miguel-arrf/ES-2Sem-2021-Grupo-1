@@ -171,7 +171,7 @@ public class NewGUI extends Application {
         showConfusionMatrix.setOnMouseClicked(showConfusionMatrixEvent -> {
             //TODO verifcar o que está no center pane, se for o coiso, então nao faz rload!!!!
             QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
-            VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager);
+            VBox mainpane = qualityEvaluatorApp.initializeMainPane(rulesManager, selectedFile);
 
             mainpane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.darkGrayBoxColor));
             centerPane.getChildren().clear();

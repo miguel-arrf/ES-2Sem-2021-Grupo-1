@@ -26,6 +26,12 @@ public class QualityEvaluator {
 
     private ArrayList<CodeSmell> codeSmells = new ArrayList<>();
 
+    private File projectFile;
+
+    public QualityEvaluator(File file){
+        this.projectFile = file;
+    }
+
     /**
      * Runs the quality evaluation process
      */
@@ -162,7 +168,7 @@ public class QualityEvaluator {
      * @throws InterruptedException
      */
     private HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
-       File java_project = getDefaultProject();
+       File java_project = projectFile;
         MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
         extractor.executeExtraction();
 
@@ -173,16 +179,6 @@ public class QualityEvaluator {
         return detector.getResults();
     }
 
-    /**
-     * Gets the file for the default project's folder.
-     *
-     * @return the file for the default project's folder.
-     */
-    public static File getDefaultProject(){
-        String uri = NewGUI.class.getResource("/jasml_0.10/").getPath();
-
-        return new File(uri);
-    }
 
     /**
      * Sets the list of code smells to the given one

@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,9 +37,11 @@ public class QualityEvaluatorApp  {
     private RulesManager rulesManager;
     private QualityEvaluator qualityEvaluator;
     //Needs to be here, otherwise the labels will not update correctly.
+    private File projectFile;
 
-    public VBox initializeMainPane(RulesManager rulesManager){
+    public VBox initializeMainPane(RulesManager rulesManager, File projectFile){
         this.rulesManager = rulesManager;
+        this.projectFile = projectFile;
 
         mainBox = new VBox(createMatrix());
         mainBox.setSpacing(20);
@@ -139,7 +142,7 @@ public class QualityEvaluatorApp  {
 
 
         resetLabelValues();
-        qualityEvaluator = new QualityEvaluator();
+        qualityEvaluator = new QualityEvaluator(projectFile);
         qualityEvaluator.setCodeSmells(rulesManager.createCodeSmells());
         qualityEvaluator.run();
 
