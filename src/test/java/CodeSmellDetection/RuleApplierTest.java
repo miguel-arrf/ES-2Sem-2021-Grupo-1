@@ -55,10 +55,7 @@ class RuleApplierTest {
 	@Test
 	void testProcessRules() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException {
 		RulesManager rulesManager = initialize();
-		
-		System.out.println(rulesManager.getResults());
-		
-		
+
         String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
 
 		MetricExtractor metricExtractor = new MetricExtractor(new File(directory_src), "src/main/Created_Excels");
@@ -74,8 +71,6 @@ class RuleApplierTest {
         rulesManager.setMetricExtractor(metricExtractor);
 		rulesManager.createCodeSmells();
 
-
-        System.out.println("Tamanho: "  + rulesManager.getResults().size());
     	RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(),docPath);
 
     	ruleApplier.processRules();

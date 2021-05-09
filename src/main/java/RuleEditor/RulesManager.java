@@ -459,7 +459,6 @@ public class RulesManager extends Application {
 
         JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isLongMethod", false);
         if(ruleFileManager.isValidName("isLongMethod")){
-            System.out.println("adicionei isLongMethod");
             rules.add(ruleToAdd);
             ruleFileManager.saveJSONListToFile(rules);
             updateRulesEditorPanel();
@@ -557,7 +556,6 @@ public class RulesManager extends Application {
         mainPane.setPadding(new Insets(20));
 
         rules.addListener((ListChangeListener<JSONObject>) change -> {
-            System.out.println("ENTRÁAAAAMOS AQUI: " + rules.size());
             if (rules.size() == 0) {
                 if (!rulesPanel.getChildren().contains(numberOfRules))
                     rulesPanel.getChildren().add(numberOfRules);

@@ -56,25 +56,6 @@ public class CodeSmellDetector {
             results.get(worker.getCodeSmell().getName()).addAll(worker.getResults());
             results.get("NoCodeSmellDetected").addAll(worker.getUndetectedSmells());
         }
-        printResults();
     }
-
-    /**
-     * Prints the results of the code smells' detection on the console
-     */
-    private void printResults() {
-        for(String codeSmell : results.keySet()) {
-            if(!codeSmell.equals("NoCodeSmellDetected")) {
-                ArrayList<String> values = results.get(codeSmell);
-                if (values.isEmpty()) {
-                    System.out.println("The code smell " + codeSmell + " was not detected in the code");
-                } else {
-                    System.out.println("The code smell " + codeSmell + " was found in:");
-                    for (String value : values) System.out.println(value);
-                }
-            }
-        }
-    }
-
 
 }

@@ -155,7 +155,7 @@ public class ConditionBlock implements CustomNode, Serializable {
             if (db.hasContent(RuleEditor.customFormat)) {
                 success = true;
 
-                //System.out.println("conditionblock: " + whatIsBeingDragged);
+
                 if (whatIsBeingDragged.getNode().getType() == Types.MetricBlock) {
                     MetricBlock c1 = (MetricBlock) whatIsBeingDragged.getNode();
 
@@ -320,11 +320,7 @@ public class ConditionBlock implements CustomNode, Serializable {
         deleteMenu.setOnAction(actionEvent -> {
             Pane parent = (Pane) box.getParent();
             parent.getChildren().remove(this.getGraphicalRepresentation());
-            System.out.println(" ------- delete pressed");
-            System.out.println(" ----- contains: "  + RuleEditor.ruleNodes.contains(this));
-            System.out.println(" --------- size here: " + RuleEditor.ruleNodes.size());
             RuleEditor.ruleNodes.remove(this);
-            System.out.println(" --------- size now: " + RuleEditor.ruleNodes.size());
 
         });
 

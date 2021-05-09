@@ -98,25 +98,6 @@ public class ClassMetrics {
     }
 
     /**
-     * Prints a summary of the class's information and metrics in the console
-     */
-    public void printInfo() {
-        System.out.println("Package: " + class_package);
-        System.out.println("Class: " + class_name);
-        System.out.println("LOC_Class: " + getLoc_class());
-        System.out.println("WMC_Class: " + getWmc_class());
-        System.out.println("NOM_Class: " + getNom_class());
-        System.out.println("Class methods: ");
-        for(Method m : getClass_methods()) {
-            System.out.println("  Name: " + m.getMethod_name());
-            System.out.println("  LOC_Method: " + m.getLoc_method());
-            System.out.println("  CYCLO_Method: " + m.getCyclo_method());
-            System.out.println("---------------------");
-        }
-        System.out.println("END OF CLASS");
-    }
-
-    /**
      * Maps the class's metrics for the functionality of code smell detection
      * @return A HashMap, mapping the name of each metric of the class to its numeric value.
      */

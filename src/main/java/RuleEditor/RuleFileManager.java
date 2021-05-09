@@ -176,7 +176,6 @@ public class RuleFileManager {
      */
     public CodeSmell jsonObjectToCodeSmell(JSONObject jsonObject, DraggingObject draggingObject, String name, boolean isClassSmell) {
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-        System.out.println("firstCustomNode: " + firstCustomNode);
         if (firstCustomNode.getType() == Types.LogicBlock) {
             RuleNode nodeToReturn = new RuleNode(firstCustomNode, null, null);
 
@@ -295,7 +294,6 @@ public class RuleFileManager {
      */
     public CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject) {
         jsonObject = (JSONObject) jsonObject.clone();
-        System.out.println("cagalhao: " + jsonObject);
         String firstCustomNodeString = ((JSONObject) jsonObject.get("rule")).get("operator").toString();
 
         CustomNode firstCustomNode;

@@ -332,7 +332,6 @@ public class RuleEditor extends Application {
                 popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST));
             } else {
                 textField.setStyle("-fx-border-radius: 10; -fx-text-inner-color: white; -fx-background-color: #606060; -fx-border-color: red");
-                System.out.println("Nome invalido");
             }
         });
 
