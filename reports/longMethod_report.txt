@@ -1,0 +1,96 @@
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	evaluation	B2	0/23
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	GUIMatrix	B1	0/13
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	consoleOutputs	B1	0/13
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	detectionButton	B1	0/13
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	progressBar	B1	0/13
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	rulesManager	B1	0/13
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	public javafx.scene.layout.VBox initializeMainPane(RuleEditor.RulesManager, java.io.File) 	rulesManager	B1	0/13
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	metricName	B1	0/10
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getEditRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager, org.json.simple.JSONObject, java.lang.String) 	inDragObject	B1	0/8
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getEditRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager, org.json.simple.JSONObject, java.lang.String) 	mainPane	B1	0/8
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getEditRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager, org.json.simple.JSONObject, java.lang.String) 	ruleNodes	B1	0/8
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getEditRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager, org.json.simple.JSONObject, java.lang.String) 	stage	B1	0/8
+RuleEditor.RulesManager	private void addNewRuleButton() 	numberOfRules	B1	0/6
+RuleEditor.RulesManager	private void addNewRuleButton() 	rules	B1	0/6
+RuleEditor.RulesManager	public sealed void start(javafx.stage.Stage) 	mainPane	B1	0/6
+RuleEditor.RulesManager	public sealed void start(javafx.stage.Stage) 	ruleFileManager	B1	0/6
+RuleEditor.RulesManager	public sealed void start(javafx.stage.Stage) 	rules	B1	0/6
+RuleEditor.LogicBlock	private javafx.scene.layout.VBox getHBox() 	andLabelVBox	B1	0/5
+RuleEditor.RuleEditor	private void configureMainPane(javafx.stage.Stage) 	firstLabel	B1	0/5
+g1.ISCTE.AppStyle	public static void customFadingIn(javafx.scene.Node, javafx.scene.layout.VBox, int) 	transition	B1	0/5
+CodeSmellDetection.RuleApplier	private void removeColumn(int) 	currentRow	B2	0/5
+CodeSmellDetection.RuleApplier	private void removeColumn(int) 	currentRow	B3	0/4
+g1.ISCTE.ProjectInfo	public ArrayList<ArrayList<java.lang.String>> getMetricsTable() 	line	B3	0/5
+g1.ISCTE.ProjectInfo	public ArrayList<ArrayList<java.lang.String>> getMetricsTable() 	line	B4	0/4
+g1.ISCTE.ProjectInfo	public ArrayList<ArrayList<java.lang.String>> getMetricsTable() 	line	B5	0/3
+CodeSmellDetection.DetectionWorker	private void detect(java.lang.Object) 	listToAddTo	B4	0/4
+CodeSmellDetection.DetectionWorker	private void detect(java.lang.Object) 	results	B4	0/4
+MetricExtraction.MethodVisitor	public sealed void visit(com.github.javaparser.ast.body.MethodDeclaration, java.lang.Object) 	method	B1	0/4
+MetricExtraction.MetricExtractor	private void getFilesFromProjectDirectory(java.io.File) 	file	B2	0/4
+MetricExtraction.MetricExtractor	private void getFilesFromProjectDirectory(java.io.File) 	source_code	B2	0/4
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager) 	ruleNodes	B1	0/4
+RuleEditor.RuleEditor	public javafx.scene.control.SplitPane getRuleEditor(javafx.stage.Stage, RuleEditor.RuleFileManager) 	stage	B1	0/4
+RuleEditor.RuleFileManager	public org.json.simple.JSONObject guiToJSONObject(ArrayList<RuleEditor.CustomNode>, java.lang.String, boolean) throws RuleEditor.IncorrectRuleException	outerName	B3	0/4
+RuleEditor.RulesManager	private void setUpMainPane() 	saveAndLoadButtons	B1	0/4
+g1.ISCTE.NewGUI	private void updateCenterPane() throws java.io.IOException	tableData	B1	0/4
+g1.ISCTE.AppStyle	public static transient void addFadingInGroup(double, double, javafx.scene.Node[]) 	fadeTransition	B3	0/4
+g1.ISCTE.AppStyle	public static void addFadingInGroup(double, double, ArrayList<javafx.scene.control.Label>, javafx.scene.layout.VBox, javafx.scene.control.ProgressBar) 	fadeTransition	B4	0/4
+CodeSmellDetection.RuleApplier	public void processRules() throws java.io.IOException	myWorkbook	B6	0/3
+MetricExtraction.MethodVisitor	public sealed void visit(com.github.javaparser.ast.body.MethodDeclaration, java.lang.Object) 	body	B1	0/3
+RuleEditor.ConditionBlock	private javafx.scene.layout.HBox valueHBox() 	valueLabel	B4	0/3
+RuleEditor.RuleEditor	private void setMainPaneBehaviourOnDrag(javafx.scene.control.Label) 	mainPane	B1	0/3
+RuleEditor.RulesManager	private void addNewRuleButton() 	mainPane	B1	0/3
+RuleEditor.RulesManager	private void addNewRuleButton() 	rulesPanel	B1	0/3
+SmellDetectionQualityEvaluation.QualityEvaluator	private HashMap<java.lang.String,ArrayList<java.lang.String>> initializeData() throws java.lang.InterruptedException	extractor	B1	0/3
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	aux	B6	0/3
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	aux	B12	0/3
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	qualityEvaluator	B1	0/3
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	rulesManager	B1	0/3
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void setupScrollPane(List<java.lang.String>, boolean) 	label	B3	0/3
+g1.ISCTE.AppStyle	public static void removeFadingOut(javafx.scene.Node, javafx.scene.layout.Pane) 	transition	B2	0/3
+g1.ISCTE.NewGUI	private javafx.scene.layout.VBox getLeft() 	filePane	B1	0/3
+g1.ISCTE.NewGUI	private void fillTable(java.lang.String[], java.lang.String[][]) 	column	B6	0/3
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	excelCreator	B15	0/3
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	myCell	B9	0/3
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	myCell	B10	0/2
+MetricExtraction.MethodVisitor	public sealed void visit(com.github.javaparser.ast.body.MethodDeclaration, java.lang.Object) 	class_methods	B3	0/2
+MetricExtraction.MetricExtractor	public void executeExtraction() throws java.lang.InterruptedException	metrics	B7	0/2
+RuleEditor.LogicBlock	private void setDrag(javafx.scene.layout.VBox) 	vBox	B1	0/2
+RuleEditor.LogicBlock	private void setDrag(javafx.scene.layout.VBox) 	whatIsBeingDragged	B1	0/2
+RuleEditor.RuleEditor	private void addCustomNode(RuleEditor.CustomNode) 	ruleNodes	B1	0/2
+RuleEditor.RuleEditor	private void configureSceneMainView(javafx.scene.control.SplitPane, javafx.stage.Stage) 	splitPane	B1	0/2
+RuleEditor.RulesManager	private void resetEverything() 	ruleFileManager	B1	0/2
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	consoleOutputs	B8	0/2
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	detectionButton	B4	0/2
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	progressBar	B4	0/2
+g1.ISCTE.NewGUI	private javafx.scene.layout.VBox centerPane() 	centerPane	B1	0/2
+RuleEditor.RuleEditor	private void saveOrUpdateMenu(javafx.stage.Stage) 	hBox	B1	1/13
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	imageView	B6	2/8
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	imageView	B9	0/2
+RuleEditor.RulesManager	private javafx.scene.layout.HBox getRenameTextField(javafx.scene.control.Label, org.json.simple.JSONObject) 	textField	B1	1/7
+MetricExtraction.ExtractionWorker	private void extractClassMetrics(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration, java.lang.String) throws java.io.FileNotFoundException	wmc_class	B1	4/9
+MetricExtraction.ExtractionWorker	private void extractClassMetrics(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration, java.lang.String) throws java.io.FileNotFoundException	wmc_class	B2	0/3
+MetricExtraction.ExtractionWorker	private void extractClassMetrics(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration, java.lang.String) throws java.io.FileNotFoundException	wmc_class	B3	0/2
+RuleEditor.ConditionBlock	private javafx.scene.layout.HBox valueHBox() 	textField	B1	2/10
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	label	B6	2/10
+MetricExtraction.ExtractionWorker	public void run() 	class_package	B1	1/4
+RuleEditor.RulesManager	private javafx.scene.control.Button setUpAddNewRuleButton() 	contextMenu	B1	1/4
+RuleEditor.RulesManager	private javafx.scene.control.Button setUpLoadRulesFileButton() 	fileChooser	B1	1/4
+RuleEditor.RulesManager	private javafx.scene.control.Button setUpSetRulesFileButton() 	addNewRuleButton	B1	1/4
+RuleEditor.RulesManager	private javafx.scene.control.Button setUpSetRulesFileButton() 	fileChooser	B1	1/4
+RuleEditor.RulesManager	private javafx.scene.control.Button setUpSetRulesFileButton() 	ruleFileManager	B1	1/4
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	imageView	B6	2/7
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	consoleOutputs	B3	7/17
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	consoleOutputs	B4	6/16
+SmellDetectionQualityEvaluation.QualityEvaluator	private void performEvaluation(HashMap<java.lang.String,ArrayList<java.lang.String>>, HashMap<java.lang.String,ArrayList<java.lang.String>>) 	consoleOutputs	B5	4/14
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	image	B6	2/5
+g1.ISCTE.MyTree	private void percolateFolder(javafx.scene.layout.VBox, java.io.File) 	image	B6	2/5
+g1.ISCTE.AppStyle	public static void addFadingInGroup(double, double, ArrayList<javafx.scene.control.Label>, javafx.scene.layout.VBox, javafx.scene.control.ProgressBar) 	progressBar	B1	4/9
+CodeSmellDetection.RuleApplier	private void addColumn(java.lang.String, int) 	myCell	B3	1/2
+CodeSmellDetection.RuleApplier	public void processRules() throws java.io.IOException	offset	B3	1/2
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	currentRow	B8	1/2
+SmellDetectionQualityEvaluation.QualityEvaluatorApp	private void detectOnClick() 	mainBox	B9	1/2
+g1.ISCTE.NewGUI	private javafx.scene.layout.VBox getSquareInfoBox(java.lang.String) 	metricBoxes	B1	1/2
+RuleEditor.RuleEditor	private javafx.scene.layout.VBox getBlocksVBox() 	inDragObject	B2	2/3
+RuleEditor.RuleEditor	private javafx.scene.layout.VBox getBlocksVBox() 	inDragObject	B3	1/2
+MetricExtraction.MetricExtractor	private void exportResultsToFile() 	file	B11	2/3

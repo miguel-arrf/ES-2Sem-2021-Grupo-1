@@ -1,0 +1,2 @@
+Refactoring Type	Source Entity	Target Class	Source/Target accessed members	Rate it!
+Move Method	CodeSmellDetection.DetectionWorker::evaluateNode(java.util.HashMap<java.lang.String,java.lang.Integer>, CodeSmellDetection.RuleNode):boolean	CodeSmellDetection.RuleNode	2/4	
