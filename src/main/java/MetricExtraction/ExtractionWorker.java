@@ -3,6 +3,7 @@ package MetricExtraction;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -45,6 +46,22 @@ public class ExtractionWorker implements Runnable {
     }
 
     /**
+     * Given a class/interface declaration, returns the construct methods present in the class
+     * @param c The class/interface declaration
+     * @return The constructor methods in the class declaration
+     */
+    private List<Method> extractConstructorMethod(ClassOrInterfaceDeclaration c) {
+        List<ConstructorDeclaration> constructors = c.findAll(ConstructorDeclaration.class);
+        List<Method> constructorMethods = new ArrayList<>();
+        for(ConstructorDeclaration declaration : constructors) {
+            String body = declaration.getBody().toString();
+            Method m = new Method(body, declaration.getName().asString());
+            constructorMethods.add(m);
+        }
+        return constructorMethods;
+    }
+
+    /**
      * Given a Java class declaration, extracts its information and metrics
      * @param classOrInterfaceDeclaration The class declaration
      * @param class_package The class's package
@@ -54,6 +71,7 @@ public class ExtractionWorker implements Runnable {
         String class_name = classOrInterfaceDeclaration.getName().asString();
         int loc_class = extractLOC_Class();
         ArrayList<Method> class_methods = extractClassMethods(classOrInterfaceDeclaration, class_name);
+        class_methods.addAll(extractConstructorMethod(classOrInterfaceDeclaration));
         int nom_class = class_methods.size();
         int wmc_class = 0;
         if(nom_class != 0) {
