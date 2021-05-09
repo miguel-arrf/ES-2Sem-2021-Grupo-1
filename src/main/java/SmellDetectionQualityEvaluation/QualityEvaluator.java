@@ -63,8 +63,6 @@ public class QualityEvaluator {
         ArrayList<String> consoleOutputs = new ArrayList<>();
         ArrayList<String> undetectedCodeSmells = detection_results.get("NoCodeSmellDetected");
 
-        System.out.println("detection results: "  + detection_results.keySet());
-
         ArrayList<String> allowedMethods = new ArrayList<>();
         allowedMethods.add("isLongMethod");
         allowedMethods.add("isGodClass");

@@ -55,11 +55,6 @@ class ClassMetricsTest {
     }
 
     @Test
-    void printInfo() {
-        classMetrics.printInfo();
-    }
-
-    @Test
     void getMetricsForDetection() {
         assertNotNull(classMetrics.getMetricsForDetection());
     }

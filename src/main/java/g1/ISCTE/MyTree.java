@@ -38,7 +38,6 @@ public class MyTree {
         for(int i = 0; i < (files != null ? files.length : 0); i++){
             File filename = files[i];
 
-            System.out.println("file: "  + filename.toString());
             if(filename.isDirectory()){
 
                 Label label = new Label(filename.getName());
