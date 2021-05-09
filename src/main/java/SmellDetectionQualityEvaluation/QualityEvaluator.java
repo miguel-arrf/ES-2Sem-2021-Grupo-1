@@ -3,7 +3,6 @@ package SmellDetectionQualityEvaluation;
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
 import MetricExtraction.MetricExtractor;
-import g1.ISCTE.NewGUI;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -15,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Given the results of code smell detection upon the project 'jasml', compares the results obtained by this application's execution with the manually inputed results in the given .xlsx file, via extraction of the required columns from the original file.
@@ -26,7 +27,7 @@ public class QualityEvaluator {
 
     private ArrayList<CodeSmell> codeSmells = new ArrayList<>();
 
-    private File projectFile;
+    private final File projectFile;
 
     public QualityEvaluator(File file){
         this.projectFile = file;
@@ -144,6 +145,7 @@ public class QualityEvaluator {
             HashMap<String, ArrayList<String>> data = new HashMap<>();
             data.put("isGodClass", new ArrayList<>());
             data.put("isLongMethod", new ArrayList<>());
+
             for(int i = 1; i < sheet.getLastRowNum(); i++) {
                 XSSFRow currentRow = sheet.getRow(i);
                 String className = currentRow.getCell(2).getStringCellValue();
@@ -153,6 +155,7 @@ public class QualityEvaluator {
                 if(isGodClass) data.get("isGodClass").add(className);
                 if(isLongMethod) data.get("isLongMethod").add(methodName);
             }
+
             return data;
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
@@ -170,7 +173,17 @@ public class QualityEvaluator {
         MetricExtractor extractor = new MetricExtractor(java_project, java_project.getName());
         extractor.executeExtraction();
 
-        ArrayList<CodeSmell> smells = codeSmells;
+        List<CodeSmell> smells = codeSmells.stream().filter(p -> {
+            if(p.getName().equals("isGodClass") && p.isClassSmell()){
+                return true;
+            }
+            if(p.getName().equals("isLongMethod") && !p.isClassSmell()){
+                return true;
+            }
+            return false;
+
+        }).collect(Collectors.toList());
+
         CodeSmellDetector detector = new CodeSmellDetector(extractor.getResults(), smells);
         detector.runDetection();
 
@@ -184,14 +197,6 @@ public class QualityEvaluator {
      */
     public void setCodeSmells(ArrayList<CodeSmell> codeSmells) {
         this.codeSmells = codeSmells;
-    }
-
-    /**
-     * Gets the list of code smells
-     * @return The list of code smells
-     */
-    public ArrayList<CodeSmell> getCodeSmells() {
-        return codeSmells;
     }
 
 }

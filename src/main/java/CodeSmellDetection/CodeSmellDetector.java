@@ -4,6 +4,7 @@ import MetricExtraction.ClassMetrics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class CodeSmellDetector {
 
     private final ArrayList<ClassMetrics> metrics;
-    private final ArrayList<CodeSmell> codeSmells;
+    private final List<CodeSmell> codeSmells;
     private final HashMap<String, ArrayList<String>> results = new HashMap<>();
 
     /**
@@ -22,7 +23,7 @@ public class CodeSmellDetector {
      * @param metrics The metrics extracted from the source code
      * @param codeSmells A list of code smells to run detection of in the source code
      */
-    public CodeSmellDetector(ArrayList<ClassMetrics> metrics, ArrayList<CodeSmell> codeSmells) {
+    public CodeSmellDetector(ArrayList<ClassMetrics> metrics, List<CodeSmell> codeSmells) {
         this.metrics = metrics;
         this.codeSmells = codeSmells;
         for(CodeSmell codeSmell : codeSmells) {

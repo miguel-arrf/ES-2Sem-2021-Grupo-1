@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,7 @@ public class QualityEvaluatorApp  {
     private final Label falsePositivesLabel = new Label("0");
     private final Label trueNegativesLabel = new Label("0");
     private final Label falseNegativesLabel = new Label("0");
+
     private Button detectionButton;
     private VBox mainBox;
     private final VBox addButtonVBox = new VBox();
@@ -46,15 +46,13 @@ public class QualityEvaluatorApp  {
         mainBox = new VBox(createMatrix());
         mainBox.setSpacing(20);
         mainBox.setPadding(new Insets(10));
-        detectionButton = styledButton("Detect", "ORANGE");
+        detectionButton = AppStyle.getButtonWithDropShadow("Detect", "orange");
         detectionButton.setOnAction(actionEvent -> detectOnClick());
 
         detectionButton.setMinHeight(25);
 
         addButtonVBox.setPadding(new Insets(5));
-        addButtonVBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: orange");
+        addButtonVBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("orange"));
 
         addButtonVBox.getChildren().add(detectionButton);
 
@@ -78,7 +76,6 @@ public class QualityEvaluatorApp  {
 
                 setupScrollPane(temp, false);
             }
-
 
 
         });
@@ -252,29 +249,6 @@ public class QualityEvaluatorApp  {
         trueNegativesLabel.setText(Integer.toString(matrix.getTrueNegatives()));
     }
 
-    /**
-     * Creates a button with the Application general style.
-     *
-     * @param text the text to be displayed in the button.
-     * @param color the background color of the button
-     * @return the stylized button with the given color and text.
-     */
-    private Button styledButton(String text, String color) {
-        Button button = new Button(text);
-
-
-        button.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color: " + color);
-        button.setMinHeight(50);
-        button.setMinWidth(Region.USE_PREF_SIZE);
-
-        button.setAlignment(Pos.CENTER);
-
-        button.setMaxWidth(Double.MAX_VALUE);
-
-        return button;
-    }
 
     /**
      * Sets the first two columns of a given gridpane as occupying 50% each of the grid size.
