@@ -1,10 +1,13 @@
 package MetricExtraction;
 
+import g1.ISCTE.NewGUI;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,10 +30,20 @@ public class MetricExtractor {
      * @param destination_directory The directory on which to export the .xlsx file to
      */
     public MetricExtractor(File project_directory, String destination_directory) {
+        String destination_directory1;
         getFilesFromProjectDirectory(project_directory);
         this.threadPool = Executors.newFixedThreadPool(5);
         this.exported_file_name = project_directory.getName() + "_metrics.xlsx";
-        this.destination_directory = destination_directory;
+
+        try{
+            Path temp = Files.createTempDirectory("CreatedExcel");
+            File file = temp.toFile();
+            destination_directory1 = file.getPath();
+        }catch (IOException e){
+            destination_directory1 = destination_directory;
+        }
+
+        this.destination_directory = destination_directory1;
     }
 
     /**

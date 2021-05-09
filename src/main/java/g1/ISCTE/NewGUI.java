@@ -38,6 +38,8 @@ import java.util.TimerTask;
 
 public class NewGUI extends Application {
 
+    private boolean isJasml = false;
+
     //Right Side
     private final VBox centerPane = new VBox();
     private final ArrayList<Label> metricBoxes = new ArrayList<>();
@@ -153,7 +155,9 @@ public class NewGUI extends Application {
 
         emptyLeftPane.setPadding(new Insets(10, 10, 10, 10));
 
-        emptyLeftPane.getChildren().addAll(buttonsBox , getShowConfusionMatrixButton());
+        emptyLeftPane.getChildren().addAll(buttonsBox);
+        if(isJasml)
+            emptyLeftPane.getChildren().add(getShowConfusionMatrixButton());
 
         emptyLeftPane.getStyleClass().add("emptyLeftPane");
 
@@ -222,41 +226,33 @@ public class NewGUI extends Application {
         return pane;
     }
 
-    private Button getProcessProjectButton() {
-        Button processProjectButton = getGrowingButtonWithCSSClass("Processar Projeto", "processProjectButton");
+    private void processarProjeto(){
+        blurBackground(0, 30, 500, leftPane);
 
-        processProjectButton.setOnMouseClicked(event -> {
-            blurBackground(0, 30, 500, leftPane);
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                metricExtractor = new MetricExtractor(selectedFile, "src/main/Created_Excels");
 
-            new Thread() {
-                @Override
-                public void run() {
-                    super.run();
-                    metricExtractor = new MetricExtractor(selectedFile, "src/main/Created_Excels");
-
-                    try {
-                        metricExtractor.executeExtraction();
-                        docPath = metricExtractor.getFinalPath();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    Platform.runLater(() -> {
-                        updateFilePane();
-                        blurBackground(30, 0, 500, leftPane);
-                    });
+                try {
+                    metricExtractor.executeExtraction();
+                    docPath = metricExtractor.getFinalPath();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }.start();
 
-        });
-
-        processProjectButton.setDisable(true);
-
-        return processProjectButton;
+                Platform.runLater(() -> {
+                    updateFilePane();
+                    blurBackground(30, 0, 500, leftPane);
+                });
+            }
+        }.start();
     }
 
-    private Button getSelectFolderButton(Button processProjectButton) {
-        Button selectFolder = getGrowingButtonWithCSSClass("Select Folder", "selectFolderButton");
+
+    private Button getSelectFolderButton(String text, boolean isJasmlFolder, String cssClass) {
+        Button selectFolder = getGrowingButtonWithCSSClass(text, cssClass);
 
         selectFolder.setOnMouseClicked(event -> {
             final DirectoryChooser directoryChooser =
@@ -266,11 +262,10 @@ public class NewGUI extends Application {
             if (selectedDirectory != null) {
                 loadJASMLButton.setDisable(false);
                 selectedFile = selectedDirectory;
-                processProjectButton.setDisable(false);
-
+                isJasml = isJasmlFolder;
                 filePane.getChildren().clear();
+                processarProjeto();
             } else {
-                processProjectButton.setDisable(true);
             }
         });
 
@@ -287,24 +282,11 @@ public class NewGUI extends Application {
         return selectFolder;
     }
 
-    private Button getDefaultProjectButton(Button processProjectButton) {
-        Button selectFolder = getGrowingButtonWithCSSClass("Load JASML Project", "loadJASMLButton");
-
-        selectFolder.setOnMouseClicked(event -> {
-            selectedFile = QualityEvaluator.getDefaultProject();
-            processProjectButton.setDisable(false);
-
-        });
-
-        return selectFolder;
-    }
 
     private VBox getEmptyLeftPane() {
 
         VBox emptyLeftPane = new VBox();
         emptyLeftPane.setSpacing(10);
-
-        Button processProjectButton = getProcessProjectButton();
 
         VBox dragAndDropVBox = new VBox();
         dragAndDropVBox.setPrefHeight(50);
@@ -328,12 +310,11 @@ public class NewGUI extends Application {
 
                 if (file.isDirectory()) {
                     stage.setTitle(file.getName());
-
+                    isJasml = false;
                     selectedFile = file;
-                    processProjectButton.setDisable(false);
                     success = true;
+                    processarProjeto();
                 } else {
-                    processProjectButton.setDisable(true);
                     blurBackground(0, 30, 500, leftUnderVBox);
 
                     Label selectFolder = new Label("Drag a folder, not a file!");
@@ -382,14 +363,14 @@ public class NewGUI extends Application {
 
 
         HBox selectFolderANDLoadDefaulProjectHBOX = new HBox();
-        Button selectFolder = getSelectFolderButton(processProjectButton);
+        Button selectFolder = getSelectFolderButton("Select Folder", false, "selectFolderButton");
         selectFolderANDLoadDefaulProjectHBOX.setSpacing(10);
 
-        loadJASMLButton = getDefaultProjectButton(processProjectButton);
+        loadJASMLButton = getSelectFolderButton("Select JASML Project", true, "loadJASMLButton");
 
         selectFolderANDLoadDefaulProjectHBOX.getChildren().addAll(selectFolder, loadJASMLButton);
 
-        buttonsBox = new VBox(selectFolderANDLoadDefaulProjectHBOX, processProjectButton);
+        buttonsBox = new VBox(selectFolderANDLoadDefaulProjectHBOX);
         buttonsBox.setSpacing(10);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.setMaxWidth(Double.MAX_VALUE);

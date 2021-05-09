@@ -3,14 +3,16 @@ package SmellDetectionQualityEvaluation;
 import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.CodeSmellDetector;
 import MetricExtraction.MetricExtractor;
+import g1.ISCTE.NewGUI;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -98,14 +100,42 @@ public class QualityEvaluator {
         evaluation = new QualityEvaluation(confusionMatrix, consoleOutputs);
     }
 
+    private static void copyInputStreamToFileJava9(InputStream input, File file)
+            throws IOException {
+
+        // append = false
+        try (OutputStream output = new FileOutputStream(file, false)) {
+            input.transferTo(output);
+        }
+
+    }
+
+    private File loadCodeSmellsFile(){
+        try{
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream("Code_Smells.xlsx");
+
+            Path temp = Files.createTempFile("Code_Smells", ".xlsx");
+            File file = temp.toFile();
+            copyInputStreamToFileJava9(is, file);
+
+            return file;
+        }catch (IOException e){
+            return null;
+        }
+
+    }
+
+
     /**
      * Gets the reference data from the .xlsx file in the shape of a map data structure
      * @return A HashMap mapping the name of the code smell to a list of where it was detected
      */
     private HashMap<String, ArrayList<String>> getDataForComparison() {
         try {
-            String directory_src = System.getProperty("user.dir") + "\\Code_Smells.xlsx";
-            XSSFWorkbook workBook = new XSSFWorkbook(OPCPackage.open(new File(directory_src)));
+            File file = loadCodeSmellsFile();
+
+            XSSFWorkbook workBook = new XSSFWorkbook(OPCPackage.open(file));
             XSSFSheet sheet = workBook.getSheet("Code Smells");
             HashMap<String, ArrayList<String>> data = new HashMap<>();
             data.put("isGodClass", new ArrayList<>());
@@ -149,8 +179,9 @@ public class QualityEvaluator {
      * @return the file for the default project's folder.
      */
     public static File getDefaultProject(){
-        String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
-        return new File(directory_src);
+        String uri = NewGUI.class.getResource("/jasml_0.10/").getPath();
+
+        return new File(uri);
     }
 
     /**

@@ -24,13 +24,16 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.Reader;
+import java.util.*;
 
 import static g1.ISCTE.AppStyle.*;
 
@@ -54,6 +57,16 @@ public class RulesManager extends Application {
     private final ObservableList<JSONObject> rules = FXCollections.observableArrayList();
     private RuleFileManager ruleFileManager;
     private MetricExtractor metricExtractor;
+
+
+    private static ConditionBlock getDefaultIsGodClassBlock(){
+        return new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Class"), "30");
+    }
+
+    private static ConditionBlock getDefaultIsLongMethodBlock(){
+        return new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "30");
+    }
+
 
     /**
      * Sets metric extractor.
@@ -380,6 +393,7 @@ public class RulesManager extends Application {
         if (rules.size() == 0)
             rulesPanel.getChildren().add(numberOfRules);
 
+
         for (JSONObject entry : rules) {
             Node rulePane = getRulePane(entry);
             rulesPanel.getChildren().add(rulePane);
@@ -412,6 +426,13 @@ public class RulesManager extends Application {
             }
         });
         MenuItem godClassItem = new MenuItem("isGodClass");
+        godClassItem.setOnAction(actionEvent -> {
+            try {
+                addIsGodClass();
+            } catch (IncorrectRuleException | ParseException e) {
+                e.printStackTrace();
+            }
+        });
 
         MenuItem classSmellMenuItem = new MenuItem("Class Rule");
         classSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(true));
@@ -419,7 +440,7 @@ public class RulesManager extends Application {
         MenuItem methodSmellMenuItem = new MenuItem("Method Rule");
         methodSmellMenuItem.setOnAction(actionEvent -> openAddRuleEditor(false));
 
-        contextMenu.getItems().addAll(classSmellMenuItem, methodSmellMenuItem);
+        contextMenu.getItems().addAll(classSmellMenuItem, methodSmellMenuItem, longMethodItem, godClassItem);
 
         addNewRule.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
@@ -432,23 +453,58 @@ public class RulesManager extends Application {
     }
 
     private void addIsLongMethod() throws IncorrectRuleException {
-        ConditionBlock isLongMethod = new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Method"), "10");
+        ConditionBlock isLongMethod =getDefaultIsLongMethodBlock();
         ArrayList<CustomNode> nodes = new ArrayList<>();
         nodes.add(isLongMethod);
 
         JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isLongMethod", false);
-        rules.add(ruleToAdd);
-        ruleFileManager.saveJSONListToFile(rules);
+        if(ruleFileManager.isValidName("isLongMethod")){
+            System.out.println("adicionei isLongMethod");
+            rules.add(ruleToAdd);
+            ruleFileManager.saveJSONListToFile(rules);
+            updateRulesEditorPanel();
+        }
+
     }
 
-    private void addIsGodClass() throws IncorrectRuleException {
-        ConditionBlock isLongMethod = new ConditionBlock(RuleOperator.GREATER, new MetricBlock("LOC_Class"), "10");
-        ArrayList<CustomNode> nodes = new ArrayList<>();
-        nodes.add(isLongMethod);
+    private void addIsGodClass() throws IncorrectRuleException, ParseException {
+        ConditionBlock isGodClass = getDefaultIsGodClassBlock();
+        ArrayList<CustomNode> nodes = new ArrayList<>(Arrays.asList(isGodClass));
 
         JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, "isGodClass", true);
-        rules.add(ruleToAdd);
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonArray = (JSONObject) jsonParser.parse(ruleToAdd.toJSONString());
+
+        int count = (int) rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains("isGodClass")).count();
+        if(count != 0){
+            Optional<JSONObject> rule = rules.stream().filter(p -> ((JSONObject) p.get("outerName")).get("innerName").equals("isGodClass")).findFirst();
+            if(rule.isPresent()){
+                rules.remove(rule.get());
+
+                JSONObject ruleExists = rule.get();
+
+                 Optional<Integer> newValue = rules.stream().filter(p ->((String) ((JSONObject) p.get("outerName")).get("innerName")).contains("isGodClass_old")).map(p -> {
+                   String name = (String) ((JSONObject) p.get("outerName")).get("innerName");
+                   name = name.replace("isGodClass_old", "");
+                   return Integer.parseInt(name);
+                }).sorted().findFirst();
+
+                 if(newValue.isPresent()){
+                     ruleFileManager.renameJSONRule(ruleExists,  "isGodClass_old" + (newValue.get() + 1));
+                 }else{
+                     ruleFileManager.renameJSONRule(ruleExists, "isGodClass_old" + 1);
+                 }
+
+                rules.add(ruleExists);
+
+            }
+
+        }
+
+        rules.add(jsonArray);
         ruleFileManager.saveJSONListToFile(rules);
+        updateRulesEditorPanel();
+
     }
 
 
@@ -513,6 +569,7 @@ public class RulesManager extends Application {
         });
 
         numberOfRules.setTextFill(Color.WHITE);
+        numberOfRules.setGraphic(getIcon("bird.png"));
         numberOfRules.setGraphic(getIcon("bird.png"));
 
         rulesPanel.getChildren().add(numberOfRules);

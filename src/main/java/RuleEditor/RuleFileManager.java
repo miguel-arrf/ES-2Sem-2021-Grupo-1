@@ -8,7 +8,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import java.util.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public class RuleFileManager {
     public File getFile() {
         return this.file;
     }
+
     /**
      * Sets the file that contains the rules.
      *
@@ -70,27 +70,33 @@ public class RuleFileManager {
      *
      * @param ruleName the new name introduced
      * @return boolean that is true if the name don't exist, false otherwise
-     * @throws IOException
-     * @throws ParseException
      */
     public Boolean isValidName(String ruleName) {
 
-            ArrayList<JSONObject> ruleFileToArray = new ArrayList();
+        ArrayList<JSONObject> ruleFileToArray = new ArrayList<>(rules);
 
-            for(Object object : rules){
-                ruleFileToArray.add((JSONObject) object);
-            }
-
-            for(JSONObject rule : ruleFileToArray) {
-                JSONObject outerName = (JSONObject) rule.get("outerName");
-                String innerName = (String) outerName.get("innerName");
-                if(ruleName.equals(innerName))
-                    return false;
-            }
-            return true;
+        for (JSONObject rule : ruleFileToArray) {
+            JSONObject outerName = (JSONObject) rule.get("outerName");
+            String innerName = (String) outerName.get("innerName");
+            if (ruleName.equals(innerName))
+                return false;
         }
+        return true;
+    }
 
 
+    /**
+     * Renames the given rule with the given new name.
+     *
+     * @param rule The rule bo be renamed.
+     * @param newName the new rule name.
+     */
+    @SuppressWarnings("unchecked")
+    public void renameJSONRule(JSONObject rule, String newName) {
+        JSONObject outerName = (JSONObject) rule.get("outerName");
+        outerName.replace("innerName", newName);
+        outerName.replace("outerName", outerName);
+    }
 
     /**
      * Saves a JSON list to the rules file (or updates it).
@@ -140,7 +146,7 @@ public class RuleFileManager {
     public JSONObject guiToJSONObject(ArrayList<CustomNode> customNodeArrayList, String name, boolean isClassSmell) throws IncorrectRuleException {
 
         //The first node is always in the zero index.
-        if(customNodeArrayList.isEmpty())
+        if (customNodeArrayList.isEmpty())
             throw new IncorrectRuleException("Empty rule");
 
         CustomNode firstCustomNode = customNodeArrayList.get(0);
@@ -170,17 +176,17 @@ public class RuleFileManager {
      */
     public CodeSmell jsonObjectToCodeSmell(JSONObject jsonObject, DraggingObject draggingObject, String name, boolean isClassSmell) {
         CustomNode firstCustomNode = jsonObjectToCustomNode(jsonObject, draggingObject);
-        System.out.println("firstCustomNode: "  + firstCustomNode);
+        System.out.println("firstCustomNode: " + firstCustomNode);
         if (firstCustomNode.getType() == Types.LogicBlock) {
             RuleNode nodeToReturn = new RuleNode(firstCustomNode, null, null);
 
             addChildrenToObject(nodeToReturn, jsonObject, draggingObject,
-                    (a,b) -> {
+                    (a, b) -> {
                         RuleNode ruleNode = new RuleNode(b);
                         a.setRight_node(ruleNode);
                         return ruleNode;
                     },
-                    (a,b) -> {
+                    (a, b) -> {
                         RuleNode ruleNode = new RuleNode(b);
                         a.setLeft_node(ruleNode);
                         return ruleNode;
@@ -213,23 +219,23 @@ public class RuleFileManager {
             children.add(customNodeToJSON(subNode, others));
         }
 
-        if(node.getType() == Types.ConditionBlock){
+        if (node.getType() == Types.ConditionBlock) {
             ConditionBlock tempConditionBlock = (ConditionBlock) node;
-            if(tempConditionBlock.getOperator() != RuleOperator.DEFAULT){
-                try{
+            if (tempConditionBlock.getOperator() != RuleOperator.DEFAULT) {
+                try {
                     Double doubleValue = Double.valueOf(tempConditionBlock.getValue());
-                }catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     throw new IncorrectRuleException("Incorrect rule");
                 }
 
-                if(tempConditionBlock.getRuleBlock() == null){
+                if (tempConditionBlock.getRuleBlock() == null) {
                     throw new IncorrectRuleException("Incorrect rule");
                 }
-            }else{
+            } else {
                 throw new IncorrectRuleException("Incorrect rule");
             }
-        }else if(node.getType() == Types.LogicBlock){
-            if(children.size() != 2){
+        } else if (node.getType() == Types.LogicBlock) {
+            if (children.size() != 2) {
                 throw new IncorrectRuleException("Incorrect rule");
             }
         }
@@ -253,21 +259,21 @@ public class RuleFileManager {
         if (firstCustomNode.getType() == Types.LogicBlock) {
             LogicBlock logicBlock = (LogicBlock) firstCustomNode;
             addChildrenToObject(logicBlock, jsonObject, draggingObject,
-                    (a,b) -> {
+                    (a, b) -> {
                         a.addToRight(b);
 
-                        if(b.getType() == Types.LogicBlock){
+                        if (b.getType() == Types.LogicBlock) {
                             return (LogicBlock) b;
-                        }else{
+                        } else {
                             return null;
                         }
                     },
-                    (a,b) -> {
+                    (a, b) -> {
                         a.addToLeft(b);
 
-                        if(b.getType() == Types.LogicBlock){
+                        if (b.getType() == Types.LogicBlock) {
                             return (LogicBlock) b;
-                        }else{
+                        } else {
                             return null;
                         }
                     });
@@ -288,6 +294,8 @@ public class RuleFileManager {
      * @return the custom node that represents the given block in the JSONObject.
      */
     public CustomNode jsonObjectToCustomNode(JSONObject jsonObject, DraggingObject draggingObject) {
+        jsonObject = (JSONObject) jsonObject.clone();
+        System.out.println("cagalhao: " + jsonObject);
         String firstCustomNodeString = ((JSONObject) jsonObject.get("rule")).get("operator").toString();
 
         CustomNode firstCustomNode;
@@ -319,30 +327,30 @@ public class RuleFileManager {
      * @param addToLeft      the function that receives an element of parent type and one child,
      *                       and ands it to the left side while returning a new parent in case this child is not a leaf one, and also has children.
      */
-    public <T> void addChildrenToObject(T parent, JSONObject jsonList, DraggingObject draggingObject, BiFunction<T, CustomNode, T> addToRight, BiFunction<T, CustomNode, T> addToLeft){
+    public <T> void addChildrenToObject(T parent, JSONObject jsonList, DraggingObject draggingObject, BiFunction<T, CustomNode, T> addToRight, BiFunction<T, CustomNode, T> addToLeft) {
         JSONArray children = (JSONArray) jsonList.get("children");
 
 
-        if(children.size() == 1){
+        if (children.size() == 1) {
             CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) children.get(0), draggingObject);
 
             T whatToAdd = addToRight.apply(parent, nodeToAddRight);
 
-            if(nodeToAddRight.getType() == Types.LogicBlock)
+            if (nodeToAddRight.getType() == Types.LogicBlock)
                 addChildrenToObject(whatToAdd, (JSONObject) children.get(0), draggingObject, addToRight, addToLeft);
 
-        }else if(children.size() == 2){
+        } else if (children.size() == 2) {
             CustomNode nodeToAddRight = jsonObjectToCustomNode((JSONObject) children.get(0), draggingObject);
             CustomNode nodeToAddLeft = jsonObjectToCustomNode((JSONObject) children.get(1), draggingObject);
 
             T whatToAddRight = addToRight.apply(parent, nodeToAddRight);
             T whatToAddLeft = addToLeft.apply(parent, nodeToAddLeft);
 
-            if(nodeToAddRight.getType() == Types.LogicBlock){
-                addChildrenToObject(whatToAddRight,(JSONObject) children.get(0), draggingObject, addToRight, addToLeft);
+            if (nodeToAddRight.getType() == Types.LogicBlock) {
+                addChildrenToObject(whatToAddRight, (JSONObject) children.get(0), draggingObject, addToRight, addToLeft);
             }
 
-            if(nodeToAddLeft.getType() == Types.LogicBlock){
+            if (nodeToAddLeft.getType() == Types.LogicBlock) {
                 addChildrenToObject(whatToAddLeft, (JSONObject) children.get(1), draggingObject, addToRight, addToLeft);
             }
 
