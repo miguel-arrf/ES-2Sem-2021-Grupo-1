@@ -602,10 +602,7 @@ public class NewGUI extends Application {
                     (TableColumn.CellEditEvent<ObservableList<String>, String> t) -> t.getTableView().getItems().get(t.getTablePosition().getRow()).set(t.getTablePosition().getColumn(), t.getNewValue()));
             table.getColumns().add(column);
         }
-
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-
     }
 
     /**

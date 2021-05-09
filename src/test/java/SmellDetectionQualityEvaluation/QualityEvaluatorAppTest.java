@@ -54,7 +54,7 @@ class QualityEvaluatorAppTest {
         File testFile = new File(url.getFile());
         System.out.println(testFile.getPath());
         
-        File projectFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
+        File projectFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
 
         MetricExtractor metricExtractor = new MetricExtractor(projectFile);
         //metricExtractor.executeExtraction();
@@ -80,7 +80,7 @@ class QualityEvaluatorAppTest {
     void testOtherBranch() throws InterruptedException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, NoSuchMethodException, InvocationTargetException {
     	 JFXPanel jfxPanel = new JFXPanel();
 
-         File selectedFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
+         File selectedFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
 
          QualityEvaluatorApp qEA = new QualityEvaluatorApp();
          
@@ -105,24 +105,6 @@ class QualityEvaluatorAppTest {
         button.fire();
     }
     
-    
-    @Test
-    void testGetStackPane() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        JFXPanel jfxPanel = new JFXPanel();
 
-    	RulesManager rulesManager = new RulesManager();
-    	
-        File selectedFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
-
-    	QualityEvaluatorApp qualityEvaluatorApp = new QualityEvaluatorApp();
-        qualityEvaluatorApp.initializeMainPane(rulesManager, selectedFile);
-        
-        Method method = QualityEvaluatorApp.class.getDeclaredMethod("getStackPane", VBox.class);
-        method.setAccessible(true);
-
-        StackPane stackPane = (StackPane) method.invoke(qualityEvaluatorApp, new VBox());
-        assertNotNull(stackPane);
-    	
-    }
     
 }

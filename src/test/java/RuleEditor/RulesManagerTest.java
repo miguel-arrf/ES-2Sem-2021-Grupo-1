@@ -6,10 +6,14 @@ import g1.ISCTE.MyTree;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import CodeSmellDetection.RuleOperator;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -75,8 +79,10 @@ class RulesManagerTest {
 		JFXPanel panel = new JFXPanel();
 		
 		RulesManager rulesManager = initialize();
+		System.out.println("rules manager size: "  + rulesManager.getRules().size());
         
-        assertEquals(rulesManager.getRules().size(), 2);
+        assertEquals(rulesManager.getRules().size(), 14);
+        
 		
 	}
 	
@@ -133,7 +139,8 @@ class RulesManagerTest {
 		
 		json.put("innerName", "testName");
 		
-		privatesetUpGUI.invoke(rulesManager, new Label(), geral);
+		HBox getRenameTextField = (HBox) privatesetUpGUI.invoke(rulesManager, new Label(), geral);
+		assertNotNull(getRenameTextField);
 		
 	}
 
@@ -159,7 +166,8 @@ class RulesManagerTest {
 		MetricExtractor metricExtractor = new MetricExtractor(new File(sqlScriptUrl.toURI()));
 		rulesManager.setMetricExtractor(metricExtractor);
 		
-		assertEquals(rulesManager.createCodeSmells().size(), 2);
+		System.out.println("pip: " + rulesManager.createCodeSmells().size());
+		assertEquals(rulesManager.createCodeSmells().size(), 14);
 	}
 
 

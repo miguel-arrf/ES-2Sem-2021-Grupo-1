@@ -19,10 +19,9 @@ class MetricExtractorTest {
          File testFile = new File(url.getFile());
          System.out.println(testFile.getPath());
     	
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"));
-        String resultado = testFile.getPath() + "/jasml_0.10_metrics.xlsx";
+        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
         
-        assertEquals(resultado, metricExtractor.getFinalPath());
+        assertNotNull(metricExtractor.getFinalPath());
     }
 
     @Test
@@ -34,15 +33,11 @@ class MetricExtractorTest {
         
         
         
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"));
+        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
         assertDoesNotThrow(() -> {
             metricExtractor.executeExtraction();
         });
-//        URL sqlScriptUrl1 = MetricExtractor.class.getClassLoader().getResource("/forTestPurposes/testFolder/somethingHere");
-//        File file = new File(sqlScriptUrl1.toURI());
-//
-//        MetricExtractor metricExtractor2 = new MetricExtractor(file, "test");
-//        metricExtractor2.executeExtraction();
+
     }
 
     @Test
@@ -51,7 +46,7 @@ class MetricExtractorTest {
         File testFile = new File(url.getFile());
         System.out.println(testFile.getPath());
     	
-        MetricExtractor metricExtractor = new MetricExtractor(new File(System.getProperty("user.dir") + "\\jasml_0.10"));
+        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
         assertEquals(metricExtractor.getResults().size(),0);
         metricExtractor.executeExtraction();
         

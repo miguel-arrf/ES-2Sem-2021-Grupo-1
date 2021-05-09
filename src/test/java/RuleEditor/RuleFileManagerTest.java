@@ -55,7 +55,7 @@ class RuleFileManagerTest {
         ArrayList<JSONObject> arrayListJson;
         try {
             arrayListJson = manager.loadJSONRuleFile();
-            Assertions.assertEquals(arrayListJson.size(), 2);
+            Assertions.assertEquals(arrayListJson.size(), 14);
 
 
         } catch (IOException | ParseException e) {

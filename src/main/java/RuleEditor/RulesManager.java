@@ -209,9 +209,9 @@ public class RulesManager extends Application {
         TextField textField = new TextField(ruleName);
         textField.setStyle("-fx-text-inner-color: white; -fx-background-color: #606060");
 
-        boolean isClassRule = (Boolean) ((JSONObject) jsonObject.get("outerName")).get("isClassSmell");
 
         updateButton.setOnAction(actionEvent -> {
+            boolean isClassRule = (Boolean) ((JSONObject) jsonObject.get("outerName")).get("isClassSmell");
 
             if (ruleFileManager.isValidName(textField.getText()) || textField.getText().equals(ruleName)) {
                 label.setText(textField.getText() + " | " + (isClassRule ? "Class rule" : "Method rule"));
@@ -473,7 +473,7 @@ public class RulesManager extends Application {
      * @throws IncorrectRuleException In case the rule is incorrectly formated.
      * @throws ParseException In case the JSON parsing fails.
      */
-    private void addDefaultRule(CustomNode defaultBlock, String nameToSearch, boolean isClassSmell) throws IncorrectRuleException, ParseException {
+    protected void addDefaultRule(CustomNode defaultBlock, String nameToSearch, boolean isClassSmell) throws IncorrectRuleException, ParseException {
         ArrayList<CustomNode> nodes = new ArrayList<>(Collections.singletonList(defaultBlock));
 
         JSONObject ruleToAdd =  ruleFileManager.guiToJSONObject(nodes, nameToSearch, isClassSmell);
@@ -708,5 +708,11 @@ public class RulesManager extends Application {
         }
 
     }
+    
+    private void setUpGUI() {
+    	resetEverything();
+        setUpMainPane();
+    }
+    
 
 }
