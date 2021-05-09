@@ -12,4 +12,4 @@ Miguel Ferreira 87295
 
 Erros identificados:
 
-- Na tabela de visualização de métricas na GUI, um bug não identificado nas libraries utilizadas causa um erro na primeira e última linhas da tabela, relativamente ao nº de linha
+- Na tabela de visualização de métricas na GUI, um bug não identificado nas libraries utilizadas causa um erro na última linha da tabela, sendo esta duplicada de outra linha da tabela, normalmente com MethodID = 222.
