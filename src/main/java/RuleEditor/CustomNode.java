@@ -39,9 +39,7 @@ public interface CustomNode {
      */
     static Node getDefaultWidgetGraphicalRepresentation(String label, String color){
         HBox ruleMakerBox = new HBox(new Label(label));
-        ruleMakerBox.setStyle("-fx-background-radius: 7 7 7 7;\n" +
-                "    -fx-border-radius: 7 7 7 7;\n" +
-                "    -fx-background-color:" + color + ";");
+        ruleMakerBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(color));
 
         ruleMakerBox.setMinWidth(150);
         ruleMakerBox.setMinHeight(50);

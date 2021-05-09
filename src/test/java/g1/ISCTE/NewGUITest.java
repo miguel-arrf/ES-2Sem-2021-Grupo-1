@@ -10,9 +10,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 
+import MetricExtraction.MetricExtractor;
 import SmellDetectionQualityEvaluation.QualityEvaluatorApp;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -26,7 +29,7 @@ class NewGUITest {
 
 
 	@Test
-	void testBlurBackground() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	void testBlurBackground() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		Node pane = new VBox();
 		
 		NewGUI.blurBackground(0.0, 20.0, 0.0, pane);
@@ -37,7 +40,7 @@ class NewGUITest {
 		
 	}
 	
-	private void getCoverage() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private void getCoverage() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 		
 		JFXPanel panel = new JFXPanel();
 		
@@ -55,25 +58,61 @@ class NewGUITest {
         assertNotNull(spacer);
         
         
-        Method methodGetProcessProjectButton = NewGUI.class.getDeclaredMethod("getProcessProjectButton", null);
+        Method methodGetProcessProjectButton = NewGUI.class.getDeclaredMethod("getShowConfusionMatrixButton", null);
         methodGetProcessProjectButton.setAccessible(true);
         Button buttonProcessProject = (Button) methodGetProcessProjectButton.invoke(ng, null);
         assertNotNull(buttonProcessProject);
         
         
-        Method methodGetSelectFolderButton = NewGUI.class.getDeclaredMethod("getSelectFolderButton", Button.class);
-        methodGetSelectFolderButton.setAccessible(true);
-        Button selectFolderButton = (Button) methodGetSelectFolderButton.invoke(ng, buttonProcessProject);
-        assertNotNull(selectFolderButton);
+        File projectFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
+        
+        Field f = NewGUI.class.getDeclaredField("selectedFile"); //NoSuchFieldException
+        f.setAccessible(true);
+        f.set(ng, projectFile);
         
         
-        Method methodGetDefaultProjectButton = NewGUI.class.getDeclaredMethod("getDefaultProjectButton", Button.class);
-        methodGetDefaultProjectButton.setAccessible(true);
-        Button getDefaultProjectButton = (Button) methodGetDefaultProjectButton.invoke(ng, buttonProcessProject);
-        assertNotNull(getDefaultProjectButton);
+        Method updateFilePane = NewGUI.class.getDeclaredMethod("updateFilePane", null);
+        updateFilePane.setAccessible(true);
+        Button voidUpdateFilePane = (Button) updateFilePane.invoke(ng, null);        
+
         
 	}
+	
+	@Test
+	void testUpdateCenterPane() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+		NewGUI ng = new NewGUI();
+		
+		File projectFile = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
+        
+        Field f = NewGUI.class.getDeclaredField("selectedFile"); //NoSuchFieldException
+        f.setAccessible(true);
+        f.set(ng, projectFile);
+        
+        
+        MetricExtractor metricExtractor = new MetricExtractor(projectFile, "src/main/Created_Excels");
 
+        Field docPath = NewGUI.class.getDeclaredField("docPath");
+        docPath.setAccessible(true);
+       
+        
+        try {
+            metricExtractor.executeExtraction();
+            docPath.set(ng,  metricExtractor.getFinalPath());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        Method updateCenterPane = NewGUI.class.getDeclaredMethod("updateCenterPane", null);
+        updateCenterPane.setAccessible(true);
+        updateCenterPane.invoke(ng, null); 
+        
+        
+        
+        
+		
+	}
+
+	
 	@Test
 	void testStartStage() throws InterruptedException {
 

@@ -1,6 +1,5 @@
 package MetricExtraction;
 
-import g1.ISCTE.NewGUI;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.File;

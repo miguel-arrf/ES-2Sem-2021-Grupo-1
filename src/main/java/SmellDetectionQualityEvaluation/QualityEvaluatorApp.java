@@ -20,12 +20,8 @@ import java.util.stream.Collectors;
  */
 public class QualityEvaluatorApp  {
 
-    private final Label truePositivesLabel = new Label("0");
-    private final Label falsePositivesLabel = new Label("0");
-    private final Label trueNegativesLabel = new Label("0");
-    private final Label falseNegativesLabel = new Label("0");
-
-    private Button detectionButton;
+    private final GUIMatrix GUIMatrix = new GUIMatrix();
+	private Button detectionButton;
     private VBox mainBox;
     private final VBox addButtonVBox = new VBox();
     private final ProgressBar progressBar = new ProgressBar();
@@ -39,25 +35,32 @@ public class QualityEvaluatorApp  {
     //Needs to be here, otherwise the labels will not update correctly.
     private File projectFile;
 
+    /**
+     * VBox representing the GUI of the code quality evaluation.
+     *
+     * @param rulesManager the rulesManager containing the code smells to be analysed.
+     * @param projectFile the file containing the project.
+     * @return the VBox containing the GUI.
+     */
     public VBox initializeMainPane(RulesManager rulesManager, File projectFile){
         this.rulesManager = rulesManager;
         this.projectFile = projectFile;
 
-        mainBox = new VBox(createMatrix());
+        mainBox = new VBox(GUIMatrix.createMatrix());
         mainBox.setSpacing(20);
         mainBox.setPadding(new Insets(10));
-        detectionButton = AppStyle.getButtonWithDropShadow("Detect", "orange");
+        detectionButton = AppStyle.getButtonWithDropShadow("Detect", AppStyle.lightOrangeColor);
         detectionButton.setOnAction(actionEvent -> detectOnClick());
 
         detectionButton.setMinHeight(25);
 
         addButtonVBox.setPadding(new Insets(5));
-        addButtonVBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("orange"));
+        addButtonVBox.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(AppStyle.lightOrangeColor));
 
         addButtonVBox.getChildren().add(detectionButton);
 
         mainBox.getChildren().add(addButtonVBox);
-        mainBox.setStyle("-fx-background-color: #3d3c40 ");
+        mainBox.setStyle("-fx-background-color: " + AppStyle.darkGrayBoxColor);
 
         progressBar.setProgress(0);
         progressBar.setMaxWidth(Double.MAX_VALUE);
@@ -83,53 +86,6 @@ public class QualityEvaluatorApp  {
         return mainBox;
     }
 
-    /**
-     * Method that adds a content to the top of a stackPane allowing us to mimic a content with rounded corners. Purely for style purposes.
-     *
-     * @param content the content (vbox) to be added to the stack pane.
-     * @return the stackPane with the given content on top.
-     */
-    private StackPane getStackPane(VBox content){
-        //ScrollPane where boxes go
-        ScrollPane scrollPane = getScrollPane(content);
-
-
-        //StackPane due to rounded corners...
-        StackPane stackPane = new StackPane();
-        VBox emptyPane = new VBox();
-        emptyPane.getStyleClass().add("emptyLeftPane");
-        VBox.setVgrow(emptyPane, Priority.ALWAYS);
-
-        stackPane.getChildren().add(emptyPane);//Background...
-        stackPane.getChildren().add(scrollPane);
-
-        return stackPane;
-    }
-
-    /**
-     * Helper method that stylizes and creates a scrollpane with the appropriate design for this application.
-     *
-     * @param content to be added in the scrollpane
-     * @return the scrollpane with the respective content
-     */
-    private ScrollPane getScrollPane(VBox content) {
-        ScrollPane scrollPane = new ScrollPane();
-
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(content);
-
-        scrollPane.setMinWidth(250);
-        scrollPane.setPrefWidth(200);
-
-        HBox.setHgrow(scrollPane, Priority.ALWAYS);
-
-        scrollPane.setFitToWidth(true);
-
-        scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
-
-
-        return scrollPane;
-    }
 
     /**
      * Method in charge of adding (and removing when completed) the progress bar to the detect button.
@@ -138,7 +94,7 @@ public class QualityEvaluatorApp  {
     private void detectOnClick() {
 
 
-        resetLabelValues();
+        GUIMatrix.resetLabelValues();
         qualityEvaluator = new QualityEvaluator(projectFile);
         qualityEvaluator.setCodeSmells(rulesManager.createCodeSmells());
         qualityEvaluator.run();
@@ -168,7 +124,7 @@ public class QualityEvaluatorApp  {
                     addButtonVBox.getChildren().remove(progressBar);
                     progressBar.setProgress(0.0);
 
-                    updateLabelValues(qualityEvaluator.getEvaluation().getConfusionMatrix());
+                    GUIMatrix.updateLabelValues(qualityEvaluator.getEvaluation().getConfusionMatrix());
 
                     if(!mainBox.getChildren().contains(choiceBox)){
                         mainBox.getChildren().add(1,choiceBox);
@@ -219,114 +175,11 @@ public class QualityEvaluatorApp  {
 
         }
 
-        StackPane stackPane = getStackPane(textBox);
+        StackPane stackPane = AppStyle.getStackPane(textBox, Double.MAX_VALUE);
 
         mainBox.getChildren().removeIf(node -> node instanceof StackPane);
 
         mainBox.getChildren().add(stackPane);
-    }
-
-
-    /**
-     * Every label in the confusion matrix is setted to 0.
-     */
-    private void resetLabelValues() {
-        truePositivesLabel.setText("0");
-        falsePositivesLabel.setText("0");
-        falseNegativesLabel.setText("0");
-        trueNegativesLabel.setText("0");
-    }
-
-    /**
-     * Updates the confusion matrix graphical representation with the correct values from the analysis.
-     *
-     * @param matrix the confusion matrix
-     */
-    private void updateLabelValues(ConfusionMatrix matrix) {
-        truePositivesLabel.setText(Integer.toString(matrix.getTruePositives()));
-        falsePositivesLabel.setText(Integer.toString(matrix.getFalsePositives()));
-        falseNegativesLabel.setText(Integer.toString(matrix.getFalseNegatives()));
-        trueNegativesLabel.setText(Integer.toString(matrix.getTrueNegatives()));
-    }
-
-
-    /**
-     * Sets the first two columns of a given gridpane as occupying 50% each of the grid size.
-     *
-     * @param gridPane the gridpane to which we want to apply the column constraints
-     */
-    private void setColumnConstraints(GridPane gridPane){
-        ColumnConstraints columnConstraints1 = new ColumnConstraints();
-        columnConstraints1.setPercentWidth(50);
-
-        ColumnConstraints columnConstraints2 = new ColumnConstraints();
-        columnConstraints2.setPercentWidth(50);
-
-        gridPane.getColumnConstraints().addAll(columnConstraints1, columnConstraints2);
-    }
-
-    /**
-     * Adds a given node in a given gridPane in a given position defined by a row and a column.
-     *
-     * @param node the node to be added to the gridPane.
-     * @param gridPane the gridPane to where the items shall be added.
-     * @param row the row to put the node.
-     * @param column the column to put the node.
-     */
-    private void addToGrid(Pane node, GridPane gridPane, int row, int column){
-        GridPane.setRowIndex(node, row);
-        GridPane.setColumnIndex(node, column);
-
-        gridPane.getChildren().add(node);
-    }
-
-    /**
-     * Method in charge of creating the graphical representation of the confusion matrix using a gridPane.
-     *
-     * @return a Pane that represents a confusion matrix.
-     */
-    private Pane createMatrix() {
-        Pane truePositivesPane = createMatrixPanel("True Positive", truePositivesLabel);
-        Pane falsePositivesPane =  createMatrixPanel("False Positive", falsePositivesLabel);
-        Pane falseNegativesPane = createMatrixPanel("False Negative", falseNegativesLabel);
-        Pane trueNegativesPane = createMatrixPanel("True Negative", trueNegativesLabel);
-
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(10));
-
-        setColumnConstraints(grid);
-
-        addToGrid(truePositivesPane,grid, 0, 0);
-        addToGrid(falsePositivesPane,grid, 0, 1);
-
-        addToGrid(falseNegativesPane, grid, 1,0);
-        addToGrid(trueNegativesPane, grid, 1,1);
-
-
-        VBox matrix = new VBox(grid);
-        matrix.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
-        matrix.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
-        return matrix;
-    }
-
-    /**
-     * Creates a confusion matrix label with the correct design. Associating to each row/column in the confusion matrix a description (cellName) and the value (result of the analysis - label).
-     *
-     * @param cellName the cell description.
-     * @param label the label containing the value of the analysis.
-     * @return a Pane representing the description and value of each of the rows and columns of the confusion matrix.
-     */
-    private Pane createMatrixPanel(String cellName, Label label) {
-        Label cellNameLabel = new Label(cellName);
-        cellNameLabel.setTextFill(Color.WHITE);
-
-        label.setTextFill(Color.WHITE);
-
-        VBox box = new VBox(cellNameLabel, label);
-        box.setSpacing(20);
-        box.setPadding(new Insets(10));
-
-        return box;
     }
 
 }

@@ -105,6 +105,13 @@ public class QualityEvaluator {
         evaluation = new QualityEvaluation(confusionMatrix, consoleOutputs);
     }
 
+    /**
+     * Transfer the content of a InputStream to a given file.
+     *
+     * @param input the InputStream to transfer the content of.
+     * @param file the to transfer the content to.
+     * @throws IOException throws IOException if the transfer fails.
+     */
     private static void copyInputStreamToFileJava9(InputStream input, File file)
             throws IOException {
 
@@ -115,14 +122,19 @@ public class QualityEvaluator {
 
     }
 
+    /**
+     * Creates a temporary file to store the XLSX file.
+     *
+     * @return the temporary file to store the XLSX file.
+     */
     private File loadCodeSmellsFile(){
         try{
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream("Code_Smells.xlsx");
+            InputStream inputStream = classloader.getResourceAsStream("Code_Smells.xlsx");
 
             Path temp = Files.createTempFile("Code_Smells", ".xlsx");
             File file = temp.toFile();
-            copyInputStreamToFileJava9(is, file);
+            copyInputStreamToFileJava9(inputStream, file);
 
             return file;
         }catch (IOException e){
@@ -166,7 +178,7 @@ public class QualityEvaluator {
     /**
      * Gets the data obtained from the application's execution of code smell detection
      * @return A HashMap mapping the name of the code smell to a list of where it was detected
-     * @throws InterruptedException
+     * @throws InterruptedException if the metrics extraction fails.
      */
     private HashMap<String, ArrayList<String>> initializeData() throws InterruptedException {
        File java_project = projectFile;
@@ -177,10 +189,7 @@ public class QualityEvaluator {
             if(p.getName().equals("isGodClass") && p.isClassSmell()){
                 return true;
             }
-            if(p.getName().equals("isLongMethod") && !p.isClassSmell()){
-                return true;
-            }
-            return false;
+            return p.getName().equals("isLongMethod") && !p.isClassSmell();
 
         }).collect(Collectors.toList());
 

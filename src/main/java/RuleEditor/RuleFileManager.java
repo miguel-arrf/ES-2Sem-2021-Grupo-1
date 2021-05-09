@@ -95,7 +95,7 @@ public class RuleFileManager {
     public void renameJSONRule(JSONObject rule, String newName) {
         JSONObject outerName = (JSONObject) rule.get("outerName");
         outerName.replace("innerName", newName);
-        outerName.replace("outerName", outerName);
+        rule.replace("outerName", outerName);
     }
 
     /**
@@ -222,7 +222,7 @@ public class RuleFileManager {
             ConditionBlock tempConditionBlock = (ConditionBlock) node;
             if (tempConditionBlock.getOperator() != RuleOperator.DEFAULT) {
                 try {
-                    Double doubleValue = Double.valueOf(tempConditionBlock.getValue());
+                    Double.valueOf(tempConditionBlock.getValue());
                 } catch (NumberFormatException e) {
                     throw new IncorrectRuleException("Incorrect rule");
                 }

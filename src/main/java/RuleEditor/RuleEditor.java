@@ -2,7 +2,6 @@ package RuleEditor;
 
 import CodeSmellDetection.RuleOperator;
 import g1.ISCTE.AppStyle;
-import javafx.application.Application;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -28,7 +26,7 @@ import java.util.Comparator;
 
 import static g1.ISCTE.AppStyle.lightPurpleColor;
 
-public class RuleEditor extends Application {
+public class RuleEditor  {
 
     public static final DataFormat customFormat = new DataFormat("Node");
     public static ArrayList<CustomNode> ruleNodes = new ArrayList<>();
@@ -47,16 +45,27 @@ public class RuleEditor extends Application {
 
     private SplitPane splitPane;
 
-    private boolean isClassSmell;
+    private final boolean isClassSmell;
 
+
+    /**
+     * Gets the current rule name.
+     *
+     * @return the rule name.
+     */
     public String getRuleName() {
         return ruleName;
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
+    /**
+     * Gets the current rule.
+     * If the current rule is null, then we need to convert the GUI representation of it to a JSON one.
+     * If there is some problem while converting (incorrect rule, for example), the IncorrectRuleException is internally
+     * thrown and the rule is returned as null.
+     *
+     * @return the rule in the JSON representation.
+     */
     public JSONObject getRule() {
         JSONParser parser = new JSONParser();
         JSONObject json;
@@ -71,24 +80,23 @@ public class RuleEditor extends Application {
         return json;
     }
 
+    /**
+     * Rule Editor constructor.
+     *
+     * @param isClassSmell the boolean representing if the current rule is a class or method one.
+     */
     public RuleEditor(boolean isClassSmell){
         this.isClassSmell = isClassSmell;
     }
 
-    @Override
-    public void start(Stage stage) {
-        ruleNodes.clear();
-        SplitPane splitPane = new SplitPane();
-        configureSceneMainView(splitPane, stage);
 
-        Scene scene = new Scene(splitPane, 1200, 1200);
-
-        configureSceneAndStage(scene, stage);
-        primaryStage = stage;
-
-        stage.show();
-    }
-
+    /**
+     * Auxiliary method to initialize the editor without a rule. Meaning this is a rule editor to create a new one.
+     *
+     * @param stage the current stage.
+     * @param ruleFileManager the current file manager that will be updated with the changes to this rule and to know if a rule name is valid or not.
+     * @return the SplitPane representing the rule editor.
+     */
     public SplitPane getRuleEditor(Stage stage, RuleFileManager ruleFileManager){
         ruleNodes.clear();
 
@@ -100,6 +108,15 @@ public class RuleEditor extends Application {
         return splitPane;
     }
 
+    /**
+     * Auxiliary method to initialize the editor with a rule. Meaning this is a rule editor to edit an existing one.
+     *
+     * @param stage the current stage.
+     * @param ruleFileManager the current file manager that will be updated with the changes to this rule and to know if a rule name is valid or not.
+     * @param jsonObject the json object that represents the rule that wants to be edited.
+     * @param ruleName the name of the current rule that is going to be edited.
+     * @return the SplitPane representing the rule editor.
+     */
     public SplitPane getEditRuleEditor(Stage stage, RuleFileManager ruleFileManager, JSONObject jsonObject, String ruleName){
         ruleNodes.clear();
 
@@ -118,6 +135,13 @@ public class RuleEditor extends Application {
         return splitPane;
     }
 
+
+    /**
+     * Auxiliary method to set up the gui of the rule editor.
+     *
+     * @param splitPane the SplitPane representing the rule editor.
+     * @param stage the current stage.
+     */
     private void configureSceneMainView(SplitPane splitPane, Stage stage) {
         addDefaultBlocks();
 
@@ -137,17 +161,12 @@ public class RuleEditor extends Application {
     }
 
 
-
-    private void configureSceneAndStage(Scene scene, Stage stage) {
-        scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
-
-        stage.setTitle("Rule Builder");
-        stage.getIcons().add(new Image(AppStyle.class.getResourceAsStream("/RuleBuilderIcon.gif")));
-
-        stage.setScene(scene);
-    }
-
-
+    /**
+     * VBox to add the "Save" or "Update" button, to close and update the rules in the rule editor.
+     *
+     * @param stage the current stage. Needed to invoke the close request, to close the rule editor window.
+     * @return the VBox with the "Save" or "Update" button.
+     */
     private VBox getOptionsVBox(Stage stage){
         VBox vBoxOptions = new VBox();
 
@@ -156,12 +175,16 @@ public class RuleEditor extends Application {
         vBoxOptions.setAlignment(Pos.CENTER);
         vBoxOptions.setPadding(new Insets(30, 30, 30, 30));
 
-        vBoxOptions.getChildren().addAll(getSaveButton(stage)/*, getLoadButton()*/);
-
+        vBoxOptions.getChildren().addAll(getSaveButton(stage));
 
         return vBoxOptions;
     }
 
+    /**
+     * VBox with the multiple blocks that the user can drag into the main panel.
+     *
+     * @return the vbox with draggable blocks.
+     */
     private VBox getBlocksVBox() {
         VBox vBoxItems = new VBox();
 
@@ -213,10 +236,7 @@ public class RuleEditor extends Application {
                 event.consume();
             });
 
-
-
             vBoxItems.getChildren().add(node);
-
 
         }
 
@@ -234,41 +254,7 @@ public class RuleEditor extends Application {
         return vBoxItems;
     }
 
-    private StackPane getStackPane(VBox content){
-        //ScrollPane where boxes go
-        ScrollPane scrollPane = getScrollPane(content);
 
-        //StackPane due to rounded corners...
-        StackPane stackPane = new StackPane();
-        VBox emptyPane = new VBox();
-        emptyPane.getStyleClass().add("emptyLeftPane");
-        VBox.setVgrow(emptyPane, Priority.ALWAYS);
-
-        stackPane.getChildren().add(emptyPane);//Background...
-        stackPane.getChildren().add(scrollPane);
-
-        return stackPane;
-    }
-
-    private ScrollPane getScrollPane(VBox content) {
-        ScrollPane scrollPane = new ScrollPane();
-
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setContent(content);
-
-        scrollPane.setMinWidth(250);
-        scrollPane.setPrefWidth(200);
-        scrollPane.setMaxWidth(350);
-
-        HBox.setHgrow(scrollPane, Priority.ALWAYS);
-
-        scrollPane.setFitToWidth(true);
-
-        scrollPane.getStylesheets().add(getClass().getResource("/style/scrollPanel.css").toExternalForm());
-
-
-        return scrollPane;
-    }
 
     private VBox rightVBox(Stage stage) {
         VBox rightVBox = new VBox();
@@ -283,11 +269,11 @@ public class RuleEditor extends Application {
 
 
         //We need this to disable the shrinking of the button while resizing the window... Let the upper panel (with the blocks be the one resizing)
-        StackPane saveButtonStackPane = getStackPane(getOptionsVBox(stage));
+        StackPane saveButtonStackPane = AppStyle.getStackPane(getOptionsVBox(stage),350);
         saveButtonStackPane.setMinHeight(Region.USE_PREF_SIZE);
 
 
-        rightVBox.getChildren().addAll(getStackPane(getBlocksVBox()), saveButtonStackPane);
+        rightVBox.getChildren().addAll(AppStyle.getStackPane(getBlocksVBox(), 350), saveButtonStackPane);
 
 
         rightVBox.setPadding(new Insets(15, 15, 15, 15));
@@ -345,7 +331,6 @@ public class RuleEditor extends Application {
             } catch (IncorrectRuleException e) {
                 System.err.println("Incorrect rule");
                 mainPane.setStyle("-fx-background-color: " + AppStyle.redRowBackgroundColor + "; -fx-background-radius: 0 0 7 7 ");
-                //mainPane.setStyle(AppStyle.setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor("red"));
             }
         });
 
@@ -356,9 +341,7 @@ public class RuleEditor extends Application {
     private Button getSaveButton(Stage stage) {
         Button saveButton = AppStyle.getButtonWithDropShadow(isNewRule ? "Save me :3" : "Update me :3", lightPurpleColor);
 
-        saveButton.setOnAction(actionEvent -> {
-            textFieldStage(stage);
-        });
+        saveButton.setOnAction(actionEvent -> textFieldStage(stage));
 
         return saveButton;
     }

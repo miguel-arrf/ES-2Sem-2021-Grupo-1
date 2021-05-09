@@ -97,7 +97,7 @@ public class DetectionWorker implements Runnable {
         boolean result;
         if(node.isLeafNode()) {//Nó representa uma condição
             ConditionBlock condition = (ConditionBlock)node.getElement();
-            result = evaluateCondition(condition, metrics);
+            result = condition.evaluateCondition(metrics);
         } else {//Avaliar o próprio nó, o nó esquerdo e o nó direito
             RuleOperator operator = node.getElement().getOperator();
             boolean left_result = evaluateNode(metrics, node.getLeft_node());
@@ -105,17 +105,6 @@ public class DetectionWorker implements Runnable {
             result = evaluateOperator(operator, left_result, right_result);
         }
         return result;
-    }
-
-    /**
-     * Evaluates the boolean value of a condition, given the required metrics numeric value as a parameter to compare with the other numeric value defined in the rule's condition
-     * @param condition A condition, which compares two numeric values by means of an operator
-     * @param metrics A HashMap mapping the metrics' names to their numeric values
-     * @return The boolean value of the condition's evaluation
-     */
-    private boolean evaluateCondition(ConditionBlock condition, HashMap<String, Integer> metrics) {
-        int value = metrics.get(condition.getRule());
-        return condition.evaluate(value);
     }
 
     /**

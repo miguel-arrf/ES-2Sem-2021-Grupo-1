@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.junit.jupiter.api.Test;
 
 import MetricExtraction.MetricExtractor;
@@ -53,12 +55,14 @@ class RuleApplierTest {
 	}
 
 	@Test
-	void testProcessRules() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException {
+	void testProcessRules() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException, NoSuchFieldException {
 		RulesManager rulesManager = initialize();
+		
+        File directory_src = new File("C:\\Users\\mferr\\Downloads\\ES-2Sem-2021-Grupo-1-e1e0d12b5bc8ee1df4610651d3a5af1c2d356e95\\jasml_0.10");
 
-        String directory_src = System.getProperty("user.dir") + "\\jasml_0.10";
 
-		MetricExtractor metricExtractor = new MetricExtractor(new File(directory_src), "src/main/Created_Excels");
+
+		MetricExtractor metricExtractor = new MetricExtractor(directory_src, "/Users/chainz/IdeaProjects/ES-2Sem-2021-Grupo-1");
 		metricExtractor.executeExtraction();
 		
 		String docPath = metricExtractor.getFinalPath();
@@ -67,16 +71,27 @@ class RuleApplierTest {
         File testFile = new File(url.getFile());
 
         String path = testFile.getPath();
+        
+        URL url2 = RuleApplierTest.class.getResource("/testRulesFinal.rule");
+        File testFile2 = new File(url2.getFile());
+        rulesManager.setFile(testFile2);
 
         rulesManager.setMetricExtractor(metricExtractor);
 		rulesManager.createCodeSmells();
-
-    	RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(),docPath);
+	
+    	RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(), docPath);
+    	    	
+    	Field f = RuleApplier.class.getDeclaredField("mySheet"); //NoSuchFieldException
+    	f.setAccessible(true);
+    	XSSFSheet mySheet = (XSSFSheet) f.get(ruleApplier); //IllegalAccessException
+    	
+    	int columnNumBefore = mySheet.getRow(0).getLastCellNum();
 
     	ruleApplier.processRules();
     	
-    	assertNotNull(ruleApplier);
-        
+    	int columnNumAfter = mySheet.getRow(0).getLastCellNum();
+    	
+    	assertNotEquals(columnNumBefore, columnNumAfter);
         
 	}
 

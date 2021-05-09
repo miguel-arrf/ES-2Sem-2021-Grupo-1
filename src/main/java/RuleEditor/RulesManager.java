@@ -545,31 +545,11 @@ public class RulesManager extends Application {
      * Sets up the main pane and deals with the initiation of the GUI.
      */
     private void setUpMainPane() {
-        mainPane.setSpacing(20);
-        mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
-        mainPane.setAlignment(Pos.TOP_CENTER);
-        mainPane.setPadding(new Insets(20));
-
-        rules.addListener((ListChangeListener<JSONObject>) change -> {
-            if (rules.size() == 0) {
-                if (!rulesPanel.getChildren().contains(numberOfRules))
-                    rulesPanel.getChildren().add(numberOfRules);
-                numberOfRules.setText("No Rules");
-                numberOfRules.setGraphic(getIcon("bird.png"));
-            } else {
-                rulesPanel.getChildren().remove(numberOfRules);
-            }
-        });
-
-        numberOfRules.setTextFill(Color.WHITE);
-        numberOfRules.setGraphic(getIcon("bird.png"));
-        numberOfRules.setGraphic(getIcon("bird.png"));
+        addNewRuleButton();
+		mainPane.setPadding(new Insets(20));
 
         rulesPanel.getChildren().add(numberOfRules);
 
-        rulesPanel.setSpacing(20);
-        rulesPanel.setMaxWidth(Double.MAX_VALUE);
-        rulesPanel.setAlignment(Pos.CENTER);
         rulesPanel.setPadding(new Insets(20));
         rulesPanel.setBorder(new Border(new BorderStroke(Color.web("#76747e"), BorderStrokeStyle.DASHED, new CornerRadii(7), new BorderWidths(2))));
         rulesPanel.setBackground(new Background(new BackgroundFill(Color.web("rgba(118,116,126,0.3)"), new CornerRadii(7), Insets.EMPTY)));
@@ -579,16 +559,9 @@ public class RulesManager extends Application {
         mainPane.getChildren().add(rulesPanel);
 
 
-        addNewRuleButton = setUpAddNewRuleButton();
         mainPane.getChildren().add(addNewRuleButton);
-        addNewRuleButton.setDisable(true);
-
         HBox saveAndLoadButtons = new HBox();
         saveAndLoadButtons.setSpacing(20);
-
-        setRulesDirectoryButton = setUpSetRulesFileButton();
-        loadRulesButton = setUpLoadRulesFileButton();
-
 
         saveAndLoadButtons.getChildren().addAll(setRulesDirectoryButton, loadRulesButton);
         saveAndLoadButtons.setMaxHeight(30);
@@ -596,6 +569,32 @@ public class RulesManager extends Application {
 
         mainPane.getChildren().add(saveAndLoadButtons);
     }
+
+	private void addNewRuleButton() {
+		mainPane.setSpacing(20);
+		mainPane.setStyle("-fx-background-color: " + darkGrayBoxColor);
+		mainPane.setAlignment(Pos.TOP_CENTER);
+		rules.addListener((ListChangeListener<JSONObject>) change -> {
+			if (rules.size() == 0) {
+				if (!rulesPanel.getChildren().contains(numberOfRules))
+					rulesPanel.getChildren().add(numberOfRules);
+				numberOfRules.setText("No Rules");
+				numberOfRules.setGraphic(getIcon("bird.png"));
+			} else {
+				rulesPanel.getChildren().remove(numberOfRules);
+			}
+		});
+		numberOfRules.setTextFill(Color.WHITE);
+		numberOfRules.setGraphic(getIcon("bird.png"));
+		numberOfRules.setGraphic(getIcon("bird.png"));
+		rulesPanel.setSpacing(20);
+		rulesPanel.setMaxWidth(Double.MAX_VALUE);
+		rulesPanel.setAlignment(Pos.CENTER);
+		addNewRuleButton = setUpAddNewRuleButton();
+		addNewRuleButton.setDisable(true);
+		setRulesDirectoryButton = setUpSetRulesFileButton();
+		loadRulesButton = setUpLoadRulesFileButton();
+	}
 
 
     /**
@@ -666,7 +665,7 @@ public class RulesManager extends Application {
         scene.getStylesheets().add(getClass().getResource("/style/AppStyle.css").toExternalForm());
 
         stage.setTitle("Rule Builder");
-        stage.getIcons().add(new Image(AppStyle.class.getResourceAsStream("/RuleBuilderIcon.gif")));
+        stage.getIcons().add(new Image(AppStyle.class.getResourceAsStream("/PreferencesPanelIcon.gif")));
 
         stage.setScene(scene);
         stage.show();

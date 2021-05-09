@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -33,10 +34,12 @@ public class AppStyle {
     public static final String lightGrayColor = "#ece2e1";
     public static final String lightYellowColor = "#ded7b1";
     public static final String lightPurpleColor = "#a29bfe";
+    public static final String lightOrangeColor = "#fdcb6e";
 
     public static final String lightGrayTextColor = "#d1d1d1";
     public static final String redRowTextColor = "#ff7675";
     public static final String greenRowTextColor = "#55efc4";
+    public static final String grayTextColor = "#76747e";
 
     public static final String redRowBackgroundColor = "#4b0c0c";
     public static final String greenRowBackgroundColor = "#20402c";
@@ -48,7 +51,6 @@ public class AppStyle {
      * @return the default style string to be used to stylize any node in the App.
      */
     public static String setDefaultBackgroundAndBorderRadiusWithGivenBackgroundColor(String color){
-
         return "-fx-background-radius: 7 7 7 7;\n"
                 + "    -fx-border-radius: 7 7 7 7;\n" +
                 "    -fx-background-color: " + color + ";";
@@ -76,7 +78,7 @@ public class AppStyle {
     public static Label getSubTitleLabel(String message){
 
         Label subTitleLabel = new Label(message);
-        subTitleLabel.setTextFill(Color.web("#76747e"));
+        subTitleLabel.setTextFill(Color.web(grayTextColor));
 
         return subTitleLabel;
     }
@@ -261,6 +263,54 @@ public class AppStyle {
     public static void setButtonIcon(Button button, String imageLocation){
         button.setGraphic(getIcon(imageLocation));
 
+    }
+
+    /**
+     * Method that adds a content to the top of a stackPane allowing us to mimic a content with rounded corners. Purely for style purposes.
+     *
+     * @param content the content (vbox) to be added to the stack pane.
+     * @return the stackPane with the given content on top.
+     */
+    public static StackPane getStackPane(VBox content, double maxWidth){
+        //ScrollPane where boxes go
+        ScrollPane scrollPane = getScrollPane(content, maxWidth);
+
+        //StackPane due to rounded corners...
+        StackPane stackPane = new StackPane();
+        VBox emptyPane = new VBox();
+        emptyPane.getStyleClass().add("emptyLeftPane");
+        VBox.setVgrow(emptyPane, Priority.ALWAYS);
+
+        stackPane.getChildren().add(emptyPane);//Background...
+        stackPane.getChildren().add(scrollPane);
+
+        return stackPane;
+    }
+
+    /**
+     * Helper method that stylizes and creates a scrollpane with the appropriate design for this application.
+     *
+     * @param content to be added in the scrollpane
+     * @return the scrollpane with the respective content
+     */
+    public static ScrollPane getScrollPane(VBox content, double maxWidth) {
+        ScrollPane scrollPane = new ScrollPane();
+
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setContent(content);
+
+        scrollPane.setMinWidth(250);
+        scrollPane.setPrefWidth(200);
+        scrollPane.setMaxWidth(maxWidth);
+
+        HBox.setHgrow(scrollPane, Priority.ALWAYS);
+
+        scrollPane.setFitToWidth(true);
+
+        scrollPane.getStylesheets().add(AppStyle.class.getResource("/style/scrollPanel.css").toExternalForm());
+
+
+        return scrollPane;
     }
 
     /**

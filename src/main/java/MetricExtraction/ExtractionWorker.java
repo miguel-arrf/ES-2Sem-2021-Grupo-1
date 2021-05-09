@@ -114,7 +114,7 @@ public class ExtractionWorker implements Runnable {
         } finally {
             try {
                 in.close();
-            } catch (IOException e) {
+            } catch (NullPointerException | IOException e) {
                 e.printStackTrace();
             }
         }

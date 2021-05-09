@@ -22,6 +22,7 @@ import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 /**
  * The type Condition block.
@@ -181,22 +182,12 @@ public class ConditionBlock implements CustomNode, Serializable {
     /**
      * Returns a button with the default design
      *
-     * @param label operator being represented in button
+     * @param operatorToPut the operator to be displayed in the button.
      * @return button with default design and desired label
      */
-    private Button getStyledButton(RuleOperator label) {
-        return getStyledButton(label, null);
-    }
-
-    /**
-     * @param operatorToPut
-     * @param customColor
-     * @return
-     */
-    private Button getStyledButton(RuleOperator operatorToPut, String customColor) {
+    private Button getStyledButton(RuleOperator operatorToPut ) {
         Button button = new Button(operatorToPut.label);
         button.getStyleClass().add("roundedAddButton");
-      //  button.setFont(AppStyle.getFont(FontType.ROUNDED_SEMI_BOLD, 13));
         button.setTextFill(Color.WHITE);
 
         button.setPadding(new Insets(10, 20, 10, 20));
@@ -207,10 +198,6 @@ public class ConditionBlock implements CustomNode, Serializable {
             Platform.runLater(() -> popupStage.fireEvent(new WindowEvent(popupStage, WindowEvent.WINDOW_CLOSE_REQUEST)));
 
         });
-
-        if (customColor != null) {
-            button.setStyle("-fx-background-color: " + customColor);
-        }
 
         return button;
     }
@@ -303,12 +290,12 @@ public class ConditionBlock implements CustomNode, Serializable {
         hBox.setAlignment(Pos.CENTER);
 
         return hBox;
-    }
+	}
 
     /**
      * Setup the ConditionBlock delete menu
      *
-     * @param box
+     * @param box the node to add which this delete context menu shall be added.
      */
     private void setHBoxDelete(Node box) {
         ContextMenu menu = new ContextMenu();
@@ -486,6 +473,16 @@ public class ConditionBlock implements CustomNode, Serializable {
         object.put("valueLabel", valueLabel.getText());
         return object.toJSONString();
     }
+
+	/**
+	 * Evaluates the boolean value of a condition, given the required metrics numeric value as a parameter to compare with the other numeric value defined in the rule's condition
+	 * @param metrics  A HashMap mapping the metrics' names to their numeric values
+	 * @return  The boolean value of the condition's evaluation
+	 */
+	public boolean evaluateCondition(HashMap<String, Integer> metrics) {
+		int value = metrics.get(getRule());
+		return evaluate(value);
+	}
 
 
 }

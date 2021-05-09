@@ -74,6 +74,12 @@ public class RuleApplier {
         excelCreator.close();
     }
 
+    /**
+     * Adds a column to the sheet.
+     *
+     * @param title the title of the column.
+     * @param nColumn the number of the column.
+     */
     private void addColumn(String title, int nColumn){
 
         int nLinhas = mySheet.getLastRowNum();
@@ -105,6 +111,11 @@ public class RuleApplier {
         }
     }
 
+    /**
+     * Removes a given column.
+     *
+     * @param nColumn the column to be removed.
+     */
     private void removeColumn(int nColumn){
         int nLinhas = mySheet.getLastRowNum();
         XSSFRow currentRow;
@@ -118,6 +129,13 @@ public class RuleApplier {
     }
 
 
+    /**
+     * Checks if a given method (or class) in the sheet contains the given CodeSmell applied by the rule.
+     *
+     * @param smellTarget the method (or class) name.
+     * @param codeSmell the CodeSmell to check.
+     * @return if the method (or class) contains the CodeSmell.
+     */
     private Boolean isCodeSmell(String smellTarget, String codeSmell){
         for(String stringWithBar : rules.get(codeSmell)){
             String name = stringWithBar.split("/")[0];
@@ -128,6 +146,12 @@ public class RuleApplier {
         return false;
     }
 
+    /**
+     * Checks if a string represents a method or a class.
+     *
+     * @param stringWithBar the string representing either a method or class.
+     * @return if the string represents a method or a class.
+     */
     private Boolean isMethodSmell(String stringWithBar) {
         return stringWithBar.split("/").length > 1;
     }

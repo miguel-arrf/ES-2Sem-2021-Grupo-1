@@ -196,7 +196,6 @@ public class NewGUI extends Application {
 
             if (selectedFile.isDirectory()) {
 
-
                 MyTree myTree = new MyTree();
 
                 ScrollPane scrollPane = myTree.getScrollPane(selectedFile);

@@ -203,6 +203,22 @@ class RuleFileManagerTest {
     }
 
 
+    @Test
+    void testRenameJSONRule() throws ParseException {
+    	RuleFileManager manager = createRuleFileManagerAndSetFile();
+    	
+        String jsonNode = "{\"children\":[{\"children\":[],\"rule\":{\"ruleLabel\":\"NOM_Class\",\"valueLabel\":\"1\",\"operator\":\"<=\"}},{\"children\":[],\"rule\":{\"ruleLabel\":\"LOC_Class\",\"valueLabel\":\"2\",\"operator\":\">=\"}}],\"rule\":{\"operator\":\"OR\"},\"outerName\":{\"innerName\":\"regra2\",\"isClassSmell\":true,\"uniqueIdentifier\":\"67052887-d0ee-4803-940d-366cde54c7b6\"}}";
+
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(jsonNode);
+
+
+        manager.renameJSONRule(json, "newName");
+        
+        String name = (String) ((JSONObject) json.get("outerName")).get("innerName");
+        
+        assertEquals(name, "newName");
+    }
 
     @Test
     void testGetChild() throws IncorrectRuleException {
@@ -210,7 +226,7 @@ class RuleFileManagerTest {
     	
         DraggingObject draggingObject = new DraggingObject();
 
-        ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.EQUAL, new MetricBlock("class_test_rule"), "test_value", draggingObject);
+        ConditionBlock conditionBlock = new ConditionBlock(RuleOperator.EQUAL, new MetricBlock("LOC_Class"), "2", draggingObject);
         ArrayList<CustomNode> allBlocks = new ArrayList<>();
         allBlocks.add(conditionBlock);
 
@@ -228,7 +244,7 @@ class RuleFileManagerTest {
         Assertions.assertEquals(1, manager.getChild(andBlock, allBlocks).size());
 
 
-        ConditionBlock newConditionBlock = new ConditionBlock(RuleOperator.EQUAL, new MetricBlock("class_test_rule"), "test_value", draggingObject);
+        ConditionBlock newConditionBlock = new ConditionBlock(RuleOperator.EQUAL, new MetricBlock("LOC_Class"), "2", draggingObject);
         allBlocks.add(newConditionBlock);
         andBlock.addToLeft(newConditionBlock);
 
