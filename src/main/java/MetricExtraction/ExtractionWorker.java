@@ -55,7 +55,7 @@ public class ExtractionWorker implements Runnable {
         List<Method> constructorMethods = new ArrayList<>();
         for(ConstructorDeclaration declaration : constructors) {
             String body = declaration.getBody().toString();
-            Method m = new Method(body, declaration.getName().asString());
+            Method m = new Method(body, declaration.getDeclarationAsString(false,false,false));
             constructorMethods.add(m);
         }
         return constructorMethods;

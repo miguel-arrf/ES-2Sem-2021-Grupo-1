@@ -21,7 +21,7 @@ public class MethodVisitor extends VoidVisitorAdapter {
         if(methodDeclaration.getBody().isPresent()){
             body = methodDeclaration.getBody().get().toString();
         }
-        Method method = new Method(body, methodDeclaration.getName().asString());
+        Method method = new Method(body, methodDeclaration.getDeclarationAsString(false,false,false));
         class_methods.add(method);
     }
 
