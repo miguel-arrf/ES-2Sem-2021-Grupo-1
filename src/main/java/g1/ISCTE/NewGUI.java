@@ -609,10 +609,10 @@ public class NewGUI extends Application {
      * @return the GUI of the general metrics of the selected project.
      */
     private HBox getInfoBoxes() {
-        VBox infoBox = getSquareInfoBox("Número total de packages");
-        VBox infoBox1 = getSquareInfoBox("Número total de classes");
-        VBox infoBox2 = getSquareInfoBox("Número total de métodos");
-        VBox infoBox3 = getSquareInfoBox("Número total de linhas de código do projeto");
+        VBox infoBox = getSquareInfoBox("Total number of packages");
+        VBox infoBox1 = getSquareInfoBox("Total number of classes");
+        VBox infoBox2 = getSquareInfoBox("Total number of methods");
+        VBox infoBox3 = getSquareInfoBox("Total number of lines of code");
 
         AppStyle.addFadingInGroup(1000, 500, infoBox, infoBox1, infoBox2, infoBox3);
 
