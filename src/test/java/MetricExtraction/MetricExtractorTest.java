@@ -19,7 +19,7 @@ class MetricExtractorTest {
          File testFile = new File(url.getFile());
          System.out.println(testFile.getPath());
     	
-        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
+        MetricExtractor metricExtractor = new MetricExtractor(new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\"));
         
         assertNotNull(metricExtractor.getFinalPath());
     }
@@ -33,7 +33,7 @@ class MetricExtractorTest {
         
         
         
-        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
+        MetricExtractor metricExtractor = new MetricExtractor(new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\"));
         assertDoesNotThrow(() -> {
             metricExtractor.executeExtraction();
         });
@@ -46,10 +46,10 @@ class MetricExtractorTest {
         File testFile = new File(url.getFile());
         System.out.println(testFile.getPath());
     	
-        MetricExtractor metricExtractor = new MetricExtractor(new File("/Users/miguelferreira/Downloads/jasml_0.10"));
+        MetricExtractor metricExtractor = new MetricExtractor(new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\"));
         assertEquals(metricExtractor.getResults().size(),0);
         metricExtractor.executeExtraction();
         
-        assertEquals(metricExtractor.getResults().size(), 50);
+        assertEquals(metricExtractor.getResults().size(), 52);
     }
 }

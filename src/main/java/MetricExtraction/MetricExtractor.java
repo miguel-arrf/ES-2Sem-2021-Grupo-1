@@ -104,8 +104,8 @@ public class MetricExtractor {
             metricName[4] = "NOM_Class";
             metricName[5] = "LOC_Class";
             metricName[6] = "WMC_Class";
-            metricName[7] = "LOC_method";
-            metricName[8] = "CYCLO_method";
+            metricName[7] = "LOC_Method";
+            metricName[8] = "CYCLO_Method";
 
             XSSFRow currentRow = mySheet.createRow(0);
 

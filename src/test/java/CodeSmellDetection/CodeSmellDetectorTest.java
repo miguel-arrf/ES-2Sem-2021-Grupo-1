@@ -31,7 +31,7 @@ public class CodeSmellDetectorTest {
     static void setUp() throws InterruptedException {
         JFXPanel jfxPanel = new JFXPanel();
 
-        String directory_src = "/Users/miguelferreira/Downloads/jasml_0.10/";
+        String directory_src = "C:\\Users\\mferr\\Downloads\\jasml_0.10\\";
         File file = new File(directory_src);
         MetricExtractor extractor = new MetricExtractor(file);
         extractor.executeExtraction();

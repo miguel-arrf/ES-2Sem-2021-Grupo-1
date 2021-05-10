@@ -54,7 +54,7 @@ class QualityEvaluatorAppTest {
         File testFile = new File(url.getFile());
         System.out.println(testFile.getPath());
         
-        File projectFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+        File projectFile = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
 
         MetricExtractor metricExtractor = new MetricExtractor(projectFile);
         //metricExtractor.executeExtraction();
@@ -80,7 +80,7 @@ class QualityEvaluatorAppTest {
     void testOtherBranch() throws InterruptedException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, NoSuchMethodException, InvocationTargetException {
     	 JFXPanel jfxPanel = new JFXPanel();
 
-         File selectedFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+         File selectedFile = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
 
          QualityEvaluatorApp qEA = new QualityEvaluatorApp();
          

@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -62,7 +63,7 @@ class NewGUITest {
         assertNotNull(buttonProcessProject);
         
         
-        File projectFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+        File projectFile = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
         
         Field f = NewGUI.class.getDeclaredField("selectedFile"); //NoSuchFieldException
         f.setAccessible(true);
@@ -72,7 +73,7 @@ class NewGUITest {
         Method updateFilePane = NewGUI.class.getDeclaredMethod("updateFilePane", null);
         updateFilePane.setAccessible(true);
         Button voidUpdateFilePane = (Button) updateFilePane.invoke(ng, null);        
-
+        assertNotNull(voidUpdateFilePane);
         
 	}
 	
@@ -80,7 +81,7 @@ class NewGUITest {
 	void testUpdateCenterPane() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		NewGUI ng = new NewGUI();
 		
-		File projectFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+		File projectFile = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
         
         Field f = NewGUI.class.getDeclaredField("selectedFile"); //NoSuchFieldException
         f.setAccessible(true);
@@ -105,7 +106,7 @@ class NewGUITest {
         updateCenterPane.invoke(ng, null); 
         
         
-        
+        assertDoesNotThrow(() -> updateCenterPane.invoke(ng,  null));
         
 		
 	}

@@ -81,7 +81,7 @@ class RulesManagerTest {
 		RulesManager rulesManager = initialize();
 		System.out.println("rules manager size: "  + rulesManager.getRules().size());
         
-        assertEquals(rulesManager.getRules().size(), 14);
+        assertEquals(rulesManager.getRules().size(), 2);
         
 		
 	}
@@ -167,7 +167,7 @@ class RulesManagerTest {
 		rulesManager.setMetricExtractor(metricExtractor);
 		
 		System.out.println("pip: " + rulesManager.createCodeSmells().size());
-		assertEquals(rulesManager.createCodeSmells().size(), 14);
+		assertEquals(rulesManager.createCodeSmells().size(), 2);
 	}
 
 

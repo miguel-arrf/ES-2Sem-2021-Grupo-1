@@ -22,7 +22,7 @@ class QualityEvaluatorTest {
 
     @BeforeAll
     static void setUp() {
-        File projectFile = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+        File projectFile = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
 
         qualityEvaluator = new QualityEvaluator(projectFile);
     }

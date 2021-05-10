@@ -24,18 +24,6 @@ class RuleFileManagerTest {
 
     private final JFXPanel panel = new JFXPanel();
 
-   /* private static RuleFileManager manager;
-    private static File testFile;
-
-
-    @BeforeAll
-    private static void setUP() {
-        RuleFileManagerTest.manager = new RuleFileManager();
-
-        URL url = RuleFileManagerTest.class.getResource("/testRule.rule");
-        testFile = new File(url.getFile());
-        manager.setFile(testFile);
-    }*/
 
     private RuleFileManager createRuleFileManagerAndSetFile() {
     	RuleFileManager manager = new RuleFileManager();
@@ -55,7 +43,7 @@ class RuleFileManagerTest {
         ArrayList<JSONObject> arrayListJson;
         try {
             arrayListJson = manager.loadJSONRuleFile();
-            Assertions.assertEquals(arrayListJson.size(), 14);
+            Assertions.assertEquals(arrayListJson.size(), 2);
 
 
         } catch (IOException | ParseException e) {

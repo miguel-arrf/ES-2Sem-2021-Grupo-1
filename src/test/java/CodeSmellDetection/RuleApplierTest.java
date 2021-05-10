@@ -58,7 +58,7 @@ class RuleApplierTest {
 	void testProcessRules() throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException, NoSuchFieldException {
 		RulesManager rulesManager = initialize();
 		
-        File directory_src = new File("/Users/miguelferreira/Downloads/jasml_0.10/");
+        File directory_src = new File("C:\\Users\\mferr\\Downloads\\jasml_0.10\\");
 
 
 
