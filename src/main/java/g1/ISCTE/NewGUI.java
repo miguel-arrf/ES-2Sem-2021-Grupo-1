@@ -32,6 +32,7 @@ import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -151,6 +152,10 @@ public class NewGUI extends Application {
                     rulesManager.loadFile();
                     rulesManager.createCodeSmells();
                     RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
+                    ra.processRules();
+                }
+                if(rulesManager.getRules().size() == 0){
+                    RuleApplier ra = new RuleApplier(new HashMap<>(), docPath);
                     ra.processRules();
                 }
                 updateCenterPane();

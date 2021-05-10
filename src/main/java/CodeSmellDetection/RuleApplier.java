@@ -40,7 +40,6 @@ public class RuleApplier {
      */
     public void resetMetricsTable() {
         int lastcell = mySheet.getRow(0).getLastCellNum();
-
         for (int x = lastcell; x > 8; x--) {
             removeColumn(x);
         }
