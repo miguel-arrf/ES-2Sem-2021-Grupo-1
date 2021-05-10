@@ -4,9 +4,8 @@
 <!---Esses são exemplos. Veja https://shields.io para outras pessoas ou para personalizar este conjunto de escudos. Você pode querer incluir dependências, status do projeto e informações de licença aqui--->
 
 | ![Repo size](https://img.shields.io/github/repo-size/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![Github contributors](https://img.shields.io/github/contributors-anon/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![Last release](https://img.shields.io/github/v/release/miguel-arrf/ES-2Sem-2021-Grupo-1?include_prereleases&style=flat-square)  |
-| ------------ | ------------ | ------------ |
-| ![Issues open](https://img.shields.io/github/issues/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![Closed issues](https://img.shields.io/github/issues-closed-raw/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![Closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  |
-
+| :------------ | :------------ | :------------ |
+| ![Issues open](https://img.shields.io/github/issues/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![Closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  | ![GitHub top language](https://img.shields.io/github/languages/top/miguel-arrf/ES-2Sem-2021-Grupo-1?style=flat-square)  |
 
 
 
