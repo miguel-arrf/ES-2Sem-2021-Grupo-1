@@ -36,7 +36,7 @@ java -jar ES-2Sem-2021-Grupo-1-Mac.jar
 > Abre o ficheiro **ES-2Sem-2021-Grupo-1-Windows.jar**. 
 
 
-## ☕ Execução <nome_do_projeto>
+## ☕ Execução
 
 Para usar a aplicação é simples! Após a iniciares, tens duas opções:
 1. Abrir um qualquer projeto Java que tenhas
