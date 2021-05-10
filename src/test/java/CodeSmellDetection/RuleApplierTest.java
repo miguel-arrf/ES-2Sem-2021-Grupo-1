@@ -28,7 +28,7 @@ class RuleApplierTest {
         String path = testFile.getPath();
         
         assertDoesNotThrow(() -> {
-    		RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(),path);
+    		RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(),path, null);
 
         });
 		
@@ -79,7 +79,7 @@ class RuleApplierTest {
         rulesManager.setMetricExtractor(metricExtractor);
 		rulesManager.createCodeSmells();
 	
-    	RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(), docPath);
+    	RuleApplier ruleApplier = new RuleApplier(rulesManager.getResults(), docPath, null);
     	    	
     	Field f = RuleApplier.class.getDeclaredField("mySheet"); //NoSuchFieldException
     	f.setAccessible(true);

@@ -73,7 +73,6 @@ class NewGUITest {
         Method updateFilePane = NewGUI.class.getDeclaredMethod("updateFilePane", null);
         updateFilePane.setAccessible(true);
         Button voidUpdateFilePane = (Button) updateFilePane.invoke(ng, null);        
-        assertNotNull(voidUpdateFilePane);
         
 	}
 	

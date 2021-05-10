@@ -1,5 +1,6 @@
 package g1.ISCTE;
 
+import CodeSmellDetection.CodeSmell;
 import CodeSmellDetection.RuleApplier;
 import MetricExtraction.MetricExtractor;
 import RuleEditor.RulesManager;
@@ -59,6 +60,7 @@ public class NewGUI extends Application {
     private Button loadJASMLButton;
     private MetricExtractor metricExtractor;
 
+    private ArrayList<CodeSmell> codeSmellsList;
 
     /**
      * The entry point of application.
@@ -150,12 +152,12 @@ public class NewGUI extends Application {
             try {
                 if (rulesManager.getRulesFile() != null && rulesManager.getRules().size() > 0) {
                     rulesManager.loadFile();
-                    rulesManager.createCodeSmells();
-                    RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath);
+                    codeSmellsList = rulesManager.createCodeSmells();
+                    RuleApplier ra = new RuleApplier(rulesManager.getResults(), docPath, codeSmellsList);
                     ra.processRules();
                 }
                 if(rulesManager.getRules().size() == 0){
-                    RuleApplier ra = new RuleApplier(new HashMap<>(), docPath);
+                    RuleApplier ra = new RuleApplier(new HashMap<>(), docPath, codeSmellsList);
                     ra.processRules();
                 }
                 updateCenterPane();

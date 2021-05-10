@@ -20,6 +20,7 @@ public class RuleApplier {
     private final XSSFWorkbook myWorkbook;
     private final String path;
     private final HashMap<String, ArrayList<String>> rules;
+    private final ArrayList<CodeSmell> codeSmellsList;
 
     /**
      * Instantiates a new Rule applier.
@@ -28,8 +29,9 @@ public class RuleApplier {
      * @param path  path to the xlsx file
      * @throws IOException the io exception
      */
-    public RuleApplier(HashMap<String, ArrayList<String>> rules, String path) throws IOException {
+    public RuleApplier(HashMap<String, ArrayList<String>> rules, String path, ArrayList<CodeSmell> codeSmellsList) throws IOException {
         this.rules = rules;
+        this.codeSmellsList = codeSmellsList;
         myWorkbook = ProjectInfo.createWorkbook(path);
         mySheet = myWorkbook.getSheetAt(0);
         this.path = path;
@@ -92,21 +94,27 @@ public class RuleApplier {
             currentRow =  mySheet.getRow(y);
             myCell = currentRow.createCell(nColumn);
 
-            if (!rules.get(title).isEmpty() && isMethodSmell(rules.get(title).get(0))) {
-                if (isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)) {
-                    myCell.setCellValue("TRUE");
+            if(codeSmellsList != null){
+                if (!rules.get(title).isEmpty() && !codeSmellsList.stream().filter(p -> p.getName().equals(title)).findFirst().get().isClassSmell()) {
+                    if (isCodeSmell(currentRow.getCell(3).getStringCellValue(), title)) {
+                        myCell.setCellValue("TRUE");
+                    } else {
+                        myCell.setCellValue("FALSE");
+                    }
+                } else if (!rules.get(title).isEmpty() && codeSmellsList.stream().filter(p -> p.getName().equals(title)).findFirst().get().isClassSmell()) {
+                    if (isCodeSmell(currentRow.getCell(2).getStringCellValue(), title)) {
+                        myCell.setCellValue("TRUE");
+                    } else {
+                        myCell.setCellValue("FALSE");
+                    }
                 } else {
                     myCell.setCellValue("FALSE");
                 }
-            } else if (!rules.get(title).isEmpty() && !isMethodSmell(rules.get(title).get(0))) {
-                if (isCodeSmell(currentRow.getCell(2).getStringCellValue(), title)) {
-                    myCell.setCellValue("TRUE");
-                } else {
-                    myCell.setCellValue("FALSE");
-                }
-            } else {
+            }else{
                 myCell.setCellValue("FALSE");
             }
+
+
         }
     }
 
@@ -144,17 +152,6 @@ public class RuleApplier {
         }
         return false;
     }
-
-    /**
-     * Checks if a string represents a method or a class.
-     *
-     * @param stringWithBar the string representing either a method or class.
-     * @return if the string represents a method or a class.
-     */
-    private Boolean isMethodSmell(String stringWithBar) {
-        return stringWithBar.split("/").length > 1;
-    }
-
 
 
 }
